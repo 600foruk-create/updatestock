@@ -2934,6 +2934,20 @@ function showNewOrderForm() {
 
 function hideNewOrderForm() {
     document.getElementById('newOrderForm').style.display = 'none';
+    resetNewOrderForm();
+}
+
+function resetNewOrderForm() {
+    const now = new Date();
+    const orderDateInput = document.getElementById('orderDate');
+    if (orderDateInput) orderDateInput.value = now.toISOString().slice(0, 16);
+    const newOrderRows = document.getElementById('newOrderRows');
+    if (newOrderRows) newOrderRows.innerHTML = '';
+    const newCustomerId = document.getElementById('newCustomerId');
+    if (newCustomerId) newCustomerId.value = '';
+    const newCustomerInput = document.querySelector('#newCustomerWrapper input');
+    if (newCustomerInput) newCustomerInput.value = '';
+    addNewOrderRow();
 }
 
 function hideAllForms() {
@@ -3278,10 +3292,11 @@ async function saveNewOrder() {
             // Immediate UI update
             refreshOrdersList('all');
             hideNewOrderForm();
-            refreshDashboard();
-            refreshStockList();
             
-            alert('Order created successfully!');
+            // Full refresh to ensure consistency
+            initApp();
+            
+            alert('Successfully saved!');
         } else {
             alert('System Error: ' + (result.message || 'The server rejected the order. Update possibly already exists.'));
         }
@@ -3646,11 +3661,19 @@ async function completeOrder(orderId) {
     if (stockDeducted) {
         order.isStockSubtracted = 1;
         refreshTransactions(); // Update history list immediately
+        order.status = 'completed'; // Only set to completed if stock was deducted OR it was already fulfilled
+    } else {
+        // If no stock was deducted, check if it's because it's already fulfilled
+        let isFullyFulfilled = (order.items || []).every(item => (item.quantity || 0) <= (item.fulfilled || 0));
+        if (isFullyFulfilled) {
+            order.status = 'completed';
+        } else {
+            alert('Order cannot be marked as completed because no stock was deducted and it is not fully fulfilled.');
+            return;
+        }
     }
     
     // Update order status on server
-    order.status = 'completed';
-
     try {
         const response = await fetch('api/sync.php?action=save_order', {
             method: 'POST',
@@ -3659,7 +3682,7 @@ async function completeOrder(orderId) {
         const result = await response.json();
         
         if (result.status === 'success') {
-            alert(`Order #${orderId} completed successfully! Stock has been deducted.`);
+            alert(`Order #${orderId} completed successfully!`);
             // Add a slight delay before initApp to ensure database commits are ready for fetching
             setTimeout(() => {
                 initApp();
@@ -3965,7 +3988,8 @@ async function updateOrder(orderId) {
             saveData();
             refreshOrdersList();
             closeEditModal();
-            alert('Order updated successfully!');
+            initApp(); // Full refresh
+            alert('Successfully updated!');
         } else {
             alert('Error: ' + result.message);
         }
