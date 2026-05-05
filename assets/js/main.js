@@ -1301,7 +1301,7 @@ async function saveQuickBrand() {
             alert('Error: ' + result.message);
         }
     } catch (e) {
-        alert('Sync failed.');
+        alert('Server update failed. Please check your connection.');
     }
 }
 
@@ -1363,7 +1363,7 @@ async function saveQuickSize() {
             alert('Error: ' + result.message);
         }
     } catch (e) {
-        alert('Sync failed.');
+        alert('Server update failed. Please check your connection.');
     }
 }
 
@@ -1474,7 +1474,7 @@ async function saveQuickItem() {
             alert('Error: ' + result.message);
         }
     } catch (e) {
-        alert('Sync failed.');
+        alert('Server update failed. Please check your connection.');
     }
 }
 
@@ -3040,12 +3040,17 @@ async function saveProduction() {
         refreshLowStockReport(); 
         hideAllForms();
         
-        // Auto-save consumption snapshot
-        await autoSaveRMConsumption();
-        alert('ad sucsessfuly');
+        // Auto-save consumption snapshot (non-critical, wrap in try/catch)
+        try {
+            await autoSaveRMConsumption();
+        } catch (e) {
+            console.warn('Auto-save consumption failed:', e);
+        }
+        
+        alert('Successfully saved!');
     } catch (err) {
         console.error('saveProduction Error:', err);
-        alert('❌ Note: Production saved to database, but there was a minor local error updating the screen.');
+        alert('Data saved to database, but there was a minor error updating the screen. Please refresh.');
     } finally {
         if (saveBtn) {
             saveBtn.disabled = false;
@@ -3139,7 +3144,7 @@ async function saveSale() {
     }
     
     saveData(); refreshTransactions(); refreshDashboard(); refreshStockList(); refreshLowStockReport(); hideAllForms(); refreshCompletedOrderDropdown();
-    alert('Process complete.');
+    alert('Successfully saved!');
 }
 
 async function saveAdjustment() {
@@ -3212,7 +3217,7 @@ async function saveAdjustment() {
 
     if (errors.length > 0) alert('Errors:\n' + errors.join('\n'));
     saveData(); refreshTransactions(); refreshDashboard(); refreshStockList(); refreshLowStockReport(); hideAllForms();
-    alert('Process complete.');
+    alert('Successfully saved!');
 }
 
 async function saveNewOrder() {
@@ -3994,7 +3999,7 @@ async function updateOrder(orderId) {
             alert('Error: ' + result.message);
         }
     } catch (e) {
-        alert('Sync failed.');
+        alert('Server update failed. Please check your connection.');
     }
 }
 
@@ -4216,7 +4221,7 @@ async function deleteMainCategory(id) {
                 refreshLowStockReport();
                 alert('Brand deleted!');
             } else { alert('Delete failed: ' + result.message); }
-        } catch (e) { alert('Sync failed.'); }
+        } catch (e) { alert('Server update failed. Please check your connection.'); }
     }
 }
 
@@ -4328,7 +4333,7 @@ async function deleteSubCategory(id) {
                 refreshCategoriesView();
                 alert('Size deleted!');
             } else { alert('Delete failed: ' + result.message); }
-        } catch (e) { alert('Sync failed.'); }
+        } catch (e) { alert('Server update failed. Please check your connection.'); }
     }
 }
 
@@ -4351,7 +4356,7 @@ async function deleteItem(id) {
                 refreshLowStockReport();
                 alert('Item deleted!');
             } else { alert('Delete failed: ' + result.message); }
-        } catch (e) { alert('Sync failed.'); }
+        } catch (e) { alert('Server update failed. Please check your connection.'); }
     }
 }
 
@@ -4451,7 +4456,7 @@ async function deleteItem(id) {
                 refreshLowStockReport();
                 alert('Item deleted!');
             } else { alert('Delete failed: ' + result.message); }
-        } catch (e) { alert('Sync failed.'); }
+        } catch (e) { alert('Server update failed. Please check your connection.'); }
     }
 }
 
@@ -5031,7 +5036,7 @@ async function saveCustProvince() {
             closeAddCustProvinceModal();
             alert('Province saved!');
         } else { alert('Error: ' + result.message); }
-    } catch (e) { alert('Sync failed.'); }
+    } catch (e) { alert('Server update failed. Please check your connection.'); }
 }
 
 async function deleteCustProvince(id) {
@@ -5048,7 +5053,7 @@ async function deleteCustProvince(id) {
                 refreshCustomersList();
                 alert('Province deleted!');
             } else { alert(result.message); }
-        } catch (e) { alert('Sync failed.'); }
+        } catch (e) { alert('Server update failed. Please check your connection.'); }
     }
 }
 
@@ -5106,7 +5111,7 @@ async function saveCustDistrict() {
             closeAddCustDistrictModal();
             alert('District saved!');
         } else { alert('Error: ' + result.message); }
-    } catch (e) { alert('Sync failed.'); }
+    } catch (e) { alert('Server update failed. Please check your connection.'); }
 }
 
 async function deleteCustDistrict(id) {
@@ -5123,7 +5128,7 @@ async function deleteCustDistrict(id) {
                 refreshCustomersList();
                 alert('District deleted!');
             } else { alert(result.message); }
-        } catch (e) { alert('Sync failed.'); }
+        } catch (e) { alert('Server update failed. Please check your connection.'); }
     }
 }
 
@@ -6982,17 +6987,21 @@ async function saveRMTransaction(type) {
         if (document.getElementById('rmInConversionHint')) document.getElementById('rmInConversionHint').innerText = '';
         if (document.getElementById('rmOutConversionHint')) document.getElementById('rmOutConversionHint').innerText = '';
 
-        // Auto-save consumption snapshot after RM transaction
-        await autoSaveRMConsumption();
+        // Auto-save consumption snapshot (non-critical, wrap in try/catch)
+        try {
+            await autoSaveRMConsumption();
+        } catch (e) {
+            console.warn('Auto-save consumption failed:', e);
+        }
         
-        // Refresh UI components directly without reloading everything
-        refreshRMInHistoryTable();
-        refreshRMOutHistoryTable();
+        // Refresh UI components directly
+        if (typeof refreshRMInHistoryTable === 'function') refreshRMInHistoryTable();
+        if (typeof refreshRMOutHistoryTable === 'function') refreshRMOutHistoryTable();
         refreshDashboard();
-        refreshRMInventoryBalance();
-        if (type === 'IN') refreshRMInFormControls();
-        
-        alert('ad sucsessfuly');
+        if (typeof refreshRMInventoryBalance === 'function') refreshRMInventoryBalance();
+        if (typeof type !== 'undefined' && type === 'IN' && typeof refreshRMInFormControls === 'function') refreshRMInFormControls();
+
+        alert('Successfully saved!');
     } catch (err) {
         console.error('saveRMTransaction Error:', err);
         alert('❌ Error saving RM transaction.');
