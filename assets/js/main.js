@@ -6423,6 +6423,14 @@ function previewFormulaUsage() {
     if (editor) editor.style.display = 'block';
 }
 
+function clearFormulaSelection() {
+    const select = document.getElementById('rmOutFormulaSelect');
+    if (select) {
+        select.value = '';
+        previewFormulaUsage();
+    }
+}
+
 function getRMItemCurrentPrice(item) {
     if (!item) return 0;
     

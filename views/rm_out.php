@@ -70,7 +70,10 @@
 
         <!-- NEW: Formula Editor moved OUTSIDE the grid to prevent layout shifts -->
         <div id="rmFormulaIngredientsEditor" style="display: none; margin-top: 1.5rem; padding: 1.2rem; background: #fffbff; border: 1px dashed var(--error); border-radius: 12px; box-shadow: var(--shadow-sm);">
-            <h4 style="font-size: 0.85rem; color: var(--error); margin-bottom: 0.8rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; border-bottom: 2px solid var(--error); display: inline-block; padding-bottom: 2px;">Edit Quantities for this Batch:</h4>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 2px solid var(--error); padding-bottom: 8px;">
+                <h4 style="font-size: 0.85rem; color: var(--error); margin: 0; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Edit Quantities for this Batch:</h4>
+                <button class="btn btn-sm" onclick="clearFormulaSelection()" style="background: var(--error); color: white; border: none; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; cursor: pointer;">✖ Cancel Selection</button>
+            </div>
             <div id="rmFormulaIngredientsList" style="display: flex; flex-direction: column; gap: 0.8rem;"></div>
         </div>
         
