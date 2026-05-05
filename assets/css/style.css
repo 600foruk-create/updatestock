@@ -2171,3 +2171,11 @@
         page-break-inside: avoid !important;
     }
 }
+
+/* Raw Material Premium Inputs */
+.rm-premium-input { border: 2px solid #e2e8f0 !important; border-radius: 8px !important; height: 42px !important; padding: 0 12px !important; font-size: 0.95rem !important; font-weight: 600 !important; color: var(--gray-700) !important; transition: all 0.2s ease !important; background: #ffffff !important; width: 100%; }
+.rm-premium-input:focus { border-color: var(--sky-500) !important; box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1) !important; outline: none; }
+.rm-qty-group { display: flex; border: 2px solid #e2e8f0; border-radius: 8px; overflow: hidden; transition: all 0.2s ease; background: white; }
+.rm-qty-group:focus-within { border-color: var(--sky-500); box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1); }
+.rm-qty-group input { border: none !important; flex: 1; height: 40px !important; padding: 0 12px !important; font-weight: 700 !important; color: var(--sky-700) !important; }
+.rm-qty-group select { border: none !important; width: 80px !important; background: #f8fafc !important; font-weight: 700 !important; color: var(--gray-600) !important; border-left: 1px solid #e2e8f0 !important; cursor: pointer; }

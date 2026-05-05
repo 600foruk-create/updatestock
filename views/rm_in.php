@@ -2,14 +2,13 @@
 
     
     <div class="form-card" style="margin-bottom: 2rem; background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-        <div style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; align-items: center;">
-            <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
-                <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.4rem; font-size: 0.85rem; display: block;">Purchase Date</label>
-                <input type="date" id="rmInDate" class="form-control" style="height: 40px; border-radius: 6px; border: 1px solid #cbd5e1; width: 100%;">
+        <div style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem; align-items: center; background: #f8fafc; padding: 1rem; border-radius: 8px; border-left: 5px solid var(--sky-500);">
+            <div class="form-group" style="margin-bottom: 0; display: flex; align-items: center; gap: 1rem;">
+                <label style="font-weight: 800; color: var(--gray-700); font-size: 0.9rem; white-space: nowrap; margin: 0;">📅 Purchase Date:</label>
+                <input type="date" id="rmInDate" class="form-control" style="height: 40px; border-radius: 8px; border: 2px solid #e2e8f0; width: 180px; padding: 0 10px; font-weight: 600; color: var(--sky-700);">
             </div>
-            <div style="flex-grow: 1;">
-                <h4 style="margin: 0; color: var(--sky-700); font-size: 1.1rem;">➕ New Purchase Entry</h4>
-                <p style="margin: 0; font-size: 0.8rem; color: var(--gray-500);">Add materials below to record multiple items in one transaction.</p>
+            <div style="flex-grow: 1; text-align: right;">
+                <span style="font-size: 0.75rem; font-weight: 800; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px;">Raw Material Purchase Management</span>
             </div>
         </div>
 

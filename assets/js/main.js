@@ -6261,35 +6261,37 @@ function addRMInRow() {
     row.className = 'rm-entry-row';
     
     // Generate material options once
-    let materialOptions = '<option value="">-- Select --</option>';
+    let materialOptions = '<option value="">-- Select Material --</option>';
     rmItems.sort((a,b) => a.name.localeCompare(b.name)).forEach(i => {
         materialOptions += `<option value="${i.id}">${i.name} (Stock: ${i.stock} ${i.unit})</option>`;
     });
 
     row.innerHTML = `
-        <td style="padding: 0 5px;">
-            <select class="form-control rm-item-select" style="width: 100%; border: 1px solid #cbd5e1; height: 38px;">
+        <td style="padding: 4px;">
+            <select class="rm-premium-input rm-item-select">
                 ${materialOptions}
             </select>
         </td>
-        <td style="padding: 0 5px;">
-            <div style="display:flex; border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden; height: 38px;">
-                <input type="number" class="form-control rm-qty-input" style="border: none; flex: 1; padding: 0 8px; width: 80px;" placeholder="0.00">
-                <select class="form-control rm-unit-select" style="border: none; width: 75px; background: #f1f5f9; font-size: 0.8rem; font-weight: 600;">
+        <td style="padding: 4px;">
+            <div class="rm-qty-group">
+                <input type="number" class="rm-qty-input" placeholder="0.00">
+                <select class="rm-unit-select">
                     <option value="Bags" selected>Bags</option>
                     <option value="KG">KG</option>
                     <option value="Grams">Grams</option>
                 </select>
             </div>
         </td>
-        <td style="padding: 0 5px;">
-            <input type="number" class="form-control rm-price-input" style="width: 100%; border: 1px solid #cbd5e1; height: 38px;" placeholder="0.00">
+        <td style="padding: 4px;">
+            <input type="number" class="rm-premium-input rm-price-input" placeholder="Price (Rs)">
         </td>
-        <td style="padding: 0 5px;">
-            <input type="text" class="form-control rm-notes-input" style="width: 100%; border: 1px solid #cbd5e1; height: 38px;" placeholder="Supplier/Ref...">
+        <td style="padding: 4px;">
+            <input type="text" class="rm-premium-input rm-notes-input" placeholder="Supplier / Batch Info">
         </td>
-        <td style="text-align: center;">
-            <button class="btn btn-icon text-error" onclick="this.closest('tr').remove()" style="padding: 5px;">🗑️</button>
+        <td style="text-align: center; padding: 4px;">
+            <button class="btn btn-icon" onclick="this.closest('tr').remove()" style="color: #ef4444; font-size: 1.2rem; background: transparent; border: none; cursor: pointer; transition: 0.2s;">
+                <i class="fas fa-times-circle"></i> 🗑️
+            </button>
         </td>
     `;
     tbody.appendChild(row);
@@ -6302,32 +6304,34 @@ function addRMOutRow() {
     const row = document.createElement('tr');
     row.className = 'rm-entry-row';
     
-    let materialOptions = '<option value="">-- Select --</option>';
+    let materialOptions = '<option value="">-- Select Material --</option>';
     rmItems.sort((a,b) => a.name.localeCompare(b.name)).forEach(i => {
         materialOptions += `<option value="${i.id}">${i.name} (Stock: ${i.stock} ${i.unit})</option>`;
     });
 
     row.innerHTML = `
-        <td style="padding: 0 5px;">
-            <select class="form-control rm-item-select" style="width: 100%; border: 1px solid #cbd5e1; height: 38px;">
+        <td style="padding: 4px;">
+            <select class="rm-premium-input rm-item-select">
                 ${materialOptions}
             </select>
         </td>
-        <td style="padding: 0 5px;">
-            <div style="display:flex; border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden; height: 38px;">
-                <input type="number" class="form-control rm-qty-input" style="border: none; flex: 1; padding: 0 8px; width: 100px;" placeholder="0.00">
-                <select class="form-control rm-unit-select" style="border: none; width: 75px; background: #f1f5f9; font-size: 0.8rem; font-weight: 600;">
+        <td style="padding: 4px;">
+            <div class="rm-qty-group">
+                <input type="number" class="rm-qty-input" placeholder="0.00">
+                <select class="rm-unit-select">
                     <option value="Bags" selected>Bags</option>
                     <option value="KG">KG</option>
                     <option value="Grams">Grams</option>
                 </select>
             </div>
         </td>
-        <td style="padding: 0 5px;">
-            <input type="text" class="form-control rm-notes-input" style="width: 100%; border: 1px solid #cbd5e1; height: 38px;" placeholder="Purpose/Notes...">
+        <td style="padding: 4px;">
+            <input type="text" class="rm-premium-input rm-notes-input" placeholder="Production / Order Ref">
         </td>
-        <td style="text-align: center;">
-            <button class="btn btn-icon text-error" onclick="this.closest('tr').remove()" style="padding: 5px;">🗑️</button>
+        <td style="text-align: center; padding: 4px;">
+            <button class="btn btn-icon" onclick="this.closest('tr').remove()" style="color: #ef4444; font-size: 1.2rem; background: transparent; border: none; cursor: pointer; transition: 0.2s;">
+                <i class="fas fa-times-circle"></i> 🗑️
+            </button>
         </td>
     `;
     tbody.appendChild(row);
