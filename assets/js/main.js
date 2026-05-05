@@ -5418,18 +5418,18 @@ function generateProductionReport() {
             <div style="background: var(--gray-800); color: white; padding: 0.8rem 1.2rem; font-weight: 600; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span style="background: var(--sky-500); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase;">Brand</span>
-                    <span>${brandName}</span>
+                    <span style="font-weight: 900; font-size: 1.3rem;">${brandName}</span>
                 </div>
                 <div style="text-align: right;">
-                    <div style="font-size: 0.75rem; opacity: 0.8; font-weight: 400;">Material Cost: Rs. ${totalRMCost.toLocaleString()}</div>
-                    <div style="font-size: 0.9rem;">Rate: Rs. ${brandRate.toFixed(2)}/KG</div>
+                    <div style="font-size: 0.85rem; font-weight: 800; color: #fff;">Material Cost: Rs. ${totalRMCost.toLocaleString()}</div>
+                    <div style="font-size: 1rem; font-weight: 900; color: #fbbf24;">Rate: Rs. ${brandRate.toFixed(2)}/KG</div>
                 </div>
             </div>
             
             <div style="padding: 1.2rem;">
                 <table class="audit-table" style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem;">
                     <thead>
-                        <tr style="background: var(--gray-50); font-size: 0.8rem; text-transform: uppercase; color: var(--gray-500);">
+                        <tr style="background: var(--gray-100); font-size: 0.85rem; text-transform: uppercase; color: #000; font-weight: 900;">
                             <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Date</th>
                             <th style="padding: 0.8rem; border: 1px solid var(--gray-200); text-align: left;">Product</th>
                             <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Length</th>
@@ -5468,24 +5468,24 @@ function generateProductionReport() {
         const bGap = bRMKg - bKg;
         
         html += `</tbody>
-                <tfoot style="background: var(--gray-50); font-weight: 800;">
+                <tfoot style="background: var(--gray-100); font-weight: 900; color: #000;">
                     <tr>
-                        <td colspan="4" style="text-align: right; padding: 0.8rem;">${brandName} Totals:</td>
-                        <td style="text-align: center;">${bPcs.toLocaleString()}</td>
-                        <td style="text-align: center; color: var(--sky-600);">${bKg.toLocaleString()} KG</td>
-                        <td colspan="2" style="text-align: center; color: #0369a1; background: #e0f2fe;">Total Material Value: Rs. ${totalRMCost.toLocaleString()}</td>
+                        <td colspan="4" style="text-align: right; padding: 0.8rem; font-weight: 900;">${brandName} Totals:</td>
+                        <td style="text-align: center; font-weight: 900;">${bPcs.toLocaleString()}</td>
+                        <td style="text-align: center; color: #0284c7; font-weight: 900;">${bKg.toLocaleString()} KG</td>
+                        <td colspan="2" style="text-align: center; color: #0369a1; background: #e0f2fe; font-weight: 900;">Total Material Value: Rs. ${totalRMCost.toLocaleString()}</td>
                     </tr>
                 </tfoot>
             </table>
 
             ${Object.keys(rmSummary).length > 0 ? `
-                <div style="background: #f8fafc; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--gray-100);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; border-bottom: 1px solid var(--gray-200); padding-bottom: 5px;">
-                        <h6 style="margin: 0; font-size: 0.7rem; text-transform: uppercase; color: var(--gray-500); letter-spacing: 0.5px; font-weight: 800;">Material Consumption Summary:</h6>
-                        <div style="display: flex; gap: 15px; font-size: 0.8rem; font-weight: 900;">
-                            <div style="color: var(--gray-700);">Material: <span style="color: var(--error);">${bRMKg.toLocaleString()} KG</span></div>
-                            <div style="color: var(--gray-700);">Production: <span style="color: var(--sky-600);">${bKg.toLocaleString()} KG</span></div>
-                            <div style="color: ${bGap > 0 ? 'var(--error)' : 'var(--success)'};">Gap: ${bGap.toLocaleString()} KG</div>
+                <div style="background: #f8fafc; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--gray-200);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; border-bottom: 2px solid var(--gray-300); padding-bottom: 5px;">
+                        <h6 style="margin: 0; font-size: 0.75rem; text-transform: uppercase; color: #000; letter-spacing: 0.5px; font-weight: 900;">Material Consumption Summary:</h6>
+                        <div style="display: flex; gap: 15px; font-size: 0.85rem; font-weight: 900;">
+                            <div style="color: #000;">Material: <span style="color: #ef4444;">${bRMKg.toLocaleString()} KG</span></div>
+                            <div style="color: #000;">Production: <span style="color: #0284c7;">${bKg.toLocaleString()} KG</span></div>
+                            <div style="color: ${bGap > 0 ? '#ef4444' : '#16a34a'};">Gap: ${bGap.toLocaleString()} KG</div>
                         </div>
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px;">
