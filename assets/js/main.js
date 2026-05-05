@@ -6302,7 +6302,7 @@ function setRMOutMode(mode) {
         if (modeBtnSingle) modeBtnSingle.classList.add('active');
         if (modeBtnFormula) modeBtnFormula.classList.remove('active');
         
-        // Ensure at least one row
+        // Ensure at least one row if empty
         const rows = document.getElementById('rmOutRows');
         if (rows && rows.children.length === 0) addRMOutRow();
     } else {
@@ -6313,23 +6313,6 @@ function setRMOutMode(mode) {
         
         if (typeof refreshRMFormulaDropdown === 'function') refreshRMFormulaDropdown();
     }
-}
-
-function toggleRMOutMode() {
-    const mode = document.querySelector('input[name="rmOutMode"]:checked').value;
-    const singleGroup = document.getElementById('rmOutSingleGroup');
-    const formulaGroup = document.getElementById('rmOutFormulaGroup');
-    const qtyLabel = document.getElementById('rmOutQtyLabel');
-
-    if (mode === 'SINGLE') {
-        if (singleGroup) singleGroup.style.display = 'block';
-        if (formulaGroup) formulaGroup.style.display = 'none';
-        if (qtyLabel) qtyLabel.innerText = 'Quantity (Single Item)';
-    } else {
-        if (singleGroup) singleGroup.style.display = 'none';
-        if (formulaGroup) formulaGroup.style.display = 'block';
-        if (qtyLabel) qtyLabel.innerText = 'Multiplier (No. of Batches)';
-    }
     
     // Hide formula editor initially
     const editor = document.getElementById('rmFormulaIngredientsEditor');
@@ -6338,32 +6321,24 @@ function toggleRMOutMode() {
     refreshRMOutFormControls();
 }
 
+function toggleRMOutMode() {
+    const mode = document.querySelector('input[name="rmOutMode"]:checked')?.value || 'SINGLE';
+    setRMOutMode(mode);
+}
+
 function refreshRMOutFormControls() {
     const dateInput = document.getElementById('rmOutDate');
     if (dateInput && !dateInput.value) {
         dateInput.value = new Date().toISOString().split('T')[0];
     }
-    const itemSelect = document.getElementById('rmOutSelect');
+    
     const formulaSelect = document.getElementById('rmOutFormulaSelect');
     const editor = document.getElementById('rmFormulaIngredientsEditor');
     
     // Check if user is currently editing a formula (editor is visible)
     const isEditingFormula = editor && editor.style.display !== 'none';
 
-    // 1. Refresh Material Select (always preserve selection)
-    if (itemSelect) {
-        const currentItem = itemSelect.value;
-        itemSelect.innerHTML = '<option value="">-- Select Material --</option>';
-        rmItems.sort((a,b) => a.name.localeCompare(b.name)).forEach(i => {
-            const opt = document.createElement('option');
-            opt.value = i.id;
-            opt.innerText = `${i.name} (Stock: ${i.stock} ${i.unit})`;
-            itemSelect.appendChild(opt);
-        });
-        if (currentItem) itemSelect.value = currentItem;
-    }
-
-    // 2. Refresh Formula Select (ONLY if not currently editing/using it)
+    // 1. Refresh Formula Select (ONLY if not currently editing/using it)
     if (formulaSelect && !isEditingFormula) {
         const currentFormula = formulaSelect.value;
         formulaSelect.innerHTML = '<option value="">-- Select Production Formula --</option>';
