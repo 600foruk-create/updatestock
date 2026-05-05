@@ -255,8 +255,19 @@ function showTab(tabName) {
     // Raw Material refreshers
     if (tabName.startsWith('rm_')) {
         if (tabName === 'rm_dashboard') if (typeof refreshRMDashboard === 'function') refreshRMDashboard();
-        if (tabName === 'rm_in') if (typeof refreshRMTransactions === 'function') refreshRMTransactions('IN');
-        if (tabName === 'rm_out') if (typeof refreshRMTransactions === 'function') refreshRMTransactions('OUT');
+        if (tabName === 'rm_in') {
+            const container = document.getElementById('rmInRows');
+            if (container && container.children.length === 0) addRMInRow();
+            if (typeof refreshRMTransactions === 'function') refreshRMTransactions('IN');
+        }
+        if (tabName === 'rm_out') {
+            const mode = document.querySelector('input[name="rmOutMode"]:checked')?.value || 'SINGLE';
+            if (mode === 'SINGLE') {
+                const container = document.getElementById('rmOutRows');
+                if (container && container.children.length === 0) addRMOutRow();
+            }
+            if (typeof refreshRMTransactions === 'function') refreshRMTransactions('OUT');
+        }
         if (tabName === 'rm_formulas') if (typeof refreshRMFormulas === 'function') refreshRMFormulas();
         if (tabName === 'rm_inventory') {
             if (typeof rmExpandedIds !== 'undefined') rmExpandedIds.clear();
@@ -2780,6 +2791,99 @@ function addAdjustmentRow() {
     row.appendChild(removeBtn);
 
     document.getElementById('adjustmentRows').appendChild(row);
+}
+
+function addRMInRow() {
+    const row = document.createElement('div');
+    row.className = 'entry-row rm-entry-row';
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '2fr 1fr 1fr 1fr 1.5fr 40px';
+    row.style.gap = '1rem';
+    row.style.alignItems = 'center';
+
+    const itemOptions = rmItems.map(i => ({ value: i.id, text: i.name }));
+    const itemWrapper = createSearchableInput('Material...', itemOptions, (opt) => {
+        row.dataset.itemId = opt.value;
+    }, false, 'rmItem');
+
+    const qtyInput = document.createElement('input');
+    qtyInput.type = 'number';
+    qtyInput.className = 'searchable-input rm-qty-input';
+    qtyInput.placeholder = 'Qty';
+    qtyInput.step = '0.01';
+
+    const unitSelect = document.createElement('select');
+    unitSelect.className = 'searchable-input rm-unit-select';
+    unitSelect.innerHTML = '<option value="Bags">Bags</option><option value="KG">KG</option><option value="Grams">Grams</option>';
+    unitSelect.value = 'Bags';
+
+    const priceInput = document.createElement('input');
+    priceInput.type = 'number';
+    priceInput.className = 'searchable-input rm-price-input';
+    priceInput.placeholder = 'Price';
+    priceInput.step = '0.01';
+
+    const notesInput = document.createElement('input');
+    notesInput.type = 'text';
+    notesInput.className = 'searchable-input rm-notes-input';
+    notesInput.placeholder = 'Notes';
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'btn btn-danger btn-sm';
+    removeBtn.textContent = '✖';
+    removeBtn.onclick = () => row.remove();
+
+    row.appendChild(itemWrapper);
+    row.appendChild(qtyInput);
+    row.appendChild(unitSelect);
+    row.appendChild(priceInput);
+    row.appendChild(notesInput);
+    row.appendChild(removeBtn);
+
+    document.getElementById('rmInRows').appendChild(row);
+}
+
+function addRMOutRow() {
+    const row = document.createElement('div');
+    row.className = 'entry-row rm-entry-row';
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '2fr 1fr 1fr 1.5fr 40px';
+    row.style.gap = '1rem';
+    row.style.alignItems = 'center';
+
+    const itemOptions = rmItems.map(i => ({ value: i.id, text: i.name }));
+    const itemWrapper = createSearchableInput('Material...', itemOptions, (opt) => {
+        row.dataset.itemId = opt.value;
+    }, false, 'rmItem');
+
+    const qtyInput = document.createElement('input');
+    qtyInput.type = 'number';
+    qtyInput.className = 'searchable-input rm-qty-input';
+    qtyInput.placeholder = 'Qty';
+    qtyInput.step = '0.01';
+
+    const unitSelect = document.createElement('select');
+    unitSelect.className = 'searchable-input rm-unit-select';
+    unitSelect.innerHTML = '<option value="Bags">Bags</option><option value="KG">KG</option><option value="Grams">Grams</option>';
+    unitSelect.value = 'Bags';
+
+    const notesInput = document.createElement('input');
+    notesInput.type = 'text';
+    notesInput.className = 'searchable-input rm-notes-input';
+    notesInput.placeholder = 'Notes';
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'btn btn-danger btn-sm';
+    removeBtn.textContent = '✖';
+    removeBtn.onclick = () => row.remove();
+
+    row.appendChild(itemWrapper);
+    row.appendChild(qtyInput);
+    row.appendChild(unitSelect);
+    row.appendChild(notesInput);
+    row.appendChild(removeBtn);
+
+    document.getElementById('rmOutRows').appendChild(row);
 }
 
 function addNewOrderRow() {
@@ -6187,15 +6291,28 @@ async function deleteRMFormula(id) {
 // ==================== RM OUT LOGIC (FORMULAS) ====================
 
 function setRMOutMode(mode) {
-    // Update Radio
-    const radio = document.querySelector(`input[name="rmOutMode"][value="${mode}"]`);
-    if (radio) radio.checked = true;
+    const singleContainer = document.getElementById('rmOutSingleContainer');
+    const formulaContainer = document.getElementById('rmOutFormulaContainer');
+    const modeBtnSingle = document.getElementById('modeBtn_SINGLE');
+    const modeBtnFormula = document.getElementById('modeBtn_FORMULA');
     
-    // Update UI Classes
-    document.querySelectorAll('.mode-toggle-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`modeBtn_${mode}`).classList.add('active');
-    
-    toggleRMOutMode();
+    if (mode === 'SINGLE') {
+        if (singleContainer) singleContainer.style.display = 'block';
+        if (formulaContainer) formulaContainer.style.display = 'none';
+        if (modeBtnSingle) modeBtnSingle.classList.add('active');
+        if (modeBtnFormula) modeBtnFormula.classList.remove('active');
+        
+        // Ensure at least one row
+        const rows = document.getElementById('rmOutRows');
+        if (rows && rows.children.length === 0) addRMOutRow();
+    } else {
+        if (singleContainer) singleContainer.style.display = 'none';
+        if (formulaContainer) formulaContainer.style.display = 'block';
+        if (modeBtnSingle) modeBtnSingle.classList.remove('active');
+        if (modeBtnFormula) modeBtnFormula.classList.add('active');
+        
+        if (typeof refreshRMFormulaDropdown === 'function') refreshRMFormulaDropdown();
+    }
 }
 
 function toggleRMOutMode() {
@@ -6894,55 +7011,73 @@ async function clearRMConsumptionHistory() {
 
 async function saveRMTransaction(type) {
     const saveBtn = type === 'IN' ? document.getElementById('rmInSaveBtn') : document.getElementById('rmOutSaveBtn');
+    const mode = type === 'OUT' ? (document.querySelector('input[name="rmOutMode"]:checked')?.value || 'SINGLE') : 'SINGLE';
     if (saveBtn) {
         saveBtn.disabled = true;
         saveBtn.innerText = 'Saving...';
     }
 
     try {
-        const mode = type === 'OUT' ? (document.querySelector('input[name="rmOutMode"]:checked')?.value || 'SINGLE') : 'SINGLE';
-        const notes = document.getElementById(type === 'IN' ? 'rmInNotes' : 'rmOutNotes').value.trim();
         const customDateInput = document.getElementById(type === 'IN' ? 'rmInDate' : 'rmOutDate');
         const customDateValue = customDateInput ? customDateInput.value : null;
 
-        const qtyInput = document.getElementById(type === 'IN' ? 'rmInQty' : 'rmOutQty');
-        const priceInput = document.getElementById('rmInPrice');
-        const multiplier = parseFloat(qtyInput.value);
-        const unitPriceUser = priceInput ? (parseFloat(priceInput.value) || 0) : 0;
-
-        if (isNaN(multiplier) || multiplier <= 0) { 
-            alert('Enter a valid quantity'); 
-            return; 
-        }
-
-        let actualKg = multiplier;
         if (mode === 'SINGLE') {
-            const itemId = type === 'IN' ? document.getElementById('rmInSelect').value : document.getElementById('rmOutSelect').value;
-            const unitSelectId = type === 'IN' ? 'rmInUnitSelect' : 'rmOutUnitSelect';
-            const selectedUnit = document.getElementById(unitSelectId).value;
+            const rows = document.getElementById(type === 'IN' ? 'rmInRows' : 'rmOutRows').children;
+            if (rows.length === 0) { alert('Add at least one item'); return; }
             
-            if (!itemId) { alert('Select a material'); return; }
-            const item = rmItems.find(i => i.id == itemId);
-            
-            if (selectedUnit === 'Bags') {
-                const kgPerBag = parseFloat(item.kgPerBag) || 0;
-                if (kgPerBag <= 0) { alert('Please set "KG per Bag" for this item in Inventory before using Bags.'); return; }
-                actualKg = multiplier * kgPerBag;
-            } else if (selectedUnit === 'Grams') {
-                actualKg = multiplier / 1000;
-            }
-            
-            let pricePerKg = 0;
-            if (type === 'IN' && actualKg > 0) {
-                pricePerKg = (unitPriceUser * multiplier) / actualKg;
-            } else if (type === 'OUT') {
+            let itemsToRecord = [];
+            for (let row of rows) {
+                const itemId = row.dataset.itemId;
+                if (!itemId) continue;
+                
+                const qtyInput = row.querySelector('.rm-qty-input');
+                const unitSelect = row.querySelector('.rm-unit-select');
+                const priceInput = row.querySelector('.rm-price-input');
+                const notesInput = row.querySelector('.rm-notes-input');
+                
+                const multiplier = parseFloat(qtyInput.value);
+                const unitPriceUser = priceInput ? (parseFloat(priceInput.value) || 0) : 0;
+                const rowNotes = notesInput ? notesInput.value.trim() : '';
+                
+                if (isNaN(multiplier) || multiplier <= 0) continue;
+
                 const item = rmItems.find(i => i.id == itemId);
-                pricePerKg = getRMItemCurrentPrice(item);
+                let actualKg = multiplier;
+                const selectedUnit = unitSelect.value;
+                
+                if (selectedUnit === 'Bags') {
+                    const kgPerBag = parseFloat(item.kgPerBag) || 0;
+                    if (kgPerBag <= 0) { 
+                        alert(`Please set "KG per Bag" for ${item.name} in Inventory first.`); 
+                        continue; 
+                    }
+                    actualKg = multiplier * kgPerBag;
+                } else if (selectedUnit === 'Grams') {
+                    actualKg = multiplier / 1000;
+                }
+                
+                let pricePerKg = 0;
+                if (type === 'IN' && actualKg > 0) {
+                    pricePerKg = (unitPriceUser * multiplier) / actualKg;
+                } else if (type === 'OUT') {
+                    pricePerKg = getRMItemCurrentPrice(item);
+                }
+                
+                itemsToRecord.push({ itemId, actualKg, rowNotes, pricePerKg });
             }
             
-            await recordSingleRMTransaction(itemId, actualKg, type, notes, pricePerKg, null, customDateValue);
+            if (itemsToRecord.length === 0) { alert('Enter valid quantity for at least one item'); return; }
+            
+            for (const rec of itemsToRecord) {
+                await recordSingleRMTransaction(rec.itemId, rec.actualKg, type, rec.rowNotes, rec.pricePerKg, null, customDateValue);
+            }
         } else {
             // Formula Mode
+            const multiplierInput = document.getElementById('rmOutFormulaQty');
+            const formulaNotesInput = document.getElementById('rmOutFormulaNotes');
+            const multiplier = parseFloat(multiplierInput ? multiplierInput.value : 1);
+            const formulaNotes = formulaNotesInput ? formulaNotesInput.value.trim() : '';
+
             const formulaId = document.getElementById('rmOutFormulaSelect').value;
             if (!formulaId) { alert('Select a formula'); return; }
             
@@ -6961,7 +7096,7 @@ async function saveRMTransaction(type) {
 
             if (customItems.length === 0) { alert('No valid items to consume'); return; }
             
-            if (!confirm(`Using "${formula.name}" x ${multiplier}. Total of ${customItems.length} items will be consumed with your adjusted quantities. Proceed?`)) {
+            if (!confirm(`Using "${formula.name}" x ${multiplier}. Total of ${customItems.length} items will be consumed. Proceed?`)) {
                 return;
             }
 
@@ -6969,7 +7104,7 @@ async function saveRMTransaction(type) {
                 const totalQty = item.qty * multiplier;
                 const rmItem = rmItems.find(i => i.id == item.itemId);
                 const priceVal = getRMItemCurrentPrice(rmItem);
-                await recordSingleRMTransaction(item.itemId, totalQty, 'OUT', `[Formula: ${formula.name}] ${notes}`, priceVal, formula.main_id, customDateValue);
+                await recordSingleRMTransaction(item.itemId, totalQty, 'OUT', `[Formula: ${formula.name}] ${formulaNotes}`, priceVal, formula.main_id, customDateValue);
             }
         }
 
@@ -6977,15 +7112,15 @@ async function saveRMTransaction(type) {
         
         // Reset Form Fields
         if (type === 'IN') {
-            if (document.getElementById('rmInQty')) document.getElementById('rmInQty').value = '';
-            if (document.getElementById('rmInSelect')) document.getElementById('rmInSelect').value = '';
-            if (document.getElementById('rmInPrice')) document.getElementById('rmInPrice').value = '';
+            document.getElementById('rmInRows').innerHTML = '';
+            addRMInRow();
             if (document.getElementById('rmInNotes')) document.getElementById('rmInNotes').value = '';
         } else {
-            if (document.getElementById('rmOutQty')) document.getElementById('rmOutQty').value = '1';
-            if (document.getElementById('rmOutSelect')) document.getElementById('rmOutSelect').value = '';
+            document.getElementById('rmOutRows').innerHTML = '';
+            addRMOutRow();
+            if (document.getElementById('rmOutFormulaQty')) document.getElementById('rmOutFormulaQty').value = '1';
             if (document.getElementById('rmOutFormulaSelect')) document.getElementById('rmOutFormulaSelect').value = '';
-            if (document.getElementById('rmOutNotes')) document.getElementById('rmOutNotes').value = '';
+            if (document.getElementById('rmOutFormulaNotes')) document.getElementById('rmOutFormulaNotes').value = '';
             
             // Hide formula editor
             const editor = document.getElementById('rmFormulaIngredientsEditor');
