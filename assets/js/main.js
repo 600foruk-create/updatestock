@@ -5604,6 +5604,87 @@ function updateReportNetValue() {
     netEl.innerText = total.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0});
 }
 
+function printProductionReport() {
+    const reportContent = document.getElementById('prodReportContent').innerHTML;
+    const fromDate = document.getElementById('prodReportFrom').value;
+    const toDate = document.getElementById('prodReportTo').value;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>Production Report - ${fromDate} to ${toDate}</title>
+                <style>
+                    :root {
+                        --sky-500: #0ea5e9;
+                        --sky-600: #0284c7;
+                        --sky-700: #0369a1;
+                        --gray-50: #f9fafb;
+                        --gray-100: #f3f4f6;
+                        --gray-200: #e5e7eb;
+                        --gray-300: #d1d5db;
+                        --gray-400: #9ca3af;
+                        --gray-500: #6b7280;
+                        --gray-600: #4b5563;
+                        --gray-700: #374151;
+                        --gray-800: #1f2937;
+                        --error: #ef4444;
+                        --success: #16a34a;
+                    }
+                    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; color: #333; }
+                    .audit-group { margin-bottom: 30px; border: 1px solid #eee; border-radius: 8px; overflow: hidden; page-break-inside: avoid; }
+                    .audit-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+                    .audit-table th, .audit-table td { border: 1px solid #eee; padding: 8px; font-size: 12px; }
+                    .audit-table th { background: #f9fafb; font-weight: 700; }
+                    h2 { color: var(--sky-600); text-align: center; margin-bottom: 5px; }
+                    p { text-align: center; color: #666; margin-top: 0; margin-bottom: 20px; }
+                    .no-print { display: none !important; }
+                    
+                    /* Brand Header Style */
+                    .audit-group > div:first-child { 
+                        background: #1f2937 !important; 
+                        color: white !important; 
+                        padding: 10px 15px !important;
+                        display: flex !important;
+                        justify-content: space-between !important;
+                        font-weight: 600;
+                    }
+                    
+                    /* Card Styles */
+                    .material-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+                    .material-card { border: 1px solid #eee; padding: 8px; border-radius: 6px; font-size: 11px; display: flex; justify-content: space-between; }
+                    
+                    /* Summary Section */
+                    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; page-break-inside: avoid; }
+                    .summary-box { border: 2px solid #0ea5e9; padding: 15px; border-radius: 10px; text-align: center; }
+                    
+                    @media print {
+                        body { padding: 0; }
+                        .audit-group { border: 1px solid #000; }
+                        .audit-table th, .audit-table td { border: 1px solid #000; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h1 style="margin: 0; color: #0284c7;">Production Summary Report</h1>
+                    <div style="color: #666;">Period: ${fromDate} to ${toDate}</div>
+                </div>
+                ${reportContent}
+            </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    
+    // Give images and styles time to load
+    setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    }, 500);
+}
+
 function exportProductionReport(format) {
     const fromDate = document.getElementById('prodReportFrom').value;
     const toDate = document.getElementById('prodReportTo').value;

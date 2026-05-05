@@ -125,7 +125,7 @@
                 </div>
                 <button class="btn btn-primary" onclick="generateProductionReport()" style="padding: 0.4rem 1.2rem; font-size: 0.85rem;">🔍 Search</button>
                 <div style="display: flex; gap: 0.4rem;">
-                    <button class="btn" onclick="window.print()" style="background: #64748b; color: white; display: flex; align-items: center; gap: 0.3rem; padding: 0.4rem 1rem; font-size: 0.85rem;">🖨️ Print</button>
+                    <button class="btn" onclick="printProductionReport()" style="background: #64748b; color: white; display: flex; align-items: center; gap: 0.3rem; padding: 0.4rem 1rem; font-size: 0.85rem;">🖨️ Print</button>
                     <button class="btn btn-success" onclick="exportProductionReport('excel')" style="display: flex; align-items: center; gap: 0.3rem; padding: 0.4rem 1rem; font-size: 0.85rem;">📥 Excel</button>
                 </div>
             </div>
