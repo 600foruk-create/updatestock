@@ -2457,7 +2457,7 @@ function renderArchivedContent(data, type = 'FG') {
     } else {
         // Finish Goods Clustered View
         data.forEach(group => {
-            html += `<div class="audit-group print-page-break" style="margin-bottom: 2rem; border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden;">
+            html += `<div class="audit-group" style="margin-bottom: 2rem;">
                 <div class="audit-brand-header" style="background: var(--sky-600); color: white; padding: 0.8rem 1.2rem; border-radius: 8px 8px 0 0; font-weight: 600;">
                     ${group.brandName}
                 </div>
@@ -2650,72 +2650,21 @@ function refreshLowStockReport() {
 
 // Print Functions
 function printStockList() {
-    const content = document.getElementById('printableStock').innerHTML;
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <html>
-            <head>
-                <title>Stock List Report</title>
-                <style>
-                    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 30px; }
-                    .print-header { display: flex; flex-direction: column; align-items: center; border-bottom: 2px solid #0284c7; padding-bottom: 15px; margin-bottom: 25px; }
-                    .print-header-top { display: flex; align-items: center; gap: 15px; }
-                    .printLogo { font-size: 2rem; }
-                    h1 { color: #0284c7; margin: 0; }
-                    .stock-list-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-                    .brand-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; page-break-inside: avoid; margin-bottom: 20px; }
-                    .brand-header { background: #0284c7 !important; color: white !important; padding: 10px 15px; font-weight: bold; }
-                    .brand-body { padding: 10px; }
-                    .stock-item { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 5px 0; font-size: 13px; }
-                    .no-print, .btn, .search-filter-bar { display: none !important; }
-                </style>
-            </head>
-            <body>
-                ${content}
-            </body>
-        </html>
-    `);
-    printWindow.document.close();
-    setTimeout(() => {
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
-    }, 500);
-}
-
-function printMonthlyAudit() {
-    const content = document.getElementById('printableAudit').innerHTML;
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <html>
-            <head>
-                <title>Monthly Audit Report</title>
-                <style>
-                    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 30px; }
-                    .print-header { text-align: center; border-bottom: 2px solid #0284c7; padding-bottom: 15px; margin-bottom: 25px; }
-                    h1 { color: #0284c7; margin: 0; }
-                    .audit-group { margin-bottom: 30px; border: 1px solid #eee; border-radius: 8px; overflow: hidden; page-break-inside: avoid; }
-                    .audit-group:not(:first-of-type) { page-break-before: always; }
-                    .audit-brand-header { background: #0284c7 !important; color: white !important; padding: 10px 15px; font-weight: bold; }
-                    .audit-table { width: 100%; border-collapse: collapse; }
-                    .audit-table th, .audit-table td { border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 12px; }
-                    .audit-table th { background: #f8f9fa; }
-                    .diff-plus { color: #16a34a; font-weight: bold; }
-                    .diff-minus { color: #ef4444; font-weight: bold; }
-                    .no-print { display: none !important; }
-                </style>
-            </head>
-            <body>
-                ${content}
-            </body>
-        </html>
-    `);
-    printWindow.document.close();
-    setTimeout(() => {
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
-    }, 500);
+    const company = companySettings.name || 'StockFlow';
+    const logo = companySettings.logo || '📦';
+    const date = new Date().toLocaleDateString('en-GB', { 
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    document.getElementById('printCompanyName').textContent = company;
+    const printLogo = document.getElementById('printLogo');
+    if (printLogo) printLogo.innerHTML = logo;
+    document.getElementById('printDate').textContent = `Report Date: ${date}`;
+    window.print();
 }
 
 function printLowStock() {
@@ -5465,7 +5414,7 @@ function generateProductionReport() {
         
         const brandRate = bKg > 0 ? (totalRMCost / bKg) : 0;
 
-        html += `<div class="audit-group print-page-break" style="margin-bottom: 2.5rem; border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden; background: white;">
+        html += `<div class="audit-group" style="margin-bottom: 2.5rem; border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden; background: white;">
             <div style="background: var(--gray-800); color: white; padding: 0.8rem 1.2rem; font-weight: 600; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span style="background: var(--sky-500); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase;">Brand</span>
@@ -5564,7 +5513,7 @@ function generateProductionReport() {
 
     // Grand Summary
     html += `
-        <div class="print-page-break" style="margin-top: 3rem; background: white; border-radius: 12px; border: 2px solid var(--sky-500); overflow: hidden;">
+        <div style="margin-top: 3rem; background: white; border-radius: 12px; border: 2px solid var(--sky-500); overflow: hidden;">
             <div style="background: var(--sky-500); color: white; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
                 <h3 style="margin: 0; font-size: 1.2rem; font-weight: 800; letter-spacing: 0.5px;">🚀 OVERALL PRODUCTION SUMMARY</h3>
                 <span style="font-size: 0.75rem; opacity: 0.8;">Generated: ${new Date().toLocaleString()}</span>
@@ -5683,9 +5632,7 @@ function printProductionReport() {
                         --success: #16a34a;
                     }
                     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; color: #333; }
-                    .audit-group { margin-bottom: 30px; border: 1px solid #eee; border-radius: 8px; overflow: hidden; }
-                    .print-page-break { page-break-before: always; }
-                    .print-page-break:first-child { page-break-before: auto; }
+                    .audit-group { margin-bottom: 30px; border: 1px solid #eee; border-radius: 8px; overflow: hidden; page-break-inside: avoid; }
                     .audit-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
                     .audit-table th, .audit-table td { border: 1px solid #eee; padding: 8px; font-size: 12px; }
                     .audit-table th { background: #f9fafb; font-weight: 700; }

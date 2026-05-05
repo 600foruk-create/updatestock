@@ -2145,47 +2145,26 @@
 
 /* Fix for Print Truncation */
 @media print {
-    .no-print, .action-buttons, .filter-bar, .search-filter-bar, .nav-tabs, .sidebar, .top-bar {
-        display: none !important;
-    }
-    
-    html, body {
-        height: auto !important;
-        overflow: visible !important;
-        background: white !important;
-    }
-
-    #app, .app-wrapper, .main-content, .tab-content {
+    #printableAudit, #auditListContainer, .audit-group, .audit-table {
         display: block !important;
         overflow: visible !important;
         height: auto !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        max-width: none !important;
-        box-shadow: none !important;
-    }
-
-    .print-page-break {
-        page-break-before: always !important;
-    }
-    
-    .print-page-break:first-child, 
-    .audit-group:first-child,
-    #printableAudit > div:first-child {
-        page-break-before: auto !important;
-    }
-
-    .audit-group, .audit-table {
-        display: block !important;
-        overflow: visible !important;
-        height: auto !important;
-        page-break-inside: avoid;
+        max-height: none !important;
+        position: static !important;
     }
     
     .audit-table {
         display: table !important;
         width: 100% !important;
         border-collapse: collapse !important;
+    }
+    
+    .audit-table thead {
+        display: table-header-group !important;
+    }
+    
+    .audit-table tbody {
+        display: table-row-group !important;
     }
     
     .audit-table tr {

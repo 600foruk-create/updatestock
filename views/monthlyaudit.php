@@ -15,7 +15,7 @@
         <div class="btn-group">
             <button class="btn btn-save" onclick="saveMonthlyAudit()">💾 Save Audit</button>
             <button class="btn btn-primary" style="background: #0ea5e9;" onclick="archiveCurrentAudit()">📁 Archive Report</button>
-            <button class="btn btn-print" onclick="printMonthlyAudit()">🖨️ Print</button>
+            <button class="btn btn-print" onclick="window.print()">🖨️ Print</button>
             <button class="btn btn-danger" onclick="resetAuditSession()" title="Clear manual entries only">🔄 Reset Godown</button>
             <button class="btn btn-success" onclick="adjustAllStockToSystem()" title="Automatically adjust all stock items matching differences">⚡ Auto Adjust All</button>
             <button class="btn btn-secondary" onclick="clearAuditFilters()">🧹 Clear</button>
