@@ -130,7 +130,9 @@ async function initApp() {
                     } else if (s.category === 'system') {
                         if (s.key === 'date_format') {
                             systemDateFormat = s.value;
-                            window.systemDateFormat = s.value;
+                            // Force transition to new default if it was the old default
+                            if (systemDateFormat === 'DD-MM-YYYY') systemDateFormat = 'DD-MMM-YYYY';
+                            window.systemDateFormat = systemDateFormat;
                         }
                     }
                 });
@@ -1869,7 +1871,7 @@ function refreshAuditList() {
     const fromDate = document.getElementById('auditDateFrom')?.value;
     const toDate = document.getElementById('auditDateTo')?.value;
     const auditPrintDate = document.getElementById('auditPrintDate');
-    if (auditPrintDate) auditPrintDate.textContent = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    if (auditPrintDate) auditPrintDate.textContent = formatDate(new Date());
     
     let html = '';
     sortMainCategories(mainCategories).forEach(main => {
@@ -2308,7 +2310,7 @@ function clearAuditFilters() {
 
 // ==================== REPORTS ARCHIVE FUNCTIONS ====================
 async function archiveCurrentAudit() {
-    const reportTitle = prompt("Enter a title for this report (e.g., April 2026 Audit):", `Audit Report ${new Date().toLocaleDateString()}`);
+    const reportTitle = prompt("Enter a title for this report (e.g., April 2026 Audit):", `Audit Report ${formatDate(new Date())}`);
     if (!reportTitle) return;
 
     // Collect all data currently shown in the audit list
@@ -2652,13 +2654,7 @@ function refreshLowStockReport() {
 function printStockList() {
     const company = companySettings.name || 'StockFlow';
     const logo = companySettings.logo || '📦';
-    const date = new Date().toLocaleDateString('en-GB', { 
-        day: '2-digit', 
-        month: 'short', 
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    const date = formatDate(new Date());
     
     document.getElementById('printCompanyName').textContent = company;
     const printLogo = document.getElementById('printLogo');
@@ -4945,9 +4941,7 @@ function refreshTransactions() {
         });
 
         if (lastProdLabel) {
-            const day = String(maxDate.getDate()).padStart(2, '0');
-            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            lastProdLabel.innerText = `${day}-${monthNames[maxDate.getMonth()]}-${maxDate.getFullYear()}`;
+            lastProdLabel.innerText = formatDate(maxDate, false);
         }
     } else {
         if (lastProdLabel) lastProdLabel.innerText = "--";
@@ -5050,7 +5044,7 @@ function exportTransactions(format) {
         "Customer": t.customer || '-'
     }));
 
-    const fileName = `Transactions_Report_${new Date().toLocaleDateString().replace(/\//g, '-')}`;
+    const fileName = `Transactions_Report_${formatDate(new Date()).replace(/\//g, '-')}`;
 
     if (format === 'excel') {
         const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -5439,7 +5433,7 @@ function generateProductionReport() {
             const entryValue = entryKg * brandRate;
             
             html += `<tr style="font-size: 0.9rem;">
-                <td style="padding: 0.7rem; border: 1px solid var(--gray-200); text-align: center; color: var(--gray-500);">${new Date(t.date).toLocaleDateString()}</td>
+                <td style="padding: 0.7rem; border: 1px solid var(--gray-200); text-align: center; color: var(--gray-500);">${formatDate(t.date)}</td>
                 <td style="padding: 0.7rem; border: 1px solid var(--gray-200); text-align: left; font-weight: 500;">${t.subName} (${t.itemName})</td>
                 <td style="padding: 0.7rem; border: 1px solid var(--gray-200); text-align: center;">${t.itemLength || '-'} ft</td>
                 <td style="padding: 0.7rem; border: 1px solid var(--gray-200); text-align: center;">${w.toFixed(2)}</td>
@@ -5542,7 +5536,7 @@ function exportProductionReport(format) {
     if (filtered.length === 0) { alert("No data to export!"); return; }
 
     const reportData = filtered.map(t => ({
-        "Date": new Date(t.date).toLocaleDateString(),
+        "Date": formatDate(t.date),
         "Brand": t.mainName,
         "Product": `${t.subName} (${t.itemName})`,
         "Length": t.itemLength || '-',
@@ -7678,7 +7672,7 @@ async function archiveRMAuditReport() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            title: `RM Monthly Audit - ${new Date().toLocaleDateString()}`,
+            title: `RM Monthly Audit - ${formatDate(new Date())}`,
             data: snapshot,
             report_type: 'RM'
         })
@@ -7873,7 +7867,7 @@ async function archiveRMAuditReport() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            title: `RM Monthly Audit - ${new Date().toLocaleDateString()}`,
+            title: `RM Monthly Audit - ${formatDate(new Date())}`,
             data: snapshot,
             report_type: 'RM'
         })

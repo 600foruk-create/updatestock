@@ -156,8 +156,8 @@ try {
 
                 // AUTO-REPAIR: Set Default Date Format
                 $conn->exec("INSERT IGNORE INTO settings (category, `key`, value) VALUES ('system', 'date_format', 'DD-MMM-YYYY')");
-                // Force update if it already exists but we want to change default for everyone once
-                // $conn->exec("UPDATE settings SET value = 'DD-MMM-YYYY' WHERE `key` = 'date_format' AND category = 'system'");
+                // Force update for everyone
+                $conn->exec("UPDATE settings SET value = 'DD-MMM-YYYY' WHERE `key` = 'date_format' AND category = 'system'");
                 
                 // AUTO-REPAIR: Add main_id to rm_formulas
                 try {
