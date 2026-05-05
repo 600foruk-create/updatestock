@@ -5456,12 +5456,6 @@ function generateProductionReport() {
                 <td style="padding: 0.7rem; text-align: center; font-weight: 700; color: var(--sky-600);">${entryKg.toFixed(2)}</td>
                 <td style="padding: 0.7rem; text-align: center; font-weight: 700; color: #0369a1; background: #f0f9ff;">${entryValue.toFixed(2)}</td>
             </tr>`;
-        });
-        
-        grandPcs += bPcs;
-        grandKg += bKg;
-        grandValue += totalRMCost;
-        
         html += `</tbody>
                 <tfoot style="background: var(--gray-50); font-weight: 800;">
                     <tr>
@@ -5474,16 +5468,21 @@ function generateProductionReport() {
             </table>
 
             ${Object.keys(rmSummary).length > 0 ? `
-                <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid var(--gray-100);">
-                    <h6 style="margin: 0 0 0.8rem 0; font-size: 0.75rem; text-transform: uppercase; color: var(--gray-500); letter-spacing: 0.5px;">Material breakdown for this Brand:</h6>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px;">
+                <div style="background: #f8fafc; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--gray-100);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; border-bottom: 1px solid var(--gray-200); padding-bottom: 5px;">
+                        <h6 style="margin: 0; font-size: 0.7rem; text-transform: uppercase; color: var(--gray-500); letter-spacing: 0.5px; font-weight: 800;">Material Consumption Summary:</h6>
+                        <div style="font-size: 0.8rem; font-weight: 900; color: var(--gray-700);">Brand RM Total: <span style="color: var(--error);">${Object.values(rmSummary).reduce((s, i) => s + i.qty, 0).toLocaleString()} KG</span></div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px;">
                         ${Object.keys(rmSummary).sort().map(name => `
-                            <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid var(--gray-100); display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <div style="font-size: 0.7rem; color: var(--gray-400);">${name}</div>
-                                    <div style="font-size: 0.85rem; font-weight: 800;">${rmSummary[name].qty.toLocaleString()} ${rmSummary[name].unit}</div>
+                            <div style="background: white; padding: 6px 10px; border-radius: 5px; border: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center;">
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-size: 0.65rem; color: var(--gray-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${name}</div>
+                                    <div style="font-size: 0.8rem; font-weight: 800; color: var(--gray-800);">${rmSummary[name].qty.toLocaleString()} <small style="font-size: 0.6rem; opacity: 0.5;">${rmSummary[name].unit}</small></div>
                                 </div>
-                                <div style="text-align: right; font-size: 0.8rem; font-weight: 700; color: #0369a1;">Rs. ${rmSummary[name].val.toLocaleString()}</div>
+                                <div style="text-align: right; margin-left: 8px;">
+                                    <div style="font-weight: 700; color: #0369a1; font-size: 0.75rem;">Rs. ${rmSummary[name].val.toLocaleString()}</div>
+                                </div>
                             </div>
                         `).join('')}
                     </div>
@@ -5492,6 +5491,11 @@ function generateProductionReport() {
         </div></div>`;
     });
     
+    // Calculate Grand RM KG
+    let grandRMKg = Object.values(globalRMSummary).reduce((sum, item) => sum + item.qty, 0);
+    let totalGap = grandRMKg - grandKg;
+    let gapColor = totalGap > (grandRMKg * 0.05) ? 'var(--error)' : (totalGap < 0 ? 'var(--success)' : '#b45309');
+
     // Grand Summary
     html += `
         <div style="margin-top: 3rem; background: white; border-radius: 12px; border: 2px solid var(--sky-500); overflow: hidden;">
@@ -5501,45 +5505,62 @@ function generateProductionReport() {
             </div>
             
             <div style="padding: 1.5rem;">
-                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                    <div style="background: #f8fafc; padding: 1.2rem; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center;">
+                        <label style="display: block; font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase; font-weight: 800; margin-bottom: 8px;">Total Production Weight</label>
+                        <strong style="font-size: 2rem; color: var(--sky-700);">${grandKg.toLocaleString()}</strong>
+                        <span style="font-size: 0.8rem; color: var(--gray-400);">KG</span>
+                    </div>
+                    <div style="background: #fff5f5; padding: 1.2rem; border-radius: 12px; border: 1px solid #fed7d7; text-align: center;">
+                        <label style="display: block; font-size: 0.75rem; color: #c53030; text-transform: uppercase; font-weight: 800; margin-bottom: 8px;">Total Material Weight</label>
+                        <strong style="font-size: 2rem; color: #c53030;">${grandRMKg.toLocaleString()}</strong>
+                        <span style="font-size: 0.8rem; color: #c53030;">KG</span>
+                    </div>
+                    <div style="background: ${totalGap > 0 ? '#fffbeb' : '#f0fdf4'}; padding: 1.2rem; border-radius: 12px; border: 1px solid ${totalGap > 0 ? '#fef3c7' : '#dcfce7'}; text-align: center;">
+                        <label style="display: block; font-size: 0.75rem; color: ${gapColor}; text-transform: uppercase; font-weight: 800; margin-bottom: 8px;">Production Gap (Loss/Waste)</label>
+                        <strong style="font-size: 2rem; color: ${gapColor};">${totalGap.toLocaleString()}</strong>
+                        <span style="font-size: 0.8rem; color: ${gapColor};">KG (${grandRMKg > 0 ? ((totalGap/grandRMKg)*100).toFixed(1) : 0}%)</span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem;">
                     <div style="background: #f8fafc; padding: 1rem; border-radius: 10px; border: 1px solid #e2e8f0; text-align: center;">
                         <label style="display: block; font-size: 0.7rem; color: var(--gray-500); text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Total Pieces</label>
                         <strong style="font-size: 1.5rem;">${grandPcs.toLocaleString()}</strong>
                     </div>
-                    <div style="background: #f8fafc; padding: 1rem; border-radius: 10px; border: 1px solid #e2e8f0; text-align: center;">
-                        <label style="display: block; font-size: 0.7rem; color: var(--gray-500); text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Total Weight</label>
-                        <strong style="font-size: 1.5rem; color: var(--sky-700);">${grandKg.toLocaleString()} KG</strong>
-                    </div>
                     <div style="background: #f0f9ff; padding: 1rem; border-radius: 10px; border: 1px solid #bae6fd; text-align: center;">
-                        <label style="display: block; font-size: 0.7rem; color: #0369a1; text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">RM Value</label>
+                        <label style="display: block; font-size: 0.7rem; color: #0369a1; text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Total Material Value</label>
                         <strong id="summaryRMValue" data-value="${grandValue}" style="font-size: 1.5rem; color: #0369a1;">Rs. ${grandValue.toLocaleString()}</strong>
                     </div>
                     <div style="background: #fffbeb; padding: 1rem; border-radius: 10px; border: 1px solid #fef3c7; text-align: center;">
-                        <label style="display: block; font-size: 0.7rem; color: #b45309; text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Other Exp.</label>
+                        <label style="display: block; font-size: 0.7rem; color: #b45309; text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Other Expenses</label>
                         <input type="number" id="summaryOtherExpenses" value="0" oninput="updateReportNetValue()" style="width: 100%; border: 1px solid #fde68a; border-radius: 6px; padding: 2px; text-align: center; font-weight: 800; font-size: 1.2rem;">
                     </div>
                     <div style="background: #f0fdf4; padding: 1rem; border-radius: 10px; border: 1px solid #dcfce7; text-align: center;">
-                        <label style="display: block; font-size: 0.7rem; color: #15803d; text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Net Value</label>
+                        <label style="display: block; font-size: 0.7rem; color: #15803d; text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Total Net Value</label>
                         <strong id="summaryNetValue" style="font-size: 1.5rem; color: #15803d;">Rs. ${grandValue.toLocaleString()}</strong>
                     </div>
                 </div>
 
                 ${Object.keys(globalRMSummary).length > 0 ? `
                     <div style="background: #fafafa; border: 1px solid var(--gray-200); border-radius: 8px; padding: 1.2rem;">
-                        <h4 style="margin: 0 0 1rem 0; font-size: 0.9rem; color: var(--gray-800); text-transform: uppercase; font-weight: 800; display: flex; align-items: center; gap: 8px;">
-                            <span style="width: 12px; height: 12px; background: var(--sky-500); border-radius: 50%;"></span>
-                            Total Material Consumption Summary (All Brands)
-                        </h4>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h4 style="margin: 0; font-size: 0.85rem; color: var(--gray-800); text-transform: uppercase; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                                <span style="width: 12px; height: 12px; background: var(--error); border-radius: 50%;"></span>
+                                Consolidated Material Consumption
+                            </h4>
+                            <div style="font-size: 1rem; font-weight: 900; color: var(--error);">Overall Material Total: ${grandRMKg.toLocaleString()} KG</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
                             ${Object.keys(globalRMSummary).sort().map(name => `
-                                <div style="background: white; padding: 12px; border-radius: 8px; border: 1px solid var(--gray-200); box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center;">
+                                <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid var(--gray-200); box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center;">
                                     <div>
-                                        <div style="font-size: 0.75rem; color: var(--gray-500); font-weight: 600;">${name}</div>
-                                        <div style="font-size: 1rem; font-weight: 900; color: var(--gray-900);">${globalRMSummary[name].qty.toLocaleString()} <span style="font-size: 0.7rem; font-weight: 400; color: var(--gray-400);">${globalRMSummary[name].unit}</span></div>
+                                        <div style="font-size: 0.7rem; color: var(--gray-500); font-weight: 600;">${name}</div>
+                                        <div style="font-size: 0.9rem; font-weight: 900; color: var(--gray-900);">${globalRMSummary[name].qty.toLocaleString()} <span style="font-size: 0.65rem; font-weight: 400; color: var(--gray-400);">${globalRMSummary[name].unit}</span></div>
                                     </div>
-                                    <div style="text-align: right; border-left: 1px solid var(--gray-100); padding-left: 10px;">
-                                        <div style="font-size: 0.7rem; color: var(--gray-400);">Subtotal</div>
-                                        <div style="font-weight: 800; color: #0369a1;">Rs. ${globalRMSummary[name].val.toLocaleString()}</div>
+                                    <div style="text-align: right; border-left: 1px solid var(--gray-100); padding-left: 8px;">
+                                        <div style="font-size: 0.65rem; color: var(--gray-400);">Subtotal</div>
+                                        <div style="font-weight: 800; color: #0369a1; font-size: 0.75rem;">Rs. ${globalRMSummary[name].val.toLocaleString()}</div>
                                     </div>
                                 </div>
                             `).join('')}
