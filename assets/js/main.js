@@ -5456,6 +5456,12 @@ function generateProductionReport() {
                 <td style="padding: 0.7rem; text-align: center; font-weight: 700; color: var(--sky-600);">${entryKg.toFixed(2)}</td>
                 <td style="padding: 0.7rem; text-align: center; font-weight: 700; color: #0369a1; background: #f0f9ff;">${entryValue.toFixed(2)}</td>
             </tr>`;
+        });
+        
+        grandPcs += bPcs;
+        grandKg += bKg;
+        grandValue += totalRMCost;
+        
         html += `</tbody>
                 <tfoot style="background: var(--gray-50); font-weight: 800;">
                     <tr>
