@@ -6226,39 +6226,36 @@ function refreshRMOutFormControls() {
     if (dateInput && !dateInput.value) {
         dateInput.value = new Date().toISOString().split('T')[0];
     }
-    const itemSelect = document.getElementById('rmOutSelect');
-    const formulaSelect = document.getElementById('rmOutFormulaSelect');
-    const editor = document.getElementById('rmFormulaIngredientsEditor');
     
-    // Check if user is currently editing a formula (editor is visible)
-    const isEditingFormula = editor && editor.style.display !== 'none';
-
-    // 1. Refresh Material Select (always preserve selection)
-    if (itemSelect) {
-        const currentItem = itemSelect.value;
-        itemSelect.innerHTML = '<option value="">-- Select Material --</option>';
-        rmItems.sort((a,b) => a.name.localeCompare(b.name)).forEach(i => {
-            const opt = document.createElement('option');
-            opt.value = i.id;
-            opt.innerText = `${i.name} (Stock: ${i.stock} ${i.unit})`;
-            itemSelect.appendChild(opt);
-        });
-        if (currentItem) itemSelect.value = currentItem;
+    const rowsContainer = document.getElementById('rmOutRows');
+    if (rowsContainer) {
+        if (rowsContainer.children.length === 0) {
+            addRMRow('OUT');
+        } else {
+            // Preserve values
+            rowsContainer.querySelectorAll('.rm-entry-row').forEach(row => {
+                const select = row.querySelector('.rm-select');
+                if (select) {
+                    const currentVal = select.value;
+                    select.innerHTML = '<option value="">-- Select Material --</option>';
+                    rmItems.sort((a,b) => a.name.localeCompare(b.name)).forEach(i => {
+                        select.innerHTML += `<option value="${i.id}">${i.name} (${i.stock} ${i.unit})</option>`;
+                    });
+                    select.value = currentVal;
+                }
+            });
+        }
     }
-
-    // 2. Refresh Formula Select (ONLY if not currently editing/using it)
-    if (formulaSelect && !isEditingFormula) {
-        const currentFormula = formulaSelect.value;
-        formulaSelect.innerHTML = '<option value="">-- Select Production Formula --</option>';
+    
+    const fSelect = document.getElementById('rmOutFormulaSelect');
+    if (fSelect) {
+        const currentF = fSelect.value;
+        fSelect.innerHTML = '<option value="">-- Select Production Formula --</option>';
         rmFormulas.sort((a,b) => a.name.localeCompare(b.name)).forEach(f => {
-            const opt = document.createElement('option');
-            opt.value = f.id;
-            opt.innerText = f.name;
-            formulaSelect.appendChild(opt);
+            fSelect.innerHTML += `<option value="${f.id}">${f.name}</option>`;
         });
-        if (currentFormula) formulaSelect.value = currentFormula;
+        fSelect.value = currentF;
     }
-    
     refreshRMOutHistoryTable();
 }
 
@@ -6901,54 +6898,62 @@ async function saveRMTransaction(type) {
 
     try {
         const mode = type === 'OUT' ? (document.querySelector('input[name="rmOutMode"]:checked')?.value || 'SINGLE') : 'SINGLE';
-        const notes = document.getElementById(type === 'IN' ? 'rmInNotes' : 'rmOutNotes').value.trim();
         const customDateInput = document.getElementById(type === 'IN' ? 'rmInDate' : 'rmOutDate');
         const customDateValue = customDateInput ? customDateInput.value : null;
 
-        const qtyInput = document.getElementById(type === 'IN' ? 'rmInQty' : 'rmOutQty');
-        const priceInput = document.getElementById('rmInPrice');
-        const multiplier = parseFloat(qtyInput.value);
-        const unitPriceUser = priceInput ? (parseFloat(priceInput.value) || 0) : 0;
-
-        if (isNaN(multiplier) || multiplier <= 0) { 
-            alert('Enter a valid quantity'); 
-            return; 
-        }
-
-        let actualKg = multiplier;
         if (mode === 'SINGLE') {
-            const itemId = type === 'IN' ? document.getElementById('rmInSelect').value : document.getElementById('rmOutSelect').value;
-            const unitSelectId = type === 'IN' ? 'rmInUnitSelect' : 'rmOutUnitSelect';
-            const selectedUnit = document.getElementById(unitSelectId).value;
-            
-            if (!itemId) { alert('Select a material'); return; }
-            const item = rmItems.find(i => i.id == itemId);
-            
-            if (selectedUnit === 'Bags') {
-                const kgPerBag = parseFloat(item.kgPerBag) || 0;
-                if (kgPerBag <= 0) { alert('Please set "KG per Bag" for this item in Inventory before using Bags.'); return; }
-                actualKg = multiplier * kgPerBag;
-            } else if (selectedUnit === 'Grams') {
-                actualKg = multiplier / 1000;
-            }
-            
-            let pricePerKg = 0;
-            if (type === 'IN' && actualKg > 0) {
-                pricePerKg = (unitPriceUser * multiplier) / actualKg;
-            } else if (type === 'OUT') {
+            const rowsContainer = document.getElementById(type === 'IN' ? 'rmInRows' : 'rmOutRows');
+            const rows = rowsContainer.querySelectorAll('.rm-entry-row');
+            if (rows.length === 0) { alert('Add at least one item'); return; }
+
+            let totalSaved = 0;
+            for (const row of rows) {
+                const itemId = row.querySelector('.rm-select').value;
+                const qtyInput = row.querySelector('.rm-qty').value;
+                const unitSelect = row.querySelector('.rm-unit').value;
+                const priceInput = row.querySelector('.rm-price');
+                const notesInput = row.querySelector('.rm-notes').value.trim();
+
+                const multiplier = parseFloat(qtyInput);
+                const unitPriceUser = priceInput ? (parseFloat(priceInput.value) || 0) : 0;
+
+                if (!itemId || isNaN(multiplier) || multiplier <= 0) continue;
+
                 const item = rmItems.find(i => i.id == itemId);
-                pricePerKg = getRMItemCurrentPrice(item);
+                let actualKg = multiplier;
+                
+                if (unitSelect === 'Bags') {
+                    const kgPerBag = parseFloat(item.kgPerBag) || 0;
+                    if (kgPerBag <= 0) { 
+                        alert(`Please set "KG per Bag" for ${item.name} in Inventory.`); 
+                        continue; 
+                    }
+                    actualKg = multiplier * kgPerBag;
+                } else if (unitSelect === 'Grams') {
+                    actualKg = multiplier / 1000;
+                }
+                
+                let pricePerKg = 0;
+                if (type === 'IN' && actualKg > 0) {
+                    pricePerKg = (unitPriceUser * multiplier) / actualKg;
+                } else if (type === 'OUT') {
+                    pricePerKg = getRMItemCurrentPrice(item);
+                }
+                
+                await recordSingleRMTransaction(itemId, actualKg, type, notesInput, pricePerKg, null, customDateValue);
+                totalSaved++;
             }
-            
-            await recordSingleRMTransaction(itemId, actualKg, type, notes, pricePerKg, null, customDateValue);
+
+            if (totalSaved === 0) { alert('No valid items to save'); return; }
         } else {
             // Formula Mode
             const formulaId = document.getElementById('rmOutFormulaSelect').value;
             if (!formulaId) { alert('Select a formula'); return; }
             
             const formula = rmFormulas.find(f => f.id == formulaId);
+            const multiplierInput = document.getElementById('rmOutFormulaMultiplier');
+            const multiplier = parseFloat(multiplierInput ? multiplierInput.value : 1);
             
-            // Collect custom quantities from the editor
             const customRows = document.querySelectorAll('.rm-formula-custom-qty');
             const customItems = [];
             customRows.forEach(input => {
@@ -6961,7 +6966,7 @@ async function saveRMTransaction(type) {
 
             if (customItems.length === 0) { alert('No valid items to consume'); return; }
             
-            if (!confirm(`Using "${formula.name}" x ${multiplier}. Total of ${customItems.length} items will be consumed with your adjusted quantities. Proceed?`)) {
+            if (!confirm(`Using "${formula.name}" x ${multiplier}. Total of ${customItems.length} items will be consumed. Proceed?`)) {
                 return;
             }
 
@@ -6969,58 +6974,150 @@ async function saveRMTransaction(type) {
                 const totalQty = item.qty * multiplier;
                 const rmItem = rmItems.find(i => i.id == item.itemId);
                 const priceVal = getRMItemCurrentPrice(rmItem);
+                const notes = document.getElementById('rmOutNotes') ? document.getElementById('rmOutNotes').value.trim() : '';
                 await recordSingleRMTransaction(item.itemId, totalQty, 'OUT', `[Formula: ${formula.name}] ${notes}`, priceVal, formula.main_id, customDateValue);
             }
         }
 
         await initApp();
-        
-        // Reset Form Fields
-        if (type === 'IN') {
-            if (document.getElementById('rmInQty')) document.getElementById('rmInQty').value = '';
-            if (document.getElementById('rmInSelect')) document.getElementById('rmInSelect').value = '';
-            if (document.getElementById('rmInPrice')) document.getElementById('rmInPrice').value = '';
-            if (document.getElementById('rmInNotes')) document.getElementById('rmInNotes').value = '';
-        } else {
-            if (document.getElementById('rmOutQty')) document.getElementById('rmOutQty').value = '1';
-            if (document.getElementById('rmOutSelect')) document.getElementById('rmOutSelect').value = '';
-            if (document.getElementById('rmOutFormulaSelect')) document.getElementById('rmOutFormulaSelect').value = '';
-            if (document.getElementById('rmOutNotes')) document.getElementById('rmOutNotes').value = '';
-            
-            // Hide formula editor
-            const editor = document.getElementById('rmFormulaIngredientsEditor');
-            if (editor) editor.style.display = 'none';
-            const preview = document.getElementById('formulaPreview');
-            if (preview) preview.innerHTML = '';
-        }
-        
-        // Clear hints
-        if (document.getElementById('rmInConversionHint')) document.getElementById('rmInConversionHint').innerText = '';
-        if (document.getElementById('rmOutConversionHint')) document.getElementById('rmOutConversionHint').innerText = '';
-
-        // Auto-save consumption snapshot (non-critical, wrap in try/catch)
-        try {
-            await autoSaveRMConsumption();
-        } catch (e) {
-            console.warn('Auto-save consumption failed:', e);
-        }
-        
-        // Refresh UI components directly
-        if (typeof refreshRMInHistoryTable === 'function') refreshRMInHistoryTable();
-        if (typeof refreshRMOutHistoryTable === 'function') refreshRMOutHistoryTable();
-        refreshDashboard();
-        if (typeof refreshRMInventoryBalance === 'function') refreshRMInventoryBalance();
-        if (typeof type !== 'undefined' && type === 'IN' && typeof refreshRMInFormControls === 'function') refreshRMInFormControls();
-
         alert('Successfully saved!');
+        
+        // Reset rows
+        if (type === 'IN') {
+            document.getElementById('rmInRows').innerHTML = '';
+            addRMRow('IN');
+        } else if (mode === 'SINGLE') {
+            document.getElementById('rmOutRows').innerHTML = '';
+            addRMRow('OUT');
+        }
     } catch (err) {
         console.error('saveRMTransaction Error:', err);
-        alert('❌ Error saving RM transaction.');
+        alert('❌ Error saving transactions.');
     } finally {
         if (saveBtn) {
             saveBtn.disabled = false;
             saveBtn.innerText = 'Save';
         }
+    }
+}
+
+function addRMRow(type) {
+    const container = document.getElementById(type === 'IN' ? 'rmInRows' : 'rmOutRows');
+    if (!container) return;
+
+    const row = document.createElement('div');
+    row.className = 'rm-entry-row';
+    row.style = 'display: grid; grid-template-columns: 1.5fr 1fr 0.8fr 1.2fr 0.4fr; gap: 0.8rem; align-items: center; background: white; padding: 0.8rem; border-radius: 8px; border: 1px solid #e2e8f0;';
+    if (type === 'IN') {
+        row.style.gridTemplateColumns = '1.5fr 1fr 1fr 1.5fr 0.4fr';
+    }
+
+    // Material Select
+    const select = document.createElement('select');
+    select.className = 'form-control rm-select';
+    select.style = 'height: 40px; border-radius: 6px; border: 1px solid #cbd5e1;';
+    select.innerHTML = '<option value="">-- Select Material --</option>';
+    rmItems.sort((a,b) => a.name.localeCompare(b.name)).forEach(i => {
+        select.innerHTML += `<option value="${i.id}">${i.name} (${i.stock} ${i.unit})</option>`;
+    });
+
+    // Qty and Unit
+    const qtyWrapper = document.createElement('div');
+    qtyWrapper.style = 'display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden; height: 40px;';
+    
+    const qtyInput = document.createElement('input');
+    qtyInput.type = 'number';
+    qtyInput.className = 'form-control rm-qty';
+    qtyInput.placeholder = 'Qty';
+    qtyInput.style = 'border: none; flex: 1; padding: 0.5rem; height: 100%; border-right: 1px solid #cbd5e1; border-radius: 0;';
+    qtyInput.oninput = () => updateRMRowHint(row, type);
+
+    const unitSelect = document.createElement('select');
+    unitSelect.className = 'form-control rm-unit';
+    unitSelect.style = 'border: none; width: 70px; padding: 0 0.3rem; font-size: 0.8rem; height: 100%; background: #f8fafc; border-radius: 0;';
+    unitSelect.innerHTML = '<option value="Bags">Bags</option><option value="KG" selected>KG</option><option value="Grams">Grams</option>';
+    unitSelect.onchange = () => updateRMRowHint(row, type);
+    
+    qtyWrapper.appendChild(qtyInput);
+    qtyWrapper.appendChild(unitSelect);
+
+    // Price (for IN) or extra space for OUT
+    let priceOrNotes;
+    if (type === 'IN') {
+        priceOrNotes = document.createElement('input');
+        priceOrNotes.type = 'number';
+        priceOrNotes.className = 'form-control rm-price';
+        priceOrNotes.placeholder = 'Price/Unit';
+        priceOrNotes.style = 'height: 40px; border-radius: 6px; border: 1px solid #cbd5e1;';
+    }
+
+    // Notes
+    const notesInput = document.createElement('input');
+    notesInput.type = 'text';
+    notesInput.className = 'form-control rm-notes';
+    notesInput.placeholder = 'Notes...';
+    notesInput.style = 'height: 40px; border-radius: 6px; border: 1px solid #cbd5e1;';
+
+    // Delete Button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.innerHTML = '🗑️';
+    deleteBtn.className = 'btn btn-danger btn-sm';
+    deleteBtn.style = 'height: 40px; width: 40px; display: flex; align-items: center; justify-content: center; padding: 0; font-size: 1.2rem;';
+    deleteBtn.onclick = () => {
+        if (container.children.length > 1) {
+            row.remove();
+        } else {
+            // Reset the single row instead of deleting
+            select.value = '';
+            qtyInput.value = '';
+            if (priceOrNotes && priceOrNotes.className.includes('rm-price')) priceOrNotes.value = '';
+            notesInput.value = '';
+            const hint = row.querySelector('.rm-hint');
+            if (hint) hint.innerText = '';
+        }
+    };
+
+    // Hint element
+    const hint = document.createElement('small');
+    hint.className = 'rm-hint';
+    hint.style = 'grid-column: 1 / -1; color: var(--sky-600); font-weight: 700; font-size: 0.75rem; margin-top: -0.5rem; height: 15px;';
+
+    row.appendChild(select);
+    row.appendChild(qtyWrapper);
+    if (type === 'IN') row.appendChild(priceOrNotes);
+    row.appendChild(notesInput);
+    row.appendChild(deleteBtn);
+    row.appendChild(hint);
+
+    container.appendChild(row);
+}
+
+function updateRMRowHint(row, type) {
+    const qtyInput = row.querySelector('.rm-qty');
+    const select = row.querySelector('.rm-select');
+    const unitSelect = row.querySelector('.rm-unit');
+    const hintEl = row.querySelector('.rm-hint');
+    
+    if (!hintEl) return;
+    
+    const qty = parseFloat(qtyInput.value);
+    const itemId = select.value;
+    const unit = unitSelect.value;
+    
+    if (isNaN(qty) || !itemId || unit === 'KG') { hintEl.innerText = ''; return; }
+    
+    const item = rmItems.find(i => i.id == itemId);
+    if (!item) { hintEl.innerText = ''; return; }
+
+    if (unit === 'Bags') {
+        const kgPerBag = parseFloat(item.kgPerBag) || 0;
+        if (kgPerBag > 0) {
+            hintEl.innerText = `(= ${(qty * kgPerBag).toFixed(2)} KG)`;
+        } else {
+            hintEl.innerText = '(Set KG/Bag in Inventory first)';
+        }
+    } else if (unit === 'Grams') {
+        hintEl.innerText = `(= ${(qty / 1000).toFixed(3)} KG)`;
     }
 }
 
@@ -7109,33 +7206,8 @@ function toggleWIPBreakdown() {
  * Real-time conversion hint logic
  */
 function updateRMConversionHint(type) {
-    const qtyInput = document.getElementById(`rm${type === 'IN' ? 'In' : 'Out'}Qty`);
-    const selectId = `rm${type === 'IN' ? 'In' : 'Out'}Select`;
-    const unitSelectId = `rm${type === 'IN' ? 'In' : 'Out'}UnitSelect`;
-    const hintId = `rm${type === 'IN' ? 'In' : 'Out'}ConversionHint`;
-    
-    const qty = parseFloat(qtyInput.value);
-    const itemId = document.getElementById(selectId).value;
-    const unitSelect = document.getElementById(unitSelectId);
-    const unit = unitSelect ? unitSelect.value : 'KG';
-    const hintEl = document.getElementById(hintId);
-    
-    if (!hintEl) return;
-    if (isNaN(qty) || !itemId || unit === 'KG' || unit === 'Multiplier') { hintEl.innerText = ''; return; }
-    
-    const item = rmItems.find(i => i.id == itemId);
-    if (!item) { hintEl.innerText = ''; return; }
-
-    if (unit === 'Bags') {
-        const kgPerBag = parseFloat(item.kgPerBag) || 0;
-        if (kgPerBag > 0) {
-            hintEl.innerText = `(= ${(qty * kgPerBag).toFixed(2)} KG)`;
-        } else {
-            hintEl.innerText = '(Set KG/Bag in Inventory first)';
-        }
-    } else if (unit === 'Grams') {
-        hintEl.innerText = `(= ${(qty / 1000).toFixed(3)} KG)`;
-    }
+    // Deprecated for multi-row mode, but keeping for compatibility if needed elsewhere
+    // Multi-row uses updateRMRowHint instead
 }
 
 /**
@@ -7181,15 +7253,25 @@ function refreshRMInFormControls() {
     if (dateInput && !dateInput.value) {
         dateInput.value = new Date().toISOString().split('T')[0];
     }
-    const itemSelect = document.getElementById('rmInSelect');
-    if (itemSelect) {
-        itemSelect.innerHTML = '<option value="">-- Select Material --</option>';
-        rmItems.sort((a,b) => a.name.localeCompare(b.name)).forEach(i => {
-            const opt = document.createElement('option');
-            opt.value = i.id;
-            opt.innerText = `${i.name} (Current: ${i.stock} ${i.unit})`;
-            itemSelect.appendChild(opt);
-        });
+    
+    const rowsContainer = document.getElementById('rmInRows');
+    if (rowsContainer) {
+        if (rowsContainer.children.length === 0) {
+            addRMRow('IN');
+        } else {
+            // Preserve values and update options
+            rowsContainer.querySelectorAll('.rm-entry-row').forEach(row => {
+                const select = row.querySelector('.rm-select');
+                if (select) {
+                    const currentVal = select.value;
+                    select.innerHTML = '<option value="">-- Select Material --</option>';
+                    rmItems.sort((a,b) => a.name.localeCompare(b.name)).forEach(i => {
+                        select.innerHTML += `<option value="${i.id}">${i.name} (${i.stock} ${i.unit})</option>`;
+                    });
+                    select.value = currentVal;
+                }
+            });
+        }
     }
     refreshRMInHistoryTable();
 }
