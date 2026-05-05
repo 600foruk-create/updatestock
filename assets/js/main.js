@@ -6314,7 +6314,6 @@ function setRMOutMode(mode) {
         if (modeBtnSingle) modeBtnSingle.classList.remove('active');
         if (modeBtnFormula) modeBtnFormula.classList.add('active');
         
-        if (typeof refreshRMFormulaDropdown === 'function') refreshRMFormulaDropdown();
     }
     
     const editor = document.getElementById('rmFormulaIngredientsEditor');

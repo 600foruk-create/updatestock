@@ -36,7 +36,7 @@
         </div>
 
         <!-- Single Item Mode Container -->
-        <div id="rmOutSingleContainer">
+        <div id="rmOutSingleContainer" style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 1rem;">
             <div id="rmOutRowsHeader" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr 40px; gap: 1rem; margin-bottom: 0.5rem; padding: 0 1rem; color: var(--gray-600); font-size: 0.85rem; font-weight: 700;">
                 <div>Raw Material</div>
                 <div>Quantity</div>
@@ -45,11 +45,11 @@
                 <div></div>
             </div>
             <div id="rmOutRows" style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1rem;"></div>
-            <button class="btn btn-info" style="margin-bottom: 1rem;" onclick="addRMOutRow()">➕ Add Material</button>
+            <button class="btn btn-info" style="margin-bottom: 0.5rem;" onclick="addRMOutRow()">➕ Add Another Material</button>
         </div>
         
-        <!-- Formula Mode Container (Initially Hidden) -->
-        <div id="rmOutFormulaContainer" style="display: none; background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 1rem;">
+        <!-- Formula Mode Container -->
+        <div id="rmOutFormulaContainer" style="display: none; background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--sky-200); margin-bottom: 1rem; border-left: 5px solid var(--sky-500);">
             <div style="display: grid; grid-template-columns: 1.5fr 1fr 1.5fr; gap: 1.5rem; align-items: flex-end;">
                 <div class="form-group" style="margin-bottom: 0;">
                     <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Select Production Formula</label>
@@ -60,7 +60,7 @@
                     <input type="number" id="rmOutFormulaQty" class="form-control" style="height: 48px; padding: 0.6rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid #cbd5e1; background: white; width: 100%;" value="1" step="0.1" oninput="previewFormulaUsage()">
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Reference / Notes</label>
+                    <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Formula Reference Notes</label>
                     <input type="text" id="rmOutFormulaNotes" class="form-control" style="height: 48px; padding: 0.6rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid #cbd5e1; background: white; width: 100%;" placeholder="Batch #, Order ID...">
                 </div>
             </div>
