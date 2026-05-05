@@ -25,6 +25,7 @@ let storeExpandedIds = new Set();
 let rmTransactions = [];
 let rmConsumptionLogs = [];
 let rmExpandedIds = new Set();
+let orderExpandedIds = new Set();
 let storeMasterLists = { issued_to: [], issued_by: [], purpose: [] };
 let archivedReports = []; // Global list of archived report metadata
 let rmPhysicalStockMap = JSON.parse(localStorage.getItem('rmPhysicalStockMap') || '{}'); // Persist between refreshes
@@ -3395,6 +3396,7 @@ function refreshOrdersList(filter = null) {
         filteredOrders.forEach(order => {
             const currentStatus = (order.status || '').toLowerCase();
             let statusColor = currentStatus === 'pending' ? '#ffb74d' : (currentStatus === 'processing' ? '#64b5f6' : '#4caf50');
+            const isExpanded = orderExpandedIds.has(String(order.id));
             let itemsHtml = '';
             (order.items || []).forEach(item => {
                 itemsHtml += `
@@ -3406,7 +3408,7 @@ function refreshOrdersList(filter = null) {
             });
 
             html += `
-                        <div class="order-card collapsed" style="border-left-color: ${statusColor};" id="order-card-${order.id}">
+                        <div class="order-card ${isExpanded ? '' : 'collapsed'}" style="border-left-color: ${statusColor};" id="order-card-${order.id}">
                             <div class="order-header" onclick="toggleOrderDetails(this)">
                                 <div style="display:flex; align-items:center;">
                                     <span class="customer-name">${order.customerName}</span>
@@ -3452,6 +3454,12 @@ function refreshOrdersList(filter = null) {
 function toggleOrderDetails(headerElement) {
     const card = headerElement.closest('.order-card');
     card.classList.toggle('collapsed');
+    const orderId = card.id.replace('order-card-', '');
+    if (card.classList.contains('collapsed')) {
+        orderExpandedIds.delete(orderId);
+    } else {
+        orderExpandedIds.add(orderId);
+    }
 }
 
 function clearOrdersView() {
