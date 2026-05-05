@@ -2664,7 +2664,41 @@ function printStockList() {
     const printLogo = document.getElementById('printLogo');
     if (printLogo) printLogo.innerHTML = logo;
     document.getElementById('printDate').textContent = `Report Date: ${date}`;
-    window.print();
+
+    const reportContent = document.getElementById('printableStock').innerHTML;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>Stock List - ${company}</title>
+                <style>
+                    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; color: #333; }
+                    .print-header { border-bottom: 2px solid #0284c7; margin-bottom: 20px; padding-bottom: 10px; }
+                    .print-header h1 { margin: 0; color: #0284c7; }
+                    .brand-card { border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 20px; overflow: hidden; page-break-inside: avoid; }
+                    .brand-header { background: #f3f4f6; padding: 10px 15px; font-weight: 700; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; }
+                    .brand-body { padding: 10px; }
+                    .stock-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+                    .item-qty { font-weight: 700; color: #0284c7; }
+                    .no-print { display: none !important; }
+                    @media print {
+                        body { padding: 0; }
+                    }
+                </style>
+            </head>
+            <body>
+                ${reportContent}
+            </body>
+        </html>
+    `);
+    
+    printWindow.document.close();
+    setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    }, 500);
 }
 
 function printLowStock() {
@@ -5513,7 +5547,7 @@ function generateProductionReport() {
 
     // Grand Summary
     html += `
-        <div style="margin-top: 3rem; background: white; border-radius: 12px; border: 2px solid var(--sky-500); overflow: hidden;">
+        <div style="page-break-before: always; margin-top: 3rem; background: white; border-radius: 12px; border: 2px solid var(--sky-500); overflow: hidden;">
             <div style="background: var(--sky-500); color: white; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
                 <h3 style="margin: 0; font-size: 1.2rem; font-weight: 800; letter-spacing: 0.5px;">🚀 OVERALL PRODUCTION SUMMARY</h3>
                 <span style="font-size: 0.75rem; opacity: 0.8;">Generated: ${new Date().toLocaleString()}</span>
