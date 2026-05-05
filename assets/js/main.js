@@ -261,7 +261,8 @@ function showTab(tabName) {
             if (typeof refreshRMTransactions === 'function') refreshRMTransactions('IN');
         }
         if (tabName === 'rm_out') {
-            const mode = document.querySelector('input[name="rmOutMode"]:checked')?.value || 'SINGLE';
+            const modeInput = document.getElementById('rmOutMode');
+            const mode = modeInput ? modeInput.value : 'SINGLE';
             if (mode === 'SINGLE') {
                 const container = document.getElementById('rmOutRows');
                 if (container && container.children.length === 0) addRMOutRow();
@@ -6295,14 +6296,16 @@ function setRMOutMode(mode) {
     const formulaContainer = document.getElementById('rmOutFormulaContainer');
     const modeBtnSingle = document.getElementById('modeBtn_SINGLE');
     const modeBtnFormula = document.getElementById('modeBtn_FORMULA');
+    const modeInput = document.getElementById('rmOutMode');
     
+    if (modeInput) modeInput.value = mode;
+
     if (mode === 'SINGLE') {
         if (singleContainer) singleContainer.style.display = 'block';
         if (formulaContainer) formulaContainer.style.display = 'none';
         if (modeBtnSingle) modeBtnSingle.classList.add('active');
         if (modeBtnFormula) modeBtnFormula.classList.remove('active');
         
-        // Ensure at least one row if empty
         const rows = document.getElementById('rmOutRows');
         if (rows && rows.children.length === 0) addRMOutRow();
     } else {
@@ -6314,16 +6317,12 @@ function setRMOutMode(mode) {
         if (typeof refreshRMFormulaDropdown === 'function') refreshRMFormulaDropdown();
     }
     
-    // Hide formula editor initially
     const editor = document.getElementById('rmFormulaIngredientsEditor');
     if (editor) editor.style.display = 'none';
+    const preview = document.getElementById('formulaPreview');
+    if (preview) preview.innerHTML = '';
 
     refreshRMOutFormControls();
-}
-
-function toggleRMOutMode() {
-    const mode = document.querySelector('input[name="rmOutMode"]:checked')?.value || 'SINGLE';
-    setRMOutMode(mode);
 }
 
 function refreshRMOutFormControls() {
@@ -6986,7 +6985,8 @@ async function clearRMConsumptionHistory() {
 
 async function saveRMTransaction(type) {
     const saveBtn = type === 'IN' ? document.getElementById('rmInSaveBtn') : document.getElementById('rmOutSaveBtn');
-    const mode = type === 'OUT' ? (document.querySelector('input[name="rmOutMode"]:checked')?.value || 'SINGLE') : 'SINGLE';
+    const modeInput = document.getElementById('rmOutMode');
+    const mode = type === 'OUT' ? (modeInput ? modeInput.value : 'SINGLE') : 'SINGLE';
     if (saveBtn) {
         saveBtn.disabled = true;
         saveBtn.innerText = 'Saving...';
