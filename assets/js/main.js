@@ -5513,7 +5513,7 @@ function generateProductionReport() {
 
     // Grand Summary
     html += `
-        <div style="margin-top: 3rem; background: white; border-radius: 12px; border: 2px solid var(--sky-500); overflow: hidden;">
+        <div class="print-page-break" style="margin-top: 3rem; background: white; border-radius: 12px; border: 2px solid var(--sky-500); overflow: hidden; page-break-before: always;">
             <div style="background: var(--sky-500); color: white; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
                 <h3 style="margin: 0; font-size: 1.2rem; font-weight: 800; letter-spacing: 0.5px;">🚀 OVERALL PRODUCTION SUMMARY</h3>
                 <span style="font-size: 0.75rem; opacity: 0.8;">Generated: ${new Date().toLocaleString()}</span>
@@ -5662,14 +5662,11 @@ function printProductionReport() {
                         body { padding: 0; }
                         .audit-group { border: 1px solid #000; }
                         .audit-table th, .audit-table td { border: 1px solid #000; }
+                        .print-page-break { page-break-before: always !important; margin-top: 0 !important; }
                     }
                 </style>
             </head>
             <body>
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <h1 style="margin: 0; color: #0284c7;">Production Summary Report</h1>
-                    <div style="color: #666;">Period: ${fromDate} to ${toDate}</div>
-                </div>
                 ${reportContent}
             </body>
         </html>
