@@ -6320,6 +6320,8 @@ function setRMOutMode(mode) {
     if (editor) editor.style.display = 'none';
     const preview = document.getElementById('formulaPreview');
     if (preview) preview.innerHTML = '';
+    const cancelBtn = document.getElementById('rmOutFormulaCancelBtn');
+    if (cancelBtn) cancelBtn.style.display = 'none';
 
     refreshRMOutFormControls();
 }
@@ -6419,14 +6421,18 @@ function previewFormulaUsage() {
         list.appendChild(totalRow);
     }
 
+    const cancelBtn = document.getElementById('rmOutFormulaCancelBtn');
     if (preview) preview.innerHTML = text;
     if (editor) editor.style.display = 'block';
+    if (cancelBtn) cancelBtn.style.display = 'inline-block';
 }
 
 function clearFormulaSelection() {
     const select = document.getElementById('rmOutFormulaSelect');
+    const cancelBtn = document.getElementById('rmOutFormulaCancelBtn');
     if (select) {
         select.value = '';
+        if (cancelBtn) cancelBtn.style.display = 'none';
         previewFormulaUsage();
     }
 }

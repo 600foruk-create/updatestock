@@ -52,10 +52,7 @@
         <div id="rmOutFormulaContainer" style="display: none; background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--sky-200); margin-bottom: 1rem; border-left: 5px solid var(--sky-500);">
             <div style="display: grid; grid-template-columns: 1.5fr 1fr 1.5fr; gap: 1.5rem; align-items: flex-end;">
                 <div class="form-group" style="margin-bottom: 0;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <label style="font-weight: 700; color: var(--gray-700); font-size: 0.9rem; margin: 0;">Select Production Formula</label>
-                        <button class="btn btn-sm" onclick="setRMOutMode('SINGLE')" style="background: var(--gray-200); color: var(--gray-700); border: 1px solid var(--gray-300); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer;">✖ Cancel & Go Back</button>
-                    </div>
+                    <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Select Production Formula</label>
                     <select id="rmOutFormulaSelect" class="form-control" onchange="previewFormulaUsage()" style="height: 48px; padding: 0.6rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid var(--sky-500); width: 100%; background: white;"></select>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
@@ -73,15 +70,13 @@
 
         <!-- NEW: Formula Editor moved OUTSIDE the grid to prevent layout shifts -->
         <div id="rmFormulaIngredientsEditor" style="display: none; margin-top: 1.5rem; padding: 1.2rem; background: #fffbff; border: 1px dashed var(--error); border-radius: 12px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 2px solid var(--error); padding-bottom: 8px;">
-                <h4 style="font-size: 0.85rem; color: var(--error); margin: 0; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Edit Quantities for this Batch:</h4>
-                <button class="btn btn-sm" onclick="clearFormulaSelection()" style="background: var(--error); color: white; border: none; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; cursor: pointer;">✖ Cancel Selection</button>
-            </div>
+            <h4 style="font-size: 0.85rem; color: var(--error); margin-bottom: 0.8rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; border-bottom: 2px solid var(--error); display: inline-block; padding-bottom: 2px;">Edit Quantities for this Batch:</h4>
             <div id="rmFormulaIngredientsList" style="display: flex; flex-direction: column; gap: 0.8rem;"></div>
         </div>
         
-        <div style="margin-top: 2rem; padding-bottom: 10px;">
+        <div style="margin-top: 2rem; padding-bottom: 10px; display: flex; gap: 1rem; align-items: center;">
             <button id="rmOutSaveBtn" class="btn btn-primary" style="background: var(--sky-600); color: white !important; display: inline-block; width: auto; padding: 0.7rem 3rem; font-size: 1.1rem; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 0 var(--sky-800); border: none; cursor: pointer; transition: 0.2s;" onclick="saveRMTransaction('OUT')">Save</button>
+            <button id="rmOutFormulaCancelBtn" class="btn btn-danger" style="display: none; background: var(--error); color: white !important; padding: 0.7rem 2rem; font-size: 1rem; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 0 #991b1b; border: none; cursor: pointer; transition: 0.2s;" onclick="clearFormulaSelection()">Cancel Selection</button>
         </div>
     </div>
 
