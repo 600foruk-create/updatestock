@@ -5436,7 +5436,8 @@ function generateProductionReport() {
                             <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Weight</th>
                             <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Qty</th>
                             <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Total KG</th>
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200); background: #f0f9ff;">Value</th>
+                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200); background: #f0f9ff; color: #0369a1;">Rate/KG</th>
+                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200); background: #f0f9ff; color: #0369a1;">Value</th>
                         </tr>
                     </thead>
                     <tbody>`;
@@ -5454,6 +5455,7 @@ function generateProductionReport() {
                 <td style="padding: 0.7rem; text-align: center;">${w.toFixed(2)}</td>
                 <td style="padding: 0.7rem; text-align: center; font-weight: 700;">${q}</td>
                 <td style="padding: 0.7rem; text-align: center; font-weight: 700; color: var(--sky-600);">${entryKg.toFixed(2)}</td>
+                <td style="padding: 0.7rem; text-align: center; color: #0369a1; font-weight: 600;">${brandRate.toFixed(2)}</td>
                 <td style="padding: 0.7rem; text-align: center; font-weight: 700; color: #0369a1; background: #f0f9ff;">${entryValue.toFixed(2)}</td>
             </tr>`;
         });
@@ -5461,6 +5463,9 @@ function generateProductionReport() {
         grandPcs += bPcs;
         grandKg += bKg;
         grandValue += totalRMCost;
+
+        const bRMKg = Object.values(rmSummary).reduce((s, i) => s + i.qty, 0);
+        const bGap = bRMKg - bKg;
         
         html += `</tbody>
                 <tfoot style="background: var(--gray-50); font-weight: 800;">
@@ -5468,7 +5473,7 @@ function generateProductionReport() {
                         <td colspan="4" style="text-align: right; padding: 0.8rem;">${brandName} Totals:</td>
                         <td style="text-align: center;">${bPcs.toLocaleString()}</td>
                         <td style="text-align: center; color: var(--sky-600);">${bKg.toLocaleString()} KG</td>
-                        <td style="text-align: center; color: #0369a1; background: #e0f2fe;">Rs. ${totalRMCost.toLocaleString()}</td>
+                        <td colspan="2" style="text-align: center; color: #0369a1; background: #e0f2fe;">Total Material Value: Rs. ${totalRMCost.toLocaleString()}</td>
                     </tr>
                 </tfoot>
             </table>
@@ -5477,7 +5482,11 @@ function generateProductionReport() {
                 <div style="background: #f8fafc; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--gray-100);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; border-bottom: 1px solid var(--gray-200); padding-bottom: 5px;">
                         <h6 style="margin: 0; font-size: 0.7rem; text-transform: uppercase; color: var(--gray-500); letter-spacing: 0.5px; font-weight: 800;">Material Consumption Summary:</h6>
-                        <div style="font-size: 0.8rem; font-weight: 900; color: var(--gray-700);">Brand RM Total: <span style="color: var(--error);">${Object.values(rmSummary).reduce((s, i) => s + i.qty, 0).toLocaleString()} KG</span></div>
+                        <div style="display: flex; gap: 15px; font-size: 0.8rem; font-weight: 900;">
+                            <div style="color: var(--gray-700);">Material: <span style="color: var(--error);">${bRMKg.toLocaleString()} KG</span></div>
+                            <div style="color: var(--gray-700);">Production: <span style="color: var(--sky-600);">${bKg.toLocaleString()} KG</span></div>
+                            <div style="color: ${bGap > 0 ? 'var(--error)' : 'var(--success)'};">Gap: ${bGap.toLocaleString()} KG</div>
+                        </div>
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px;">
                         ${Object.keys(rmSummary).sort().map(name => `
