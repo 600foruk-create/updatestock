@@ -32,7 +32,7 @@ let rmPhysicalStockMap = JSON.parse(localStorage.getItem('rmPhysicalStockMap') |
 
 let auditSession = {}; // Correctly initialized global session
 let auditRecords = [];
-let systemDateFormat = 'DD-MM-YYYY'; // Default format
+let systemDateFormat = 'DD-MMM-YYYY'; // Default format: 05-May-2026
 
 // Company Settings
 let companySettings = {
@@ -660,12 +660,12 @@ function formatDate(dateString, includeTime = true) {
     const monthShort = monthNames[d.getMonth()];
     
     let formattedDate = "";
-    switch (window.systemDateFormat) {
+    switch (window.systemDateFormat || systemDateFormat) {
         case 'DD-MMM-YYYY': formattedDate = `${day}-${monthShort}-${year}`; break;
         case 'DD-MM-YYYY':  formattedDate = `${day}-${month}-${year}`; break;
         case 'DD/MM/YYYY':  formattedDate = `${day}/${month}/${year}`; break;
         case 'YYYY-MM-DD':  formattedDate = `${year}-${month}-${day}`; break;
-        default:            formattedDate = `${day}-${month}-${year}`;
+        default:            formattedDate = `${day}-${monthShort}-${year}`; // Fallback to user preferred
     }
     
     if (includeTime) {

@@ -1938,8 +1938,13 @@
 
         function formatDate(dateString) {
             if (!dateString) return '';
-            let date = new Date(dateString);
-            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString().slice(0, 5);
+            const d = new Date(dateString);
+            if (isNaN(d.getTime())) return dateString;
+            const day = String(d.getDate()).padStart(2, '0');
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const monthShort = monthNames[d.getMonth()];
+            const year = d.getFullYear();
+            return `${day}-${monthShort}-${year}`;
         }
 
         function filterTable(tableId, searchText) {
