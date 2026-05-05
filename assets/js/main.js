@@ -6708,15 +6708,17 @@ async function saveRMConsumptionEntry() {
     await autoSaveRMConsumption();
 }
 
-async function autoSaveRMConsumption() {
+async function autoSaveRMConsumption(targetDate = null) {
     // 1. Calculate FG Total (Same logic as refreshRMConsumptionReport)
-    let lastFGDate = null;
-    transactions.forEach(t => {
-        if (t.type === 'IN') {
-            const d = new Date(t.date);
-            if (!isNaN(d.getTime()) && (!lastFGDate || d > lastFGDate)) lastFGDate = d;
-        }
-    });
+    let lastFGDate = targetDate ? new Date(targetDate) : null;
+    if (!targetDate) {
+        transactions.forEach(t => {
+            if (t.type === 'IN') {
+                const d = new Date(t.date);
+                if (!isNaN(d.getTime()) && (!lastFGDate || d > lastFGDate)) lastFGDate = d;
+            }
+        });
+    }
 
     let fgTotalKg = 0;
     if (lastFGDate) {
@@ -6729,13 +6731,15 @@ async function autoSaveRMConsumption() {
     }
 
     // 2. Calculate RM Totals (Same logic as refreshRMConsumptionReport)
-    let lastRMDate = null;
-    rmTransactions.forEach(t => {
-        if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:')) {
-            const d = new Date(t.date);
-            if (!isNaN(d.getTime()) && (!lastRMDate || d > lastRMDate)) lastRMDate = d;
-        }
-    });
+    let lastRMDate = targetDate ? new Date(targetDate) : null;
+    if (!targetDate) {
+        rmTransactions.forEach(t => {
+            if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:')) {
+                const d = new Date(t.date);
+                if (!isNaN(d.getTime()) && (!lastRMDate || d > lastRMDate)) lastRMDate = d;
+            }
+        });
+    }
 
     let rmTotalKg = 0;
     let rmTotalValue = 0;
@@ -6761,7 +6765,7 @@ async function autoSaveRMConsumption() {
     if (fgTotalKg === 0 && rmTotalKg === 0) return;
 
     const gapVal = rmTotalKg - fgTotalKg;
-    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const now = targetDate ? (targetDate + " 23:59:59") : new Date().toISOString().slice(0, 19).replace('T', ' ');
 
     const log = {
         date: now,
@@ -6781,10 +6785,16 @@ async function autoSaveRMConsumption() {
         const result = await response.json();
         if (result.status === 'success') {
             log.id = result.id;
-            rmConsumptionLogs.unshift(log);
+            if (result.action === 'updated') {
+                const idx = rmConsumptionLogs.findIndex(l => l.id == result.id);
+                if (idx !== -1) rmConsumptionLogs[idx] = log;
+            } else {
+                rmConsumptionLogs.unshift(log);
+            }
             populateRMHistoryYearFilter(); 
             refreshRMConsumptionHistory();
-            alert('Daily entry saved successfully!');
+            // Standardizing message
+            console.log('Daily consumption report synced.');
         }
     } catch (e) { console.error('Failed to save log:', e); }
 }
@@ -7121,9 +7131,8 @@ async function saveRMTransaction(type) {
         if (document.getElementById('rmInConversionHint')) document.getElementById('rmInConversionHint').innerText = '';
         if (document.getElementById('rmOutConversionHint')) document.getElementById('rmOutConversionHint').innerText = '';
 
-        // Auto-save consumption snapshot (non-critical, wrap in try/catch)
         try {
-            await autoSaveRMConsumption();
+            await autoSaveRMConsumption(customDateValue);
         } catch (e) {
             console.warn('Auto-save consumption failed:', e);
         }

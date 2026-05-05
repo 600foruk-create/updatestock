@@ -353,9 +353,24 @@ try {
 
         elseif ($action === 'save_rm_consumption_log') {
             $log = $input['log'];
-            $stmt = $conn->prepare("INSERT INTO rm_consumption_logs (date, fg_weight, rm_weight, rm_value, other_expenses, in_process, gap, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$log['date'] ?? date('Y-m-d H:i:s'), $log['fg_weight'], $log['rm_weight'], $log['rm_value'] ?? 0, $log['other_expenses'] ?? 0, $log['in_process'] ?? 0, $log['gap'], $log['notes'] ?? '']);
-            echo json_encode(['status' => 'success', 'id' => $conn->lastInsertId()]);
+            $dateOnly = date('Y-m-d', strtotime($log['date'] ?? date('Y-m-d')));
+            
+            // Check if entry for this date already exists
+            $check = $conn->prepare("SELECT id FROM rm_consumption_logs WHERE DATE(date) = ?");
+            $check->execute([$dateOnly]);
+            $existing = $check->fetch(PDO::FETCH_ASSOC);
+            
+            if ($existing) {
+                // Update existing record with the NEW cumulative totals
+                $stmt = $conn->prepare("UPDATE rm_consumption_logs SET fg_weight = ?, rm_weight = ?, rm_value = ?, gap = rm_weight - fg_weight - in_process WHERE id = ?");
+                $stmt->execute([$log['fg_weight'], $log['rm_weight'], $log['rm_value'] ?? 0, $existing['id']]);
+                echo json_encode(['status' => 'success', 'id' => $existing['id'], 'action' => 'updated']);
+            } else {
+                // Insert new record
+                $stmt = $conn->prepare("INSERT INTO rm_consumption_logs (date, fg_weight, rm_weight, rm_value, other_expenses, in_process, gap, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$log['date'] ?? date('Y-m-d H:i:s'), $log['fg_weight'], $log['rm_weight'], $log['rm_value'] ?? 0, $log['other_expenses'] ?? 0, $log['in_process'] ?? 0, $log['gap'], $log['notes'] ?? '[Auto]']);
+                echo json_encode(['status' => 'success', 'id' => $conn->lastInsertId(), 'action' => 'inserted']);
+            }
         }
 
         elseif ($action === 'save_rm_consumption_in_process') {
