@@ -7247,41 +7247,6 @@ function updateRMConversionHint(type) {
     }
 }
 
-/**
- * Enhanced RM Out Mode Toggle
- */
-function setRMOutMode(mode) {
-    document.querySelectorAll('input[name="rmOutMode"]').forEach(radio => {
-        if (radio.value === mode) radio.checked = true;
-    });
-    
-    // UI toggles
-    if (document.getElementById('rmOutSingleGroup')) document.getElementById('rmOutSingleGroup').style.display = (mode === 'SINGLE') ? 'block' : 'none';
-    if (document.getElementById('rmOutFormulaGroup')) document.getElementById('rmOutFormulaGroup').style.display = (mode === 'FORMULA') ? 'block' : 'none';
-    if (document.getElementById('rmFormulaIngredientsEditor')) document.getElementById('rmFormulaIngredientsEditor').style.display = (mode === 'FORMULA') ? 'block' : 'none';
-    if (document.getElementById('formulaPreview')) document.getElementById('formulaPreview').style.display = (mode === 'FORMULA') ? 'block' : 'none';
-    
-    document.querySelectorAll('.mode-toggle-btn').forEach(btn => btn.classList.remove('active'));
-    if (document.getElementById(`modeBtn_${mode}`)) document.getElementById(`modeBtn_${mode}`).classList.add('active');
-
-    // Unit toggle
-    const unitSelect = document.getElementById('rmOutUnitSelect');
-    if (unitSelect) {
-        const batchesOpt = [...unitSelect.options].find(o => o.value === 'Multiplier');
-        if (mode === 'FORMULA') {
-            unitSelect.value = 'Multiplier';
-            if (batchesOpt) batchesOpt.style.display = 'block';
-            [...unitSelect.options].forEach(o => { if(o.value !== 'Multiplier') o.style.display = 'none'; });
-            if (document.getElementById('rmOutQtyLabel')) document.getElementById('rmOutQtyLabel').innerText = 'Number of Batches';
-        } else {
-            unitSelect.value = 'KG';
-            if (batchesOpt) batchesOpt.style.display = 'none';
-            [...unitSelect.options].forEach(o => { if(o.value !== 'Multiplier') o.style.display = 'block'; });
-            if (document.getElementById('rmOutQtyLabel')) document.getElementById('rmOutQtyLabel').innerText = 'Quantity';
-        }
-    }
-    updateRMConversionHint('OUT');
-}
 
 // ==================== RM IN LOGIC ====================
 
@@ -7289,16 +7254,6 @@ function refreshRMInFormControls() {
     const dateInput = document.getElementById('rmInDate');
     if (dateInput && !dateInput.value) {
         dateInput.value = new Date().toISOString().split('T')[0];
-    }
-    const itemSelect = document.getElementById('rmInSelect');
-    if (itemSelect) {
-        itemSelect.innerHTML = '<option value="">-- Select Material --</option>';
-        rmItems.sort((a,b) => a.name.localeCompare(b.name)).forEach(i => {
-            const opt = document.createElement('option');
-            opt.value = i.id;
-            opt.innerText = `${i.name} (Current: ${i.stock} ${i.unit})`;
-            itemSelect.appendChild(opt);
-        });
     }
     refreshRMInHistoryTable();
 }
