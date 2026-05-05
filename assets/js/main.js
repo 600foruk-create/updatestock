@@ -318,20 +318,18 @@ function loadLocalData() {
 function loadLegacyData() { loadLocalData(); } // For backward compatibility in catch blocks
 
 function saveData() {
-    localStorage.setItem('stock_orders', JSON.stringify(orders || []));
-    localStorage.setItem('stock_customers', JSON.stringify(customers || []));
-    localStorage.setItem('stock_transactions', JSON.stringify(transactions || []));
-    localStorage.setItem('stock_items', JSON.stringify(items || []));
-    localStorage.setItem('stock_mainCat', JSON.stringify(mainCategories || []));
-    localStorage.setItem('stock_subCat', JSON.stringify(subCategories || []));
-    localStorage.setItem('stock_rawMaterials', JSON.stringify(rawMaterials || []));
-    localStorage.setItem('stock_storeItems', JSON.stringify(storeItems || []));
-    localStorage.setItem('stock_rmTransactions', JSON.stringify(rmTransactions || []));
-    localStorage.setItem('stock_usedOrders', JSON.stringify(Array.from(usedCompletedOrders || [])));
-    localStorage.setItem('stock_company', JSON.stringify(companySettings));
-    localStorage.setItem('stock_users', JSON.stringify(users || []));
-    if (currentUser) {
-        localStorage.setItem('stock_currentUser', JSON.stringify(currentUser));
+    try {
+        localStorage.setItem('stock_rawMaterials', JSON.stringify(rawMaterials || []));
+        localStorage.setItem('stock_storeItems', JSON.stringify(storeItems || []));
+        localStorage.setItem('stock_rmTransactions', JSON.stringify(rmTransactions || []));
+        localStorage.setItem('stock_usedOrders', JSON.stringify(Array.from(usedCompletedOrders || [])));
+        localStorage.setItem('stock_company', JSON.stringify(companySettings));
+        localStorage.setItem('stock_users', JSON.stringify(users || []));
+        if (currentUser) {
+            localStorage.setItem('stock_currentUser', JSON.stringify(currentUser));
+        }
+    } catch (e) {
+        console.warn('LocalStorage save failed:', e);
     }
 }
 
@@ -3027,20 +3025,20 @@ async function saveProduction() {
                 errors.push(`Server error for ${item.name}`);
             }
         }
+        if (errors.length > 0) {
+            alert('Some items failed to save:\n' + errors.join('\n'));
+        }
 
-        if (errors.length > 0) alert('Errors:\n' + errors.join('\n'));
+        // UI Updates & Refresh
+        try {
+            hideAllForms();
+            await initApp(); // Full synchronization from server
+            refreshTransactions(); // Specifically refresh transactions table
+        } catch (uiErr) {
+            console.warn('UI refresh error:', uiErr);
+        }
         
-        // Clear Entry Data as requested
-        document.getElementById('productionRows').innerHTML = '';
-        
-        saveData(); 
-        refreshTransactions(); 
-        refreshDashboard(); 
-        refreshStockList(); 
-        refreshLowStockReport(); 
-        hideAllForms();
-        
-        // Auto-save consumption snapshot (non-critical, wrap in try/catch)
+        // Auto-save consumption snapshot (non-critical background task)
         try {
             await autoSaveRMConsumption();
         } catch (e) {
@@ -3050,7 +3048,7 @@ async function saveProduction() {
         alert('Successfully saved!');
     } catch (err) {
         console.error('saveProduction Error:', err);
-        alert('Data saved to database, but there was a minor error updating the screen. Please refresh.');
+        alert('Error: Data might not have saved correctly. Please check your internet and try again.');
     } finally {
         if (saveBtn) {
             saveBtn.disabled = false;
@@ -3143,7 +3141,12 @@ async function saveSale() {
         }
     }
     
-    saveData(); refreshTransactions(); refreshDashboard(); refreshStockList(); refreshLowStockReport(); hideAllForms(); refreshCompletedOrderDropdown();
+    try {
+        saveData(); refreshTransactions(); refreshDashboard(); refreshStockList(); refreshLowStockReport(); hideAllForms(); refreshCompletedOrderDropdown();
+        await initApp();
+    } catch (uiErr) {
+        console.warn('UI refresh minor error:', uiErr);
+    }
     alert('Successfully saved!');
 }
 
