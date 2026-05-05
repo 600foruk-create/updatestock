@@ -52,7 +52,10 @@
         <div id="rmOutFormulaContainer" style="display: none; background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--sky-200); margin-bottom: 1rem; border-left: 5px solid var(--sky-500);">
             <div style="display: grid; grid-template-columns: 1.5fr 1fr 1.5fr; gap: 1.5rem; align-items: flex-end;">
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Select Production Formula</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label style="font-weight: 700; color: var(--gray-700); font-size: 0.9rem; margin: 0;">Select Production Formula</label>
+                        <button class="btn btn-sm" onclick="setRMOutMode('SINGLE')" style="background: var(--gray-200); color: var(--gray-700); border: 1px solid var(--gray-300); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer;">✖ Cancel & Go Back</button>
+                    </div>
                     <select id="rmOutFormulaSelect" class="form-control" onchange="previewFormulaUsage()" style="height: 48px; padding: 0.6rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid var(--sky-500); width: 100%; background: white;"></select>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
