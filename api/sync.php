@@ -154,11 +154,6 @@ try {
                     if (!in_array('permissions', $userCols)) $conn->exec("ALTER TABLE users ADD COLUMN permissions TEXT DEFAULT NULL");
                 } catch(Exception $e) {}
 
-                // AUTO-REPAIR: Set Default Date Format
-                $conn->exec("INSERT IGNORE INTO settings (category, `key`, value) VALUES ('system', 'date_format', 'DD-MMM-YYYY')");
-                // Force update for everyone
-                $conn->exec("UPDATE settings SET value = 'DD-MMM-YYYY' WHERE `key` = 'date_format' AND category = 'system'");
-                
                 // AUTO-REPAIR: Add main_id to rm_formulas
                 try {
                     $rfCols = $conn->query("SHOW COLUMNS FROM rm_formulas")->fetchAll(PDO::FETCH_COLUMN);
