@@ -185,6 +185,11 @@ async function initApp() {
 
             saveData(); // Sync to local backup
             updateOrderFilterCounts();
+            // Populate year dropdown and default to current month/year
+            populateOrderYearFilter();
+            const _now = new Date();
+            const _mSel = document.getElementById('orderMonthFilter');
+            if (_mSel && !_mSel.value) _mSel.value = _now.getMonth() + 1;
         } else {
             console.warn('StockFlow: SQL returned error state:', result.message);
             loadLegacyData();
@@ -3424,18 +3429,43 @@ async function saveNewOrder() {
 let currentOrderFilter = 'all';
 let ordersViewCleared = false;
 
+function populateOrderYearFilter() {
+    const yearSel = document.getElementById('orderYearFilter');
+    if (!yearSel) return;
+    const currentVal = yearSel.value;
+    const years = [...new Set(orders.map(o => new Date(o.date).getFullYear()))].filter(y => !isNaN(y)).sort((a,b) => b - a);
+    let html = '<option value="">All Years</option>';
+    years.forEach(y => { html += `<option value="${y}">${y}</option>`; });
+    yearSel.innerHTML = html;
+    // Restore or default to current year
+    const nowYear = new Date().getFullYear();
+    if (currentVal) { yearSel.value = currentVal; }
+    else if (years.includes(nowYear)) { yearSel.value = nowYear; }
+}
+
 function updateOrderFilterCounts() {
-    const counts = {
-        all: orders.length,
-        pending: orders.filter(o => (o.status || '').toLowerCase() === 'pending').length,
-        processing: orders.filter(o => (o.status || '').toLowerCase() === 'processing').length,
-        completed: orders.filter(o => (o.status || '').toLowerCase() === 'completed').length
+    // Get selected month/year to keep counts in sync with current filter
+    const selMonth = document.getElementById('orderMonthFilter')?.value;
+    const selYear  = document.getElementById('orderYearFilter')?.value;
+
+    const inPeriod = (o) => {
+        const d = new Date(o.date);
+        const mMatch = !selMonth || (d.getMonth() + 1) == selMonth;
+        const yMatch = !selYear  || d.getFullYear()  == selYear;
+        return mMatch && yMatch;
     };
 
-    if (document.getElementById('count-all')) document.getElementById('count-all').innerText = counts.all;
-    if (document.getElementById('count-pending')) document.getElementById('count-pending').innerText = counts.pending;
+    const counts = {
+        all:        orders.filter(o => inPeriod(o)).length,
+        pending:    orders.filter(o => inPeriod(o) && (o.status || '').toLowerCase() === 'pending').length,
+        processing: orders.filter(o => inPeriod(o) && (o.status || '').toLowerCase() === 'processing').length,
+        completed:  orders.filter(o => inPeriod(o) && (o.status || '').toLowerCase() === 'completed').length
+    };
+
+    if (document.getElementById('count-all'))        document.getElementById('count-all').innerText        = counts.all;
+    if (document.getElementById('count-pending'))    document.getElementById('count-pending').innerText    = counts.pending;
     if (document.getElementById('count-processing')) document.getElementById('count-processing').innerText = counts.processing;
-    if (document.getElementById('count-completed')) document.getElementById('count-completed').innerText = counts.completed;
+    if (document.getElementById('count-completed'))  document.getElementById('count-completed').innerText  = counts.completed;
 }
 
 function refreshOrdersList(filter = null) {
@@ -3489,7 +3519,14 @@ function refreshOrdersList(filter = null) {
         const to = toDate ? new Date(toDate).setHours(0,0,0,0) : null;
         const dateMatch = (!from || orderDate >= from) && (!to || orderDate <= to);
         
-        return statusMatch && searchMatch && dateMatch;
+        // Month / Year filter
+        const selMonth = document.getElementById('orderMonthFilter')?.value;
+        const selYear  = document.getElementById('orderYearFilter')?.value;
+        const od = new Date(o.date);
+        const monthMatch = !selMonth || (od.getMonth() + 1) == selMonth;
+        const yearMatch  = !selYear  || od.getFullYear()    == selYear;
+
+        return statusMatch && searchMatch && dateMatch && monthMatch && yearMatch;
     });
 
     // Ensure latest orders are always at the top
@@ -3577,6 +3614,12 @@ function resetOrderFilters() {
     document.getElementById('orderSearch').value = '';
     document.getElementById('orderDateFrom').value = '';
     document.getElementById('orderDateTo').value = '';
+    // Reset month/year to current month/year
+    const now = new Date();
+    const monthSel = document.getElementById('orderMonthFilter');
+    const yearSel  = document.getElementById('orderYearFilter');
+    if (monthSel) monthSel.value = now.getMonth() + 1;
+    if (yearSel)  yearSel.value  = now.getFullYear();
     currentOrderFilter = 'all';
     refreshOrdersList();
 }

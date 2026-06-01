@@ -11,6 +11,27 @@
 
                     <div class="filter-bar" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; background: var(--gray-50); padding: 1rem; border-radius: 10px; border: 1px solid var(--gray-200);">
                         <input type="text" id="orderSearch" placeholder="Search Customer Name..." onkeyup="refreshOrdersList()" style="flex: 2; min-width: 200px; padding: 0.6rem; border: 1px solid var(--gray-300); border-radius: 8px;">
+                        
+                        <!-- Month / Year Filter -->
+                        <select id="orderMonthFilter" onchange="refreshOrdersList()" style="padding: 0.6rem; border: 1px solid var(--gray-300); border-radius: 8px; min-width: 130px;">
+                            <option value="">All Months</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                        <select id="orderYearFilter" onchange="refreshOrdersList()" style="padding: 0.6rem; border: 1px solid var(--gray-300); border-radius: 8px; min-width: 100px;">
+                            <option value="">All Years</option>
+                        </select>
+
                         <div style="display: flex; align-items: center; gap: 0.5rem; flex: 1; min-width: 300px;">
                             <input type="date" id="orderDateFrom" onchange="refreshOrdersList()" style="padding: 0.6rem; border: 1px solid var(--gray-300); border-radius: 8px; flex: 1;">
                             <span style="color: var(--gray-500);">to</span>
