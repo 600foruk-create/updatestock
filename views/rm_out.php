@@ -57,7 +57,7 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                     <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Batch Multiplier</label>
-                    <input type="number" id="rmOutFormulaQty" class="form-control" style="height: 48px; padding: 0.6rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid #cbd5e1; background: white; width: 100%;" value="1" step="0.1" oninput="previewFormulaUsage()">
+                    <input type="number" id="rmOutFormulaQty" class="form-control" style="height: 48px; padding: 0.6rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid #cbd5e1; background: white; width: 100%;" value="1" step="0.1" oninput="recalculateFormulaTotalValue()">
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                     <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Formula Reference Notes</label>

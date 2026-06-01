@@ -6667,26 +6667,33 @@ function recalculateFormulaTotalValue() {
     const list = document.getElementById('rmFormulaIngredientsList');
     if (!list) return;
     
+    // Get the batch multiplier to calculate the correct totals
+    const multiplierInput = document.getElementById('rmOutFormulaQty');
+    const multiplier = parseFloat(multiplierInput ? multiplierInput.value : 1) || 1;
+
     const inputs = list.querySelectorAll('.rm-formula-custom-qty');
     let total = 0;
     inputs.forEach(input => {
         const itemId = input.dataset.itemId;
-        const qty = parseFloat(input.value) || 0;
+        const baseQty = parseFloat(input.value) || 0;
         const item = rmItems.find(i => i.id == itemId);
         const price = getRMItemCurrentPrice(item);
+        
+        // Subtotal for this item (Base Qty * Multiplier * Price)
+        const subtotal = (baseQty * multiplier) * price;
         
         // Update subtotal display in that row
         const row = input.parentElement;
         const subtotalEl = row.children[3];
         if (subtotalEl) {
-            subtotalEl.innerText = 'Rs. ' + (qty * price).toLocaleString();
+            subtotalEl.innerText = 'Rs. ' + subtotal.toLocaleString(undefined, {maximumFractionDigits: 0});
         }
         
-        total += qty * price;
+        total += subtotal;
     });
     
     const display = document.getElementById('formulaTotalValueDisplay');
-    if (display) display.innerText = 'Rs. ' + total.toLocaleString();
+    if (display) display.innerText = 'Rs. ' + total.toLocaleString(undefined, {maximumFractionDigits: 0});
 }
 
 function updateRMOutMetrics() {
