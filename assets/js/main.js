@@ -6936,10 +6936,30 @@ async function autoSaveRMConsumption(targetDate = null) {
     if (fgTotalKg === 0 && rmTotalKg === 0) return;
 
     const gapVal = rmTotalKg - fgTotalKg;
-    const now = targetDate ? (targetDate + " 23:59:59") : new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+    // Use the actual transaction date (not today's date) so the log entry
+    // matches the date of the production/issuance, even if entered the next day
+    let logDateStr;
+    if (targetDate) {
+        logDateStr = targetDate + " 23:59:59";
+    } else {
+        // Pick the most recent date between lastFGDate and lastRMDate
+        const refDate = (lastFGDate && lastRMDate)
+            ? (lastFGDate > lastRMDate ? lastFGDate : lastRMDate)
+            : (lastFGDate || lastRMDate);
+        if (refDate) {
+            // Format as YYYY-MM-DD 23:59:59
+            const y = refDate.getFullYear();
+            const m = String(refDate.getMonth() + 1).padStart(2, '0');
+            const d = String(refDate.getDate()).padStart(2, '0');
+            logDateStr = `${y}-${m}-${d} 23:59:59`;
+        } else {
+            logDateStr = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        }
+    }
 
     const log = {
-        date: now,
+        date: logDateStr,
         fg_weight: fgTotalKg,
         rm_weight: rmTotalKg,
         rm_value: rmTotalValue,
