@@ -7009,10 +7009,9 @@ function refreshRMConsumptionReport() {
                 </div>
             </div>`;
 
-            // Auto-save brand log if there's any data today/yesterday
+            // Auto-save brand log if there's any data
             if (fg > 0 || rm > 0) {
-                const logDate = (lastFGDate && (lastFGDate.toDateString()===todayStr||lastFGDate.toDateString()===yesterdayStr))
-                    ? lastFGDate : lastRMDate;
+                const logDate = targetDateObj;
                 if (logDate) {
                     const y = logDate.getFullYear(), m = String(logDate.getMonth()+1).padStart(2,'0'), d2 = String(logDate.getDate()).padStart(2,'0');
                     const dateStr = `${y}-${m}-${d2} 23:59:59`;
