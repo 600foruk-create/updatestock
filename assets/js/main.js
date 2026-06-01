@@ -7183,20 +7183,7 @@ function showBrandHistoryModal(brandId) {
                     <div style="font-size:0.85rem;opacity:0.9;margin-top:4px;">Brand-wise Consumption Log</div>
                 </div>
                 <div style="display:flex; gap:0.5rem;">
-                    <button onclick="
-                        const c = document.getElementById('bhmContainer');
-                        if(c.style.maxWidth === '1000px') {
-                            c.style.maxWidth = '100vw';
-                            c.style.height = '100vh';
-                            c.style.maxHeight = '100vh';
-                            c.style.borderRadius = '0';
-                        } else {
-                            c.style.maxWidth = '1000px';
-                            c.style.height = '85vh';
-                            c.style.maxHeight = '85vh';
-                            c.style.borderRadius = '20px';
-                        }
-                    " style="background:rgba(255,255,255,0.2);border:none;color:white;font-size:1.1rem;width:36px;height:36px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'" title="Toggle Fullscreen">🗖</button>
+                    <button onclick="toggleBrandHistoryFullscreen()" style="background:rgba(255,255,255,0.2);border:none;color:white;font-size:1.1rem;width:36px;height:36px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'" title="Toggle Fullscreen">🗖</button>
                     <button onclick="closeBrandHistoryModal()" style="background:rgba(255,255,255,0.2);border:none;color:white;font-size:1.2rem;width:36px;height:36px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'" title="Close">✕</button>
                 </div>
             </div>
@@ -7307,6 +7294,22 @@ function renderBrandHistoryTable(brandId) {
 function closeBrandHistoryModal() {
     const m = document.getElementById('brandHistoryModal');
     if (m) m.remove();
+}
+
+function toggleBrandHistoryFullscreen() {
+    const c = document.getElementById('bhmContainer');
+    if (!c) return;
+    if (c.style.maxWidth === '1000px' || c.style.maxWidth === '') {
+        c.style.maxWidth = '100vw';
+        c.style.height = '100vh';
+        c.style.maxHeight = '100vh';
+        c.style.borderRadius = '0';
+    } else {
+        c.style.maxWidth = '1000px';
+        c.style.height = '85vh';
+        c.style.maxHeight = '85vh';
+        c.style.borderRadius = '20px';
+    }
 }
 
 // ==================== END BRAND HISTORY MODAL ====================
