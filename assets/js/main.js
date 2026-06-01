@@ -6779,10 +6779,14 @@ function exportRMOutToExcel() {
 
 // Process RM Transaction
 function refreshRMConsumptionReport() {
-    // Get today's date string for comparison
-    const todayStr = new Date().toDateString();
+    // Today and yesterday strings (support next-day data entry workflow)
+    const todayObj = new Date();
+    const todayStr = todayObj.toDateString();
+    const yesterdayObj = new Date(todayObj);
+    yesterdayObj.setDate(yesterdayObj.getDate() - 1);
+    const yesterdayStr = yesterdayObj.toDateString();
 
-    // 1. Calculate Latest FG Production (Inbound) - Only if from TODAY
+    // 1. Calculate Latest FG Production (Inbound)
     let lastFGDate = null;
     transactions.forEach(t => {
         if (t.type === 'IN') {
@@ -6791,17 +6795,21 @@ function refreshRMConsumptionReport() {
         }
     });
 
-    // If latest FG transaction is NOT from today → show 0
+    // Show values if latest FG is TODAY or YESTERDAY (next-day entry support)
+    // Show 0 if 2+ days old
     let fgTotalKg = 0;
-    if (lastFGDate && lastFGDate.toDateString() === todayStr) {
-        transactions.forEach(t => {
-            if (t.type === 'IN' && new Date(t.date).toDateString() === todayStr) {
-                fgTotalKg += (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
-            }
-        });
+    if (lastFGDate) {
+        const lastFGStr = lastFGDate.toDateString();
+        if (lastFGStr === todayStr || lastFGStr === yesterdayStr) {
+            transactions.forEach(t => {
+                if (t.type === 'IN' && new Date(t.date).toDateString() === lastFGStr) {
+                    fgTotalKg += (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
+                }
+            });
+        }
     }
 
-    // 2. Calculate Latest RM Formula Issuance (Outbound) - Only if from TODAY
+    // 2. Calculate Latest RM Formula Issuance (Outbound)
     let lastRMDate = null;
     rmTransactions.forEach(t => {
         if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:')) {
@@ -6810,25 +6818,26 @@ function refreshRMConsumptionReport() {
         }
     });
 
-    // If latest RM issuance is NOT from today → show 0
+    // Show values if latest RM issuance is TODAY or YESTERDAY
+    // Show 0 if 2+ days old
     let rmTotalKg = 0;
     let rmTotalValue = 0;
-    if (lastRMDate && lastRMDate.toDateString() === todayStr) {
-        rmTransactions.forEach(t => {
-            if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === todayStr) {
-                const item = rmItems.find(i => i.id == t.rm_item_id);
-                const qty = (parseFloat(t.quantity) || 0);
-                let price = (parseFloat(t.price) || 0);
-
-                // Fallback for old transactions that had 0 price
-                if (price <= 0 && item) {
-                    price = getRMItemCurrentPrice(item);
+    if (lastRMDate) {
+        const lastRMStr = lastRMDate.toDateString();
+        if (lastRMStr === todayStr || lastRMStr === yesterdayStr) {
+            rmTransactions.forEach(t => {
+                if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === lastRMStr) {
+                    const item = rmItems.find(i => i.id == t.rm_item_id);
+                    const qty = (parseFloat(t.quantity) || 0);
+                    let price = (parseFloat(t.price) || 0);
+                    if (price <= 0 && item) {
+                        price = getRMItemCurrentPrice(item);
+                    }
+                    rmTotalKg += qty;
+                    rmTotalValue += qty * price;
                 }
-
-                rmTotalKg += qty;
-                rmTotalValue += qty * price;
-            }
-        });
+            });
+        }
     }
 
     // 3. Update UI Elements
