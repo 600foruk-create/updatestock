@@ -24,6 +24,7 @@ let storeTransactions = [];
 let storeExpandedIds = new Set();
 let rmTransactions = [];
 let rmConsumptionLogs = [];
+let rmBrandConsumptionLogs = [];
 let rmExpandedIds = new Set();
 let orderExpandedIds = new Set();
 let storeMasterLists = { issued_to: [], issued_by: [], purpose: [] };
@@ -94,6 +95,7 @@ async function initApp() {
             rmTransactions = d.rmTransactions || [];
             archivedReports = d.archivedReports || [];
             rmConsumptionLogs = d.rmConsumptionLogs || [];
+            rmBrandConsumptionLogs = d.rmBrandConsumptionLogs || [];
             
             // Extract Store Master Lists from settings
             const sLists = d.settings.filter(s => s.category === 'store_lists');
@@ -6915,11 +6917,13 @@ function refreshRMConsumptionReport() {
         }
     }
 
-    // 4. Brand-wise Breakdown
+    // 4. Brand-wise Breakdown — show ALL brands from mainCategories
     const brandSection = document.getElementById('brandWIPSection');
-    const brandCards  = document.getElementById('brandWIPCards');
-    if (brandCards) {
-        // -- FG by brand (uses t.mainId) --
+    const brandCards   = document.getElementById('brandWIPCards');
+    if (brandCards && mainCategories.length > 0) {
+        if (brandSection) brandSection.style.display = 'block';
+
+        // -- FG by brand (uses t.brand_id / t.mainId) --
         const fgByBrand = {};
         if (lastFGDate) {
             const lastFGStr = lastFGDate.toDateString();
@@ -6933,24 +6937,18 @@ function refreshRMConsumptionReport() {
             }
         }
 
-        // -- RM by brand (extracts formula_id from notes, then formula.main_id) --
+        // -- RM by brand — use t.brand_id directly (already stored on transaction) --
         const rmByBrand = {};
         if (lastRMDate) {
             const lastRMStr = lastRMDate.toDateString();
             if (lastRMStr === todayStr || lastRMStr === yesterdayStr) {
                 rmTransactions.forEach(t => {
                     if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === lastRMStr) {
-                        // Extract formula id from notes: "[Formula: 3]" → 3
-                        const match = t.notes.match(/\[Formula:\s*(\d+)\]/);
-                        const formulaId = match ? match[1] : null;
-                        const formula = formulaId ? rmFormulas.find(f => f.id == formulaId) : null;
-                        const bid = formula && formula.main_id ? formula.main_id : '__none__';
-
+                        const bid = t.brand_id || '__none__';
                         const item = rmItems.find(i => i.id == t.rm_item_id);
                         const qty = (parseFloat(t.quantity) || 0);
                         let price = (parseFloat(t.price) || 0);
                         if (price <= 0 && item) price = getRMItemCurrentPrice(item);
-
                         if (!rmByBrand[bid]) rmByBrand[bid] = { kg: 0, value: 0 };
                         rmByBrand[bid].kg    += qty;
                         rmByBrand[bid].value += qty * price;
@@ -6959,63 +6957,82 @@ function refreshRMConsumptionReport() {
             }
         }
 
-        // Collect all brand IDs that appear in either FG or RM
-        const allBrandIds = [...new Set([...Object.keys(fgByBrand), ...Object.keys(rmByBrand)])];
+        // Predefined color palette for cards
+        const palette = [
+            { bg: '#eff6ff', border: '#3b82f6', text: '#1d4ed8' },
+            { bg: '#f0fdf4', border: '#22c55e', text: '#15803d' },
+            { bg: '#fff7ed', border: '#f97316', text: '#c2410c' },
+            { bg: '#fdf4ff', border: '#a855f7', text: '#7e22ce' },
+            { bg: '#fef2f2', border: '#ef4444', text: '#b91c1c' },
+            { bg: '#f0fdfa', border: '#14b8a6', text: '#0f766e' },
+            { bg: '#fffbeb', border: '#eab308', text: '#92400e' },
+            { bg: '#faf5ff', border: '#8b5cf6', text: '#6d28d9' },
+        ];
 
-        if (allBrandIds.length === 0) {
-            if (brandSection) brandSection.style.display = 'none';
-        } else {
-            if (brandSection) brandSection.style.display = 'block';
+        let html = '';
+        mainCategories.forEach((brand, idx) => {
+            const bid    = brand.id;
+            const clr    = palette[idx % palette.length];
+            const fg     = fgByBrand[bid]  || 0;
+            const rm     = (rmByBrand[bid] || {}).kg    || 0;
+            const val    = (rmByBrand[bid] || {}).value || 0;
+            const wip    = rm - fg;
+            const wipColor = wip < -0.01 ? '#dc2626' : (wip > 0.01 ? '#059669' : '#374151');
 
-            // Predefined color palette for cards
-            const palette = [
-                { bg: '#eff6ff', border: '#3b82f6', text: '#1d4ed8' },
-                { bg: '#f0fdf4', border: '#22c55e', text: '#15803d' },
-                { bg: '#fff7ed', border: '#f97316', text: '#c2410c' },
-                { bg: '#fdf4ff', border: '#a855f7', text: '#7e22ce' },
-                { bg: '#fef2f2', border: '#ef4444', text: '#b91c1c' },
-                { bg: '#f0fdfa', border: '#14b8a6', text: '#0f766e' },
-                { bg: '#fffbeb', border: '#eab308', text: '#92400e' },
-                { bg: '#faf5ff', border: '#8b5cf6', text: '#6d28d9' },
-            ];
-
-            let html = '';
-            allBrandIds.forEach((bid, idx) => {
-                const brand = mainCategories.find(m => m.id == bid);
-                const brandName = brand ? brand.name : (bid === '__none__' ? 'Unlinked' : 'Unknown');
-                const clr = palette[idx % palette.length];
-
-                const fg  = fgByBrand[bid] || 0;
-                const rm  = (rmByBrand[bid] || {}).kg    || 0;
-                const val = (rmByBrand[bid] || {}).value || 0;
-                const wip = rm - fg;
-                const wipColor = wip < -0.01 ? '#dc2626' : (wip > 0.01 ? '#059669' : '#374151');
-
-                html += `
-                <div style="background: ${clr.bg}; border: 1.5px solid ${clr.border}; border-radius: 14px; padding: 1.2rem 1.4rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
-                    <div style="font-size: 0.7rem; font-weight: 800; color: ${clr.text}; text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-                        <span style="width: 8px; height: 8px; background: ${clr.border}; border-radius: 50%; display: inline-block;"></span>
-                        ${brandName}
+            html += `
+            <div onclick="showBrandHistoryModal(${bid})" style="cursor:pointer; background: ${clr.bg}; border: 1.5px solid ${clr.border}; border-radius: 14px; padding: 1.2rem 1.4rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); transition: transform 0.15s, box-shadow 0.15s;"
+                 onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.12)'"
+                 onmouseout="this.style.transform='';this.style.boxShadow='0 1px 4px rgba(0,0,0,0.06)'">
+                <div style="font-size: 0.7rem; font-weight: 800; color: ${clr.text}; text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                    <span style="display:flex;align-items:center;gap:6px;">
+                        <span style="width:8px;height:8px;background:${clr.border};border-radius:50%;display:inline-block;"></span>
+                        ${brand.name}
+                    </span>
+                    <span style="font-size:0.6rem;color:${clr.border};opacity:0.7;">📊 History</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center;">
+                    <div style="background: white; border-radius: 8px; padding: 6px 4px;">
+                        <div style="font-size: 0.6rem; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 3px;">FG Produced</div>
+                        <div style="font-size: 1rem; font-weight: 900; color: #111827;">${fg.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</div>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center;">
-                        <div style="background: white; border-radius: 8px; padding: 6px 4px;">
-                            <div style="font-size: 0.6rem; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 3px;">FG Produced</div>
-                            <div style="font-size: 1rem; font-weight: 900; color: #111827;">${fg.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</div>
-                        </div>
-                        <div style="background: white; border-radius: 8px; padding: 6px 4px;">
-                            <div style="font-size: 0.6rem; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 3px;">RM Issued</div>
-                            <div style="font-size: 1rem; font-weight: 900; color: #111827;">${rm.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</div>
-                            <div style="font-size: 0.7rem; font-weight: 700; color: #059669;">Rs. ${val.toLocaleString(undefined,{maximumFractionDigits:0})}</div>
-                        </div>
-                        <div style="background: white; border-radius: 8px; padding: 6px 4px;">
-                            <div style="font-size: 0.6rem; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 3px;">WIP</div>
-                            <div style="font-size: 1rem; font-weight: 900; color: ${wipColor};">${wip.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</div>
-                        </div>
+                    <div style="background: white; border-radius: 8px; padding: 6px 4px;">
+                        <div style="font-size: 0.6rem; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 3px;">RM Issued</div>
+                        <div style="font-size: 1rem; font-weight: 900; color: #111827;">${rm.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</div>
+                        <div style="font-size: 0.7rem; font-weight: 700; color: #059669;">Rs. ${val.toLocaleString(undefined,{maximumFractionDigits:0})}</div>
                     </div>
-                </div>`;
-            });
-            brandCards.innerHTML = html;
-        }
+                    <div style="background: white; border-radius: 8px; padding: 6px 4px;">
+                        <div style="font-size: 0.6rem; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 3px;">WIP</div>
+                        <div style="font-size: 1rem; font-weight: 900; color: ${wipColor};">${wip.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</div>
+                    </div>
+                </div>
+            </div>`;
+
+            // Auto-save brand log if there's any data today/yesterday
+            if (fg > 0 || rm > 0) {
+                const logDate = (lastFGDate && (lastFGDate.toDateString()===todayStr||lastFGDate.toDateString()===yesterdayStr))
+                    ? lastFGDate : lastRMDate;
+                if (logDate) {
+                    const y = logDate.getFullYear(), m = String(logDate.getMonth()+1).padStart(2,'0'), d2 = String(logDate.getDate()).padStart(2,'0');
+                    const dateStr = `${y}-${m}-${d2} 23:59:59`;
+                    fetch('api/sync.php?action=save_rm_brand_consumption_log', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ log: { date: dateStr, brand_id: bid, fg_weight: fg, rm_weight: rm, rm_value: val, gap: wip, notes: '[Auto]' } })
+                    }).then(r => r.json()).then(res => {
+                        if (res.status === 'success') {
+                            // Update local brand logs
+                            const existing = rmBrandConsumptionLogs.findIndex(l => l.brand_id == bid && l.date && l.date.startsWith(`${y}-${m}-${d2}`));
+                            const logObj = { id: res.id, date: dateStr, brand_id: bid, fg_weight: fg, rm_weight: rm, rm_value: val, gap: wip };
+                            if (existing !== -1) rmBrandConsumptionLogs[existing] = logObj;
+                            else rmBrandConsumptionLogs.unshift(logObj);
+                        }
+                    }).catch(() => {});
+                }
+            }
+        });
+        brandCards.innerHTML = html;
+    } else if (brandSection) {
+        brandSection.style.display = 'none';
     }
 
     refreshRMConsumptionHistory();
@@ -7135,6 +7152,147 @@ async function autoSaveRMConsumption(targetDate = null) {
         }
     } catch (e) { console.error('Failed to save log:', e); }
 }
+
+// ==================== BRAND HISTORY MODAL ====================
+function showBrandHistoryModal(brandId) {
+    const brand = mainCategories.find(b => b.id == brandId);
+    if (!brand) return;
+
+    // Remove existing modal if any
+    const existing = document.getElementById('brandHistoryModal');
+    if (existing) existing.remove();
+
+    const now = new Date();
+    const curMonth = now.getMonth() + 1;
+    const curYear  = now.getFullYear();
+
+    // Build year options from logs for this brand
+    const logs = rmBrandConsumptionLogs.filter(l => l.brand_id == brandId);
+    const years = [...new Set(logs.map(l => new Date(l.date).getFullYear()))].filter(y => !isNaN(y)).sort((a,b) => b - a);
+    if (!years.includes(curYear)) years.unshift(curYear);
+    let yearOpts = years.map(y => `<option value="${y}" ${y === curYear ? 'selected' : ''}>${y}</option>`).join('');
+
+    const modal = document.createElement('div');
+    modal.id = 'brandHistoryModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    modal.innerHTML = `
+        <div style="background:white;border-radius:16px;width:100%;max-width:750px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <div style="padding:1.2rem 1.5rem;background:var(--sky-600);color:white;display:flex;align-items:center;justify-content:space-between;border-radius:16px 16px 0 0;">
+                <div>
+                    <div style="font-size:1.1rem;font-weight:800;">📊 ${brand.name} — History</div>
+                    <div style="font-size:0.75rem;opacity:0.8;">Brand-wise Consumption Log</div>
+                </div>
+                <button onclick="closeBrandHistoryModal()" style="background:rgba(255,255,255,0.2);border:none;color:white;font-size:1.2rem;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+            </div>
+
+            <!-- Filters -->
+            <div style="padding:1rem 1.5rem;background:#f8fafc;border-bottom:1px solid #e2e8f0;display:flex;gap:0.8rem;flex-wrap:wrap;align-items:center;">
+                <select id="bhmMonth" onchange="renderBrandHistoryTable(${brandId})" style="padding:0.4rem 0.8rem;border:1px solid #cbd5e1;border-radius:8px;font-size:0.85rem;">
+                    <option value="">All Months</option>
+                    <option value="1" ${curMonth===1?'selected':''}>January</option>
+                    <option value="2" ${curMonth===2?'selected':''}>February</option>
+                    <option value="3" ${curMonth===3?'selected':''}>March</option>
+                    <option value="4" ${curMonth===4?'selected':''}>April</option>
+                    <option value="5" ${curMonth===5?'selected':''}>May</option>
+                    <option value="6" ${curMonth===6?'selected':''}>June</option>
+                    <option value="7" ${curMonth===7?'selected':''}>July</option>
+                    <option value="8" ${curMonth===8?'selected':''}>August</option>
+                    <option value="9" ${curMonth===9?'selected':''}>September</option>
+                    <option value="10" ${curMonth===10?'selected':''}>October</option>
+                    <option value="11" ${curMonth===11?'selected':''}>November</option>
+                    <option value="12" ${curMonth===12?'selected':''}>December</option>
+                </select>
+                <select id="bhmYear" onchange="renderBrandHistoryTable(${brandId})" style="padding:0.4rem 0.8rem;border:1px solid #cbd5e1;border-radius:8px;font-size:0.85rem;">
+                    <option value="">All Years</option>
+                    ${yearOpts}
+                </select>
+            </div>
+
+            <!-- Table -->
+            <div style="flex:1;overflow-y:auto;">
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead style="position:sticky;top:0;background:var(--sky-600);color:white;z-index:1;">
+                        <tr>
+                            <th style="padding:0.7rem 1rem;text-align:left;font-size:0.8rem;">Date</th>
+                            <th style="padding:0.7rem 1rem;text-align:left;font-size:0.8rem;">FG Produced (KG)</th>
+                            <th style="padding:0.7rem 1rem;text-align:left;font-size:0.8rem;">RM Issued (KG)</th>
+                            <th style="padding:0.7rem 1rem;text-align:left;font-size:0.8rem;">RM Value (Rs.)</th>
+                            <th style="padding:0.7rem 1rem;text-align:left;font-size:0.8rem;">WIP (KG)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="brandHistoryTableBody">
+                        <tr><td colspan="5" style="text-align:center;padding:2rem;color:#9ca3af;">Loading...</td></tr>
+                    </tbody>
+                    <tfoot id="brandHistoryTableFoot" style="background:var(--sky-600);color:white;font-weight:bold;position:sticky;bottom:0;"></tfoot>
+                </table>
+            </div>
+        </div>`;
+
+    document.body.appendChild(modal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeBrandHistoryModal(); });
+    renderBrandHistoryTable(brandId);
+}
+
+function renderBrandHistoryTable(brandId) {
+    const tbody = document.getElementById('brandHistoryTableBody');
+    const tfoot = document.getElementById('brandHistoryTableFoot');
+    if (!tbody) return;
+
+    const selMonth = document.getElementById('bhmMonth')?.value;
+    const selYear  = document.getElementById('bhmYear')?.value;
+
+    const logs = rmBrandConsumptionLogs.filter(l => {
+        if (l.brand_id != brandId) return false;
+        const d = new Date(l.date);
+        if (selMonth && (d.getMonth() + 1) != selMonth) return false;
+        if (selYear  && d.getFullYear()    != selYear)  return false;
+        return true;
+    }).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    if (logs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:#9ca3af;">No records found for this filter.</td></tr>`;
+        if (tfoot) tfoot.innerHTML = '';
+        return;
+    }
+
+    let totalFG = 0, totalRM = 0, totalVal = 0, totalWIP = 0;
+    let html = '';
+    logs.forEach((l, i) => {
+        const fg  = parseFloat(l.fg_weight) || 0;
+        const rm  = parseFloat(l.rm_weight) || 0;
+        const val = parseFloat(l.rm_value)  || 0;
+        const wip = parseFloat(l.gap)       || (rm - fg);
+        totalFG += fg; totalRM += rm; totalVal += val; totalWIP += wip;
+        const wipColor = wip < -0.01 ? '#dc2626' : (wip > 0.01 ? '#059669' : '#374151');
+        const bg = i % 2 === 0 ? 'white' : '#f8fafc';
+        html += `<tr style="background:${bg};">
+            <td style="padding:0.65rem 1rem;font-size:0.85rem;">${formatDate(l.date)}</td>
+            <td style="padding:0.65rem 1rem;font-size:0.85rem;font-weight:600;">${fg.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding:0.65rem 1rem;font-size:0.85rem;font-weight:600;">${rm.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding:0.65rem 1rem;font-size:0.85rem;color:#059669;font-weight:700;">Rs. ${val.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+            <td style="padding:0.65rem 1rem;font-size:0.85rem;font-weight:800;color:${wipColor};">${wip.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+        </tr>`;
+    });
+    tbody.innerHTML = html;
+
+    if (tfoot) {
+        const totalWIPColor = totalWIP < -0.01 ? '#ffcdd2' : (totalWIP > 0.01 ? '#c8e6c9' : 'white');
+        tfoot.innerHTML = `<tr>
+            <td style="padding:0.7rem 1rem;font-size:0.8rem;">TOTAL (${logs.length} records)</td>
+            <td style="padding:0.7rem 1rem;">${totalFG.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding:0.7rem 1rem;">${totalRM.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding:0.7rem 1rem;">Rs. ${totalVal.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+            <td style="padding:0.7rem 1rem;background:${totalWIPColor};color:#111827;">${totalWIP.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+        </tr>`;
+    }
+}
+
+function closeBrandHistoryModal() {
+    const m = document.getElementById('brandHistoryModal');
+    if (m) m.remove();
+}
+
+// ==================== END BRAND HISTORY MODAL ====================
 
 function refreshRMConsumptionHistory() {
     const tbody = document.getElementById('rmConsumptionHistoryTable');

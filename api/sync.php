@@ -160,6 +160,18 @@ try {
                     if (!in_array('main_id', $rfCols)) $conn->exec("ALTER TABLE rm_formulas ADD COLUMN main_id INT DEFAULT NULL");
                 } catch(Exception $e) {}
 
+                // NEW: Brand-wise Consumption Logs Table
+                $conn->exec("CREATE TABLE IF NOT EXISTS rm_brand_consumption_logs (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    date DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    brand_id INT NOT NULL,
+                    fg_weight DECIMAL(15,3) DEFAULT 0,
+                    rm_weight DECIMAL(15,3) DEFAULT 0,
+                    rm_value DECIMAL(15,3) DEFAULT 0,
+                    gap DECIMAL(15,3) DEFAULT 0,
+                    notes TEXT
+                )");
+
             } catch (Exception $e) {}
 
             $data = [
@@ -182,6 +194,7 @@ try {
                 'rmFormulaItems' => $conn->query("SELECT * FROM rm_formula_items")->fetchAll(PDO::FETCH_ASSOC),
                 'rmTransactions' => $conn->query("SELECT * FROM rm_transactions ORDER BY date DESC")->fetchAll(PDO::FETCH_ASSOC),
                 'rmConsumptionLogs' => $conn->query("SELECT * FROM rm_consumption_logs ORDER BY date DESC")->fetchAll(PDO::FETCH_ASSOC),
+                'rmBrandConsumptionLogs' => $conn->query("SELECT * FROM rm_brand_consumption_logs ORDER BY date DESC")->fetchAll(PDO::FETCH_ASSOC),
                 'storeMainCategories' => $conn->query("SELECT * FROM store_main_categories")->fetchAll(PDO::FETCH_ASSOC),
                 'storeSubCategories' => $conn->query("SELECT * FROM store_sub_categories")->fetchAll(PDO::FETCH_ASSOC),
                 'storeItems' => $conn->query("SELECT i.*, sc.main_id AS mainId FROM store_items i LEFT JOIN store_sub_categories sc ON i.sub_id = sc.id")->fetchAll(PDO::FETCH_ASSOC),
@@ -404,6 +417,27 @@ try {
         elseif ($action === 'clear_rm_consumption_history') {
             $conn->exec("DELETE FROM rm_consumption_logs");
             echo json_encode(['status' => 'success']);
+        }
+
+        elseif ($action === 'save_rm_brand_consumption_log') {
+            $log = $input['log'];
+            $brandId  = $log['brand_id'];
+            $dateOnly = date('Y-m-d', strtotime($log['date'] ?? date('Y-m-d')));
+
+            // Upsert: one record per brand per date
+            $check = $conn->prepare("SELECT id FROM rm_brand_consumption_logs WHERE brand_id = ? AND DATE(date) = ?");
+            $check->execute([$brandId, $dateOnly]);
+            $existing = $check->fetch(PDO::FETCH_ASSOC);
+
+            if ($existing) {
+                $stmt = $conn->prepare("UPDATE rm_brand_consumption_logs SET fg_weight = ?, rm_weight = ?, rm_value = ?, gap = rm_weight - fg_weight WHERE id = ?");
+                $stmt->execute([$log['fg_weight'], $log['rm_weight'], $log['rm_value'] ?? 0, $existing['id']]);
+                echo json_encode(['status' => 'success', 'id' => $existing['id'], 'action' => 'updated']);
+            } else {
+                $stmt = $conn->prepare("INSERT INTO rm_brand_consumption_logs (date, brand_id, fg_weight, rm_weight, rm_value, gap, notes) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$log['date'] ?? date('Y-m-d H:i:s'), $brandId, $log['fg_weight'], $log['rm_weight'], $log['rm_value'] ?? 0, $log['gap'] ?? 0, $log['notes'] ?? '[Auto]']);
+                echo json_encode(['status' => 'success', 'id' => $conn->lastInsertId(), 'action' => 'inserted']);
+            }
         }
 
         elseif ($action === 'save_category') {
