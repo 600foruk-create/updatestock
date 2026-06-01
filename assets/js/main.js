@@ -6779,7 +6779,10 @@ function exportRMOutToExcel() {
 
 // Process RM Transaction
 function refreshRMConsumptionReport() {
-    // 1. Calculate Latest FG Production (Inbound) - Most recent active day
+    // Get today's date string for comparison
+    const todayStr = new Date().toDateString();
+
+    // 1. Calculate Latest FG Production (Inbound) - Only if from TODAY
     let lastFGDate = null;
     transactions.forEach(t => {
         if (t.type === 'IN') {
@@ -6788,17 +6791,17 @@ function refreshRMConsumptionReport() {
         }
     });
 
+    // If latest FG transaction is NOT from today → show 0
     let fgTotalKg = 0;
-    if (lastFGDate) {
-        const lastFGDateStr = lastFGDate.toDateString();
+    if (lastFGDate && lastFGDate.toDateString() === todayStr) {
         transactions.forEach(t => {
-            if (t.type === 'IN' && new Date(t.date).toDateString() === lastFGDateStr) {
+            if (t.type === 'IN' && new Date(t.date).toDateString() === todayStr) {
                 fgTotalKg += (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
             }
         });
     }
 
-    // 2. Calculate Latest RM Formula Issuance (Outbound) - Most recent active day
+    // 2. Calculate Latest RM Formula Issuance (Outbound) - Only if from TODAY
     let lastRMDate = null;
     rmTransactions.forEach(t => {
         if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:')) {
@@ -6807,12 +6810,12 @@ function refreshRMConsumptionReport() {
         }
     });
 
+    // If latest RM issuance is NOT from today → show 0
     let rmTotalKg = 0;
     let rmTotalValue = 0;
-    if (lastRMDate) {
-        const lastRMDateStr = lastRMDate.toDateString();
+    if (lastRMDate && lastRMDate.toDateString() === todayStr) {
         rmTransactions.forEach(t => {
-            if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === lastRMDateStr) {
+            if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === todayStr) {
                 const item = rmItems.find(i => i.id == t.rm_item_id);
                 const qty = (parseFloat(t.quantity) || 0);
                 let price = (parseFloat(t.price) || 0);
