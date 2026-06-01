@@ -7176,13 +7176,29 @@ function showBrandHistoryModal(brandId) {
     modal.id = 'brandHistoryModal';
     modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
     modal.innerHTML = `
-        <div style="background:white;border-radius:20px;width:100%;max-width:1000px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
-            <div style="padding:1.5rem 2rem;background:linear-gradient(135deg, var(--sky-600), var(--sky-800));color:white;display:flex;align-items:center;justify-content:space-between;border-radius:20px 20px 0 0;">
+        <div id="bhmContainer" style="background:white;border-radius:20px;width:100%;max-width:1000px;height:85vh;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);transition:all 0.3s ease;">
+            <div style="padding:1.5rem 2rem;background:linear-gradient(135deg, var(--sky-600), var(--sky-800));color:white;display:flex;align-items:center;justify-content:space-between;border-radius:inherit;border-bottom-left-radius:0;border-bottom-right-radius:0;">
                 <div>
                     <div style="font-size:1.4rem;font-weight:800;letter-spacing:0.5px;">📊 ${brand.name} — History</div>
                     <div style="font-size:0.85rem;opacity:0.9;margin-top:4px;">Brand-wise Consumption Log</div>
                 </div>
-                <button onclick="closeBrandHistoryModal()" style="background:rgba(255,255,255,0.2);border:none;color:white;font-size:1.2rem;width:36px;height:36px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">✕</button>
+                <div style="display:flex; gap:0.5rem;">
+                    <button onclick="
+                        const c = document.getElementById('bhmContainer');
+                        if(c.style.maxWidth === '1000px') {
+                            c.style.maxWidth = '100vw';
+                            c.style.height = '100vh';
+                            c.style.maxHeight = '100vh';
+                            c.style.borderRadius = '0';
+                        } else {
+                            c.style.maxWidth = '1000px';
+                            c.style.height = '85vh';
+                            c.style.maxHeight = '85vh';
+                            c.style.borderRadius = '20px';
+                        }
+                    " style="background:rgba(255,255,255,0.2);border:none;color:white;font-size:1.1rem;width:36px;height:36px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'" title="Toggle Fullscreen">🗖</button>
+                    <button onclick="closeBrandHistoryModal()" style="background:rgba(255,255,255,0.2);border:none;color:white;font-size:1.2rem;width:36px;height:36px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'" title="Close">✕</button>
+                </div>
             </div>
 
             <!-- Filters -->
