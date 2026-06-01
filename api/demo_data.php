@@ -25,13 +25,17 @@ try {
     // 1. Truncate Tables
     $tables = [
         'main_categories', 'sub_categories', 'items', 'customers',
-        'transactions', 'orders', 'order_items', 'raw_materials',
-        'rm_formulas', 'rm_formula_items', 'rm_transactions', 
+        'transactions', 'orders', 'order_items', 'audit_records',
+        'rm_main_categories', 'rm_sub_categories', 'rm_items',
+        'rm_units', 'rm_formulas', 'rm_formula_items', 'rm_transactions', 
+        'rm_brand_consumption_logs',
         'customer_main_categories', 'customer_sub_categories',
-        'rm_brand_consumption_logs'
+        'store_main_categories', 'store_sub_categories', 'store_items',
+        'store_transactions'
     ];
     foreach ($tables as $table) {
-        $conn->exec("TRUNCATE TABLE `$table`");
+        // Use try-catch in case a dynamically generated table doesn't exist yet
+        try { $conn->exec("TRUNCATE TABLE `$table`"); } catch (Exception $e) {}
     }
 
     // 2. Settings (Update Company Profile)
@@ -70,18 +74,20 @@ try {
         (3, 'CUST-003', 'Zaman Sanitaries', '03451122334', 'Ring Road', 1, 1)
     ");
 
-    // 6. Insert Raw Materials
-    $conn->exec("INSERT INTO `raw_materials` (`id`, `name`, `category`, `unit`, `stock`, `threshold`, `base_price`) VALUES 
-        (1, 'PVC Resin (K-67)', 'Chemical', 'KG', 5000, 500, 280),
-        (2, 'Calcium Carbonate', 'Filler', 'KG', 8000, 1000, 45),
-        (3, 'Titanium Dioxide', 'Colorant', 'KG', 200, 50, 850),
-        (4, 'Stabilizer', 'Chemical', 'KG', 450, 100, 620)
+    // 6. Insert Raw Materials Hierarchy & Items
+    $conn->exec("INSERT INTO `rm_main_categories` (`id`, `name`, `code`) VALUES (1, 'Chemicals', 'CHM'), (2, 'Fillers & Additives', 'FLR')");
+    $conn->exec("INSERT INTO `rm_sub_categories` (`id`, `main_id`, `name`, `code`) VALUES (1, 1, 'Resins', 'RSN'), (2, 2, 'Calcium', 'CAL'), (3, 2, 'Colors', 'CLR')");
+    $conn->exec("INSERT INTO `rm_items` (`id`, `sub_id`, `name`, `code`, `unit`, `stock`, `threshold`, `base_price`, `kg_per_bag`) VALUES 
+        (1, 1, 'PVC Resin (K-67)', 'PVC-K67', 'KG', 5000, 500, 280, 25),
+        (2, 2, 'Calcium Carbonate', 'CAL-C', 'KG', 8000, 1000, 45, 25),
+        (3, 3, 'Titanium Dioxide', 'TITAN-D', 'KG', 200, 50, 850, 25),
+        (4, 1, 'Stabilizer', 'STAB-1', 'KG', 450, 100, 620, 25)
     ");
 
     // 7. Insert RM Formulas
-    $conn->exec("INSERT INTO `rm_formulas` (`id`, `name`, `category`, `notes`) VALUES 
-        (1, 'Master Standard Mix', 'Pipe Production', 'Standard mix for 13ft Master pipes'),
-        (2, 'Popular Heavy Duty', 'Pipe Production', 'High thickness mix')
+    $conn->exec("INSERT INTO `rm_formulas` (`id`, `name`) VALUES 
+        (1, 'Master Standard Mix'),
+        (2, 'Popular Heavy Duty')
     ");
     $conn->exec("INSERT INTO `rm_formula_items` (`formula_id`, `rm_item_id`, `quantity`) VALUES 
         (1, 1, 100), (1, 2, 75), (1, 3, 2), (1, 4, 3.5),
@@ -91,22 +97,22 @@ try {
     // 8. Insert RM Transactions (Stock IN & OUT)
     $today = date('Y-m-d');
     $yesterday = date('Y-m-d', strtotime('-1 day'));
-    $conn->exec("INSERT INTO `rm_transactions` (`date`, `type`, `rm_item_id`, `quantity`, `price`, `notes`, `brand_id`) VALUES 
-        ('$yesterday 09:00:00', 'IN', 1, 5000, 275, 'Initial Stock', NULL),
-        ('$yesterday 09:00:00', 'IN', 2, 8000, 42, 'Initial Stock', NULL),
-        ('$yesterday 09:00:00', 'IN', 3, 200, 840, 'Initial Stock', NULL),
-        ('$yesterday 09:00:00', 'IN', 4, 450, 610, 'Initial Stock', NULL),
+    $conn->exec("INSERT INTO `rm_transactions` (`date`, `type`, `rm_item_id`, `quantity`, `notes`) VALUES 
+        ('$yesterday 09:00:00', 'IN', 1, 5000, 'Initial Stock'),
+        ('$yesterday 09:00:00', 'IN', 2, 8000, 'Initial Stock'),
+        ('$yesterday 09:00:00', 'IN', 3, 200, 'Initial Stock'),
+        ('$yesterday 09:00:00', 'IN', 4, 450, 'Initial Stock'),
         
-        ('$today 10:15:00', 'OUT', 1, 100, 275, '[Formula: Master Standard Mix]', 1),
-        ('$today 10:15:00', 'OUT', 2, 75, 42, '[Formula: Master Standard Mix]', 1),
-        ('$today 10:15:00', 'OUT', 3, 2, 840, '[Formula: Master Standard Mix]', 1),
-        ('$today 10:15:00', 'OUT', 4, 3.5, 610, '[Formula: Master Standard Mix]', 1)
+        ('$today 10:15:00', 'OUT', 1, 100, '[Formula: Master Standard Mix]'),
+        ('$today 10:15:00', 'OUT', 2, 75, '[Formula: Master Standard Mix]'),
+        ('$today 10:15:00', 'OUT', 3, 2, '[Formula: Master Standard Mix]'),
+        ('$today 10:15:00', 'OUT', 4, 3.5, '[Formula: Master Standard Mix]')
     ");
 
     // 9. Insert FG Production (Stock IN)
-    $conn->exec("INSERT INTO `transactions` (`date`, `type`, `main_id`, `sub_id`, `item_id`, `quantity`, `itemWeight`, `notes`) VALUES 
-        ('$today 14:30:00', 'IN', 1, 1, 1, 250, 0.45, 'Batch #1'),
-        ('$today 16:00:00', 'IN', 1, 2, 2, 120, 0.75, 'Batch #2')
+    $conn->exec("INSERT INTO `transactions` (`date`, `type`, `main_id`, `sub_id`, `item_id`, `quantity`, `notes`) VALUES 
+        ('$today 14:30:00', 'IN', 1, 1, 1, 250, 'Batch #1'),
+        ('$today 16:00:00', 'IN', 1, 2, 2, 120, 'Batch #2')
     ");
 
     // 10. Insert Orders (Sales)
@@ -120,6 +126,22 @@ try {
     ");
     $conn->exec("INSERT INTO `transactions` (`date`, `type`, `main_id`, `sub_id`, `item_id`, `quantity`, `customer_id`, `order_id`, `notes`) VALUES 
         ('$yesterday 11:30:00', 'OUT', 1, 1, 1, 150, 1, 1, 'Delivered')
+    ");
+
+    // 11. Insert Store Module Mock Data
+    $conn->exec("INSERT INTO `store_main_categories` (`id`, `name`, `code`) VALUES (1, 'Stationery', 'STAT'), (2, 'Hardware', 'HDW')");
+    $conn->exec("INSERT INTO `store_sub_categories` (`id`, `main_id`, `name`, `code`) VALUES (1, 1, 'Office Supplies', 'OFS'), (2, 2, 'Tools', 'TLS')");
+    $conn->exec("INSERT INTO `store_items` (`id`, `sub_id`, `name`, `code`, `opening_stock`, `stock`, `low_stock_threshold`) VALUES 
+        (1, 1, 'A4 Paper Ream', 'A4-01', 50, 45, 10),
+        (2, 1, 'Ballpoint Pens Box', 'PEN-B', 20, 18, 5),
+        (3, 2, 'Wrench Set', 'WR-01', 5, 5, 2),
+        (4, 2, 'Machine Oil (Liter)', 'OIL-M', 30, 25, 10)
+    ");
+    $conn->exec("INSERT INTO `store_transactions` (`date`, `item_id`, `quantity`, `type`, `ref`, `notes`, `issued_to`, `purpose`) VALUES 
+        ('$yesterday 10:00:00', 1, 50, 'INWARD', 'PO-1001', 'Initial Purchase', '', ''),
+        ('$today 11:00:00', 1, 5, 'OUTWARD', 'REQ-01', 'Office Use', 'Accounts Dept', 'Monthly Printing'),
+        ('$yesterday 10:00:00', 4, 30, 'INWARD', 'PO-1002', 'Initial Purchase', '', ''),
+        ('$today 14:00:00', 4, 5, 'OUTWARD', 'REQ-02', 'Machine Maintenance', 'Production Line 1', 'Weekly lubrication')
     ");
 
     // Enable foreign key checks
