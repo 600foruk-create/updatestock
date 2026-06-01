@@ -41,7 +41,17 @@
         </div>
     </div>
 
-    <!-- Daily Records History List -->
+    <!-- Brand-wise WIP Breakdown -->
+    <div id="brandWIPSection" style="margin-bottom: 2.5rem; display: none;">
+        <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem;">
+            <span style="font-size: 0.75rem; font-weight: 800; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.8px;">🏷️ Brand-Wise Breakdown</span>
+            <div style="flex: 1; height: 1px; background: var(--gray-200);"></div>
+        </div>
+        <div id="brandWIPCards" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
+            <!-- Injected by JS -->
+        </div>
+    </div>
+
     <div style="background: white; border-radius: 12px; border: 1px solid var(--gray-200); box-shadow: var(--shadow-sm); overflow: hidden;">
         <div style="padding: 1.2rem; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
             <h3 style="margin: 0; font-size: 1.1rem; color: var(--gray-700);">📋 Consumption History Log</h3>

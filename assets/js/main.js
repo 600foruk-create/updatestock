@@ -6915,6 +6915,109 @@ function refreshRMConsumptionReport() {
         }
     }
 
+    // 4. Brand-wise Breakdown
+    const brandSection = document.getElementById('brandWIPSection');
+    const brandCards  = document.getElementById('brandWIPCards');
+    if (brandCards) {
+        // -- FG by brand (uses t.mainId) --
+        const fgByBrand = {};
+        if (lastFGDate) {
+            const lastFGStr = lastFGDate.toDateString();
+            if (lastFGStr === todayStr || lastFGStr === yesterdayStr) {
+                transactions.forEach(t => {
+                    if (t.type === 'IN' && new Date(t.date).toDateString() === lastFGStr) {
+                        const bid = t.mainId || '__none__';
+                        fgByBrand[bid] = (fgByBrand[bid] || 0) + (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
+                    }
+                });
+            }
+        }
+
+        // -- RM by brand (extracts formula_id from notes, then formula.main_id) --
+        const rmByBrand = {};
+        if (lastRMDate) {
+            const lastRMStr = lastRMDate.toDateString();
+            if (lastRMStr === todayStr || lastRMStr === yesterdayStr) {
+                rmTransactions.forEach(t => {
+                    if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === lastRMStr) {
+                        // Extract formula id from notes: "[Formula: 3]" → 3
+                        const match = t.notes.match(/\[Formula:\s*(\d+)\]/);
+                        const formulaId = match ? match[1] : null;
+                        const formula = formulaId ? rmFormulas.find(f => f.id == formulaId) : null;
+                        const bid = formula && formula.main_id ? formula.main_id : '__none__';
+
+                        const item = rmItems.find(i => i.id == t.rm_item_id);
+                        const qty = (parseFloat(t.quantity) || 0);
+                        let price = (parseFloat(t.price) || 0);
+                        if (price <= 0 && item) price = getRMItemCurrentPrice(item);
+
+                        if (!rmByBrand[bid]) rmByBrand[bid] = { kg: 0, value: 0 };
+                        rmByBrand[bid].kg    += qty;
+                        rmByBrand[bid].value += qty * price;
+                    }
+                });
+            }
+        }
+
+        // Collect all brand IDs that appear in either FG or RM
+        const allBrandIds = [...new Set([...Object.keys(fgByBrand), ...Object.keys(rmByBrand)])];
+
+        if (allBrandIds.length === 0) {
+            if (brandSection) brandSection.style.display = 'none';
+        } else {
+            if (brandSection) brandSection.style.display = 'block';
+
+            // Predefined color palette for cards
+            const palette = [
+                { bg: '#eff6ff', border: '#3b82f6', text: '#1d4ed8' },
+                { bg: '#f0fdf4', border: '#22c55e', text: '#15803d' },
+                { bg: '#fff7ed', border: '#f97316', text: '#c2410c' },
+                { bg: '#fdf4ff', border: '#a855f7', text: '#7e22ce' },
+                { bg: '#fef2f2', border: '#ef4444', text: '#b91c1c' },
+                { bg: '#f0fdfa', border: '#14b8a6', text: '#0f766e' },
+                { bg: '#fffbeb', border: '#eab308', text: '#92400e' },
+                { bg: '#faf5ff', border: '#8b5cf6', text: '#6d28d9' },
+            ];
+
+            let html = '';
+            allBrandIds.forEach((bid, idx) => {
+                const brand = mainCategories.find(m => m.id == bid);
+                const brandName = brand ? brand.name : (bid === '__none__' ? 'Unlinked' : 'Unknown');
+                const clr = palette[idx % palette.length];
+
+                const fg  = fgByBrand[bid] || 0;
+                const rm  = (rmByBrand[bid] || {}).kg    || 0;
+                const val = (rmByBrand[bid] || {}).value || 0;
+                const wip = rm - fg;
+                const wipColor = wip < -0.01 ? '#dc2626' : (wip > 0.01 ? '#059669' : '#374151');
+
+                html += `
+                <div style="background: ${clr.bg}; border: 1.5px solid ${clr.border}; border-radius: 14px; padding: 1.2rem 1.4rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06);">
+                    <div style="font-size: 0.7rem; font-weight: 800; color: ${clr.text}; text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                        <span style="width: 8px; height: 8px; background: ${clr.border}; border-radius: 50%; display: inline-block;"></span>
+                        ${brandName}
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center;">
+                        <div style="background: white; border-radius: 8px; padding: 6px 4px;">
+                            <div style="font-size: 0.6rem; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 3px;">FG Produced</div>
+                            <div style="font-size: 1rem; font-weight: 900; color: #111827;">${fg.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</div>
+                        </div>
+                        <div style="background: white; border-radius: 8px; padding: 6px 4px;">
+                            <div style="font-size: 0.6rem; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 3px;">RM Issued</div>
+                            <div style="font-size: 1rem; font-weight: 900; color: #111827;">${rm.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</div>
+                            <div style="font-size: 0.7rem; font-weight: 700; color: #059669;">Rs. ${val.toLocaleString(undefined,{maximumFractionDigits:0})}</div>
+                        </div>
+                        <div style="background: white; border-radius: 8px; padding: 6px 4px;">
+                            <div style="font-size: 0.6rem; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 3px;">WIP</div>
+                            <div style="font-size: 1rem; font-weight: 900; color: ${wipColor};">${wip.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</div>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            brandCards.innerHTML = html;
+        }
+    }
+
     refreshRMConsumptionHistory();
 }
 
