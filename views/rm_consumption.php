@@ -1,7 +1,8 @@
 <div class="rm-consumption">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-        <div>
-            <!-- Header removed as requested -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 1rem; background: white; padding: 0.5rem 1rem; border-radius: 12px; border: 1px solid var(--gray-200); box-shadow: var(--shadow-sm);">
+            <label style="font-weight: 800; color: var(--gray-600); font-size: 0.85rem; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">📅 Filter By Date:</label>
+            <input type="date" id="wipDashboardDateFilter" class="form-control" style="border: none; outline: none; background: transparent; font-weight: 700; color: var(--sky-700); cursor: pointer; padding: 0;" onchange="refreshRMConsumptionReport()">
         </div>
         <div style="display: flex; gap: 0.8rem;">
             <button class="btn btn-primary" onclick="saveRMConsumptionEntry()" style="background: var(--sky-600); border: none; font-weight: 600; padding: 0.8rem 1.5rem; display: flex; align-items: center; gap: 0.5rem;">

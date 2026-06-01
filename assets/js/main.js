@@ -6831,66 +6831,71 @@ function exportRMOutToExcel() {
 
 // Process RM Transaction
 function refreshRMConsumptionReport() {
-    // Today and yesterday strings (support next-day data entry workflow)
-    const todayObj = new Date();
-    const todayStr = todayObj.toDateString();
-    const yesterdayObj = new Date(todayObj);
-    yesterdayObj.setDate(yesterdayObj.getDate() - 1);
-    const yesterdayStr = yesterdayObj.toDateString();
-
-    // 1. Calculate Latest FG Production (Inbound)
-    let lastFGDate = null;
+    // 1. Find the latest date in the entire system (FG or RM)
+    let latestSystemDate = null;
     transactions.forEach(t => {
         if (t.type === 'IN') {
             const d = new Date(t.date);
-            if (!isNaN(d.getTime()) && (!lastFGDate || d > lastFGDate)) lastFGDate = d;
+            if (!isNaN(d.getTime()) && (!latestSystemDate || d > latestSystemDate)) latestSystemDate = d;
         }
     });
-
-    // Show values if latest FG is TODAY or YESTERDAY (next-day entry support)
-    // Show 0 if 2+ days old
-    let fgTotalKg = 0;
-    if (lastFGDate) {
-        const lastFGStr = lastFGDate.toDateString();
-        if (lastFGStr === todayStr || lastFGStr === yesterdayStr) {
-            transactions.forEach(t => {
-                if (t.type === 'IN' && new Date(t.date).toDateString() === lastFGStr) {
-                    fgTotalKg += (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
-                }
-            });
-        }
-    }
-
-    // 2. Calculate Latest RM Formula Issuance (Outbound)
-    let lastRMDate = null;
     rmTransactions.forEach(t => {
         if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:')) {
             const d = new Date(t.date);
-            if (!isNaN(d.getTime()) && (!lastRMDate || d > lastRMDate)) lastRMDate = d;
+            if (!isNaN(d.getTime()) && (!latestSystemDate || d > latestSystemDate)) latestSystemDate = d;
         }
     });
 
-    // Show values if latest RM issuance is TODAY or YESTERDAY
-    // Show 0 if 2+ days old
-    let rmTotalKg = 0;
-    let rmTotalValue = 0;
-    if (lastRMDate) {
-        const lastRMStr = lastRMDate.toDateString();
-        if (lastRMStr === todayStr || lastRMStr === yesterdayStr) {
-            rmTransactions.forEach(t => {
-                if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === lastRMStr) {
-                    const item = rmItems.find(i => i.id == t.rm_item_id);
-                    const qty = (parseFloat(t.quantity) || 0);
-                    let price = (parseFloat(t.price) || 0);
-                    if (price <= 0 && item) {
-                        price = getRMItemCurrentPrice(item);
-                    }
-                    rmTotalKg += qty;
-                    rmTotalValue += qty * price;
-                }
-            });
+    if (!latestSystemDate) latestSystemDate = new Date();
+
+    // 2. Setup the Date Filter
+    const dateFilterEl = document.getElementById('wipDashboardDateFilter');
+    let targetDateObj = latestSystemDate;
+    
+    if (dateFilterEl) {
+        if (!dateFilterEl.value) {
+            // Default to latest system date if empty
+            const y = latestSystemDate.getFullYear();
+            const m = String(latestSystemDate.getMonth() + 1).padStart(2, '0');
+            const d = String(latestSystemDate.getDate()).padStart(2, '0');
+            dateFilterEl.value = `${y}-${m}-${d}`;
+        } else {
+            // Use user-selected date
+            // Parse user input (e.g., '2026-05-25') treating it as local time to match formatting
+            const parts = dateFilterEl.value.split('-');
+            if (parts.length === 3) {
+                targetDateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+            } else {
+                targetDateObj = new Date(dateFilterEl.value);
+            }
         }
     }
+    
+    const targetDateStr = targetDateObj.toDateString();
+
+    // 3. Calculate FG Production (Inbound) for Target Date
+    let fgTotalKg = 0;
+    transactions.forEach(t => {
+        if (t.type === 'IN' && new Date(t.date).toDateString() === targetDateStr) {
+            fgTotalKg += (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
+        }
+    });
+
+    // 4. Calculate RM Formula Issuance (Outbound) for Target Date
+    let rmTotalKg = 0;
+    let rmTotalValue = 0;
+    rmTransactions.forEach(t => {
+        if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === targetDateStr) {
+            const item = rmItems.find(i => i.id == t.rm_item_id);
+            const qty = (parseFloat(t.quantity) || 0);
+            let price = (parseFloat(t.price) || 0);
+            if (price <= 0 && item) {
+                price = getRMItemCurrentPrice(item);
+            }
+            rmTotalKg += qty;
+            rmTotalValue += qty * price;
+        }
+    });
 
     // 3. Update UI Elements
     const fgWeightEl = document.getElementById('wipFGWeight');
@@ -6932,37 +6937,27 @@ function refreshRMConsumptionReport() {
 
         // -- FG by brand (uses t.brand_id / t.mainId) --
         const fgByBrand = {};
-        if (lastFGDate) {
-            const lastFGStr = lastFGDate.toDateString();
-            if (lastFGStr === todayStr || lastFGStr === yesterdayStr) {
-                transactions.forEach(t => {
-                    if (t.type === 'IN' && new Date(t.date).toDateString() === lastFGStr) {
-                        const bid = t.mainId || '__none__';
-                        fgByBrand[bid] = (fgByBrand[bid] || 0) + (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
-                    }
-                });
+        transactions.forEach(t => {
+            if (t.type === 'IN' && new Date(t.date).toDateString() === targetDateStr) {
+                const bid = t.mainId || '__none__';
+                fgByBrand[bid] = (fgByBrand[bid] || 0) + (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
             }
-        }
+        });
 
         // -- RM by brand — use t.brand_id directly (already stored on transaction) --
         const rmByBrand = {};
-        if (lastRMDate) {
-            const lastRMStr = lastRMDate.toDateString();
-            if (lastRMStr === todayStr || lastRMStr === yesterdayStr) {
-                rmTransactions.forEach(t => {
-                    if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === lastRMStr) {
-                        const bid = t.brand_id || '__none__';
-                        const item = rmItems.find(i => i.id == t.rm_item_id);
-                        const qty = (parseFloat(t.quantity) || 0);
-                        let price = (parseFloat(t.price) || 0);
-                        if (price <= 0 && item) price = getRMItemCurrentPrice(item);
-                        if (!rmByBrand[bid]) rmByBrand[bid] = { kg: 0, value: 0 };
-                        rmByBrand[bid].kg    += qty;
-                        rmByBrand[bid].value += qty * price;
-                    }
-                });
+        rmTransactions.forEach(t => {
+            if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === targetDateStr) {
+                const bid = t.brand_id || '__none__';
+                const item = rmItems.find(i => i.id == t.rm_item_id);
+                const qty = (parseFloat(t.quantity) || 0);
+                let price = (parseFloat(t.price) || 0);
+                if (price <= 0 && item) price = getRMItemCurrentPrice(item);
+                if (!rmByBrand[bid]) rmByBrand[bid] = { kg: 0, value: 0 };
+                rmByBrand[bid].kg    += qty;
+                rmByBrand[bid].value += qty * price;
             }
-        }
+        });
 
         // Predefined color palette for cards
         const palette = [
