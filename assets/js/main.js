@@ -10187,7 +10187,6 @@ async function toggleAdminRoleForSelectedUser() {
         }
     } catch (e) { alert('Failed to change role.'); }
 }
-}
 
 // ==========================================
 // Demo Data Restore Functionality
