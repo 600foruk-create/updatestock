@@ -26,6 +26,7 @@ try {
     $tables = [
         'main_categories', 'sub_categories', 'items', 'customers',
         'transactions', 'orders', 'order_items', 'audit_records',
+        'audit_reports_archive', 'raw_materials', // Legacy table just in case
         'rm_main_categories', 'rm_sub_categories', 'rm_items',
         'rm_units', 'rm_formulas', 'rm_formula_items', 'rm_transactions', 
         'rm_brand_consumption_logs',
@@ -37,6 +38,16 @@ try {
         // Use try-catch in case a dynamically generated table doesn't exist yet
         try { $conn->exec("TRUNCATE TABLE `$table`"); } catch (Exception $e) {}
     }
+
+    // Reset Users (Keep admin, add demo users)
+    try {
+        $conn->exec("DELETE FROM `users` WHERE `username` != 'admin'");
+        $conn->exec("UPDATE `users` SET `password` = 'admin123' WHERE `username` = 'admin'");
+        $conn->exec("INSERT INTO `users` (`name`, `username`, `password`, `role`) VALUES 
+            ('Manager Ali', 'manager1', 'manager123', 'Manager'),
+            ('Staff Usman', 'staff1', 'staff123', 'User')
+        ");
+    } catch (Exception $e) {}
 
     // 2. Settings (Update Company Profile)
     $conn->exec("INSERT INTO `settings` (`category`, `key`, `value`) VALUES ('company', 'name', 'Softifyx') ON DUPLICATE KEY UPDATE `value`='Softifyx'");
