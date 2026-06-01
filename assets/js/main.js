@@ -7174,20 +7174,21 @@ function showBrandHistoryModal(brandId) {
 
     const modal = document.createElement('div');
     modal.id = 'brandHistoryModal';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
     modal.innerHTML = `
-        <div style="background:white;border-radius:16px;width:100%;max-width:750px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-            <div style="padding:1.2rem 1.5rem;background:var(--sky-600);color:white;display:flex;align-items:center;justify-content:space-between;border-radius:16px 16px 0 0;">
+        <div style="background:white;border-radius:20px;width:100%;max-width:1000px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
+            <div style="padding:1.5rem 2rem;background:linear-gradient(135deg, var(--sky-600), var(--sky-800));color:white;display:flex;align-items:center;justify-content:space-between;border-radius:20px 20px 0 0;">
                 <div>
-                    <div style="font-size:1.1rem;font-weight:800;">📊 ${brand.name} — History</div>
-                    <div style="font-size:0.75rem;opacity:0.8;">Brand-wise Consumption Log</div>
+                    <div style="font-size:1.4rem;font-weight:800;letter-spacing:0.5px;">📊 ${brand.name} — History</div>
+                    <div style="font-size:0.85rem;opacity:0.9;margin-top:4px;">Brand-wise Consumption Log</div>
                 </div>
-                <button onclick="closeBrandHistoryModal()" style="background:rgba(255,255,255,0.2);border:none;color:white;font-size:1.2rem;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+                <button onclick="closeBrandHistoryModal()" style="background:rgba(255,255,255,0.2);border:none;color:white;font-size:1.2rem;width:36px;height:36px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">✕</button>
             </div>
 
             <!-- Filters -->
-            <div style="padding:1rem 1.5rem;background:#f8fafc;border-bottom:1px solid #e2e8f0;display:flex;gap:0.8rem;flex-wrap:wrap;align-items:center;">
-                <select id="bhmMonth" onchange="renderBrandHistoryTable(${brandId})" style="padding:0.4rem 0.8rem;border:1px solid #cbd5e1;border-radius:8px;font-size:0.85rem;">
+            <div style="padding:1.2rem 2rem;background:#f8fafc;border-bottom:1px solid #e2e8f0;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <span style="font-weight:700;color:var(--gray-600);font-size:0.9rem;">📅 Filter By:</span>
+                <select id="bhmMonth" onchange="renderBrandHistoryTable(${brandId})" style="padding:0.5rem 1rem;border:1px solid #cbd5e1;border-radius:10px;font-size:0.9rem;background:white;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
                     <option value="">All Months</option>
                     <option value="1" ${curMonth===1?'selected':''}>January</option>
                     <option value="2" ${curMonth===2?'selected':''}>February</option>
@@ -7202,28 +7203,28 @@ function showBrandHistoryModal(brandId) {
                     <option value="11" ${curMonth===11?'selected':''}>November</option>
                     <option value="12" ${curMonth===12?'selected':''}>December</option>
                 </select>
-                <select id="bhmYear" onchange="renderBrandHistoryTable(${brandId})" style="padding:0.4rem 0.8rem;border:1px solid #cbd5e1;border-radius:8px;font-size:0.85rem;">
+                <select id="bhmYear" onchange="renderBrandHistoryTable(${brandId})" style="padding:0.5rem 1rem;border:1px solid #cbd5e1;border-radius:10px;font-size:0.9rem;background:white;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
                     <option value="">All Years</option>
                     ${yearOpts}
                 </select>
             </div>
 
             <!-- Table -->
-            <div style="flex:1;overflow-y:auto;">
+            <div style="flex:1;overflow-y:auto;background:white;">
                 <table style="width:100%;border-collapse:collapse;">
-                    <thead style="position:sticky;top:0;background:var(--sky-600);color:white;z-index:1;">
+                    <thead style="position:sticky;top:0;background:#f1f5f9;color:var(--gray-700);z-index:1;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
                         <tr>
-                            <th style="padding:0.7rem 1rem;text-align:left;font-size:0.8rem;">Date</th>
-                            <th style="padding:0.7rem 1rem;text-align:left;font-size:0.8rem;">FG Produced (KG)</th>
-                            <th style="padding:0.7rem 1rem;text-align:left;font-size:0.8rem;">RM Issued (KG)</th>
-                            <th style="padding:0.7rem 1rem;text-align:left;font-size:0.8rem;">RM Value (Rs.)</th>
-                            <th style="padding:0.7rem 1rem;text-align:left;font-size:0.8rem;">WIP (KG)</th>
+                            <th style="padding:1rem 1.5rem;text-align:left;font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Date</th>
+                            <th style="padding:1rem 1.5rem;text-align:left;font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">FG Produced (KG)</th>
+                            <th style="padding:1rem 1.5rem;text-align:left;font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">RM Issued (KG)</th>
+                            <th style="padding:1rem 1.5rem;text-align:left;font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">RM Value (Rs.)</th>
+                            <th style="padding:1rem 1.5rem;text-align:left;font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">WIP (KG)</th>
                         </tr>
                     </thead>
                     <tbody id="brandHistoryTableBody">
-                        <tr><td colspan="5" style="text-align:center;padding:2rem;color:#9ca3af;">Loading...</td></tr>
+                        <tr><td colspan="5" style="text-align:center;padding:3rem;color:#9ca3af;font-size:1.1rem;">Loading...</td></tr>
                     </tbody>
-                    <tfoot id="brandHistoryTableFoot" style="background:var(--sky-600);color:white;font-weight:bold;position:sticky;bottom:0;"></tfoot>
+                    <tfoot id="brandHistoryTableFoot" style="background:#f8fafc;font-weight:bold;position:sticky;bottom:0;box-shadow:0 -1px 3px rgba(0,0,0,0.05);"></tfoot>
                 </table>
             </div>
         </div>`;
@@ -7265,24 +7266,24 @@ function renderBrandHistoryTable(brandId) {
         totalFG += fg; totalRM += rm; totalVal += val; totalWIP += wip;
         const wipColor = wip < -0.01 ? '#dc2626' : (wip > 0.01 ? '#059669' : '#374151');
         const bg = i % 2 === 0 ? 'white' : '#f8fafc';
-        html += `<tr style="background:${bg};">
-            <td style="padding:0.65rem 1rem;font-size:0.85rem;">${formatDate(l.date)}</td>
-            <td style="padding:0.65rem 1rem;font-size:0.85rem;font-weight:600;">${fg.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
-            <td style="padding:0.65rem 1rem;font-size:0.85rem;font-weight:600;">${rm.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
-            <td style="padding:0.65rem 1rem;font-size:0.85rem;color:#059669;font-weight:700;">Rs. ${val.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
-            <td style="padding:0.65rem 1rem;font-size:0.85rem;font-weight:800;color:${wipColor};">${wip.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+        html += `<tr style="background:${bg}; border-bottom: 1px solid #f1f5f9; transition: background 0.15s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='${bg}'">
+            <td style="padding:1rem 1.5rem;font-size:0.9rem;color:var(--gray-800);">${formatDate(l.date)}</td>
+            <td style="padding:1rem 1.5rem;font-size:0.9rem;font-weight:700;color:var(--gray-800);">${fg.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding:1rem 1.5rem;font-size:0.9rem;font-weight:700;color:var(--gray-800);">${rm.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding:1rem 1.5rem;font-size:0.9rem;font-weight:700;color:#059669;">Rs. ${val.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+            <td style="padding:1rem 1.5rem;font-size:0.95rem;font-weight:800;color:${wipColor};">${wip.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
         </tr>`;
     });
     tbody.innerHTML = html;
 
     if (tfoot) {
-        const totalWIPColor = totalWIP < -0.01 ? '#ffcdd2' : (totalWIP > 0.01 ? '#c8e6c9' : 'white');
+        const totalWIPColor = totalWIP < -0.01 ? '#ffcdd2' : (totalWIP > 0.01 ? '#c8e6c9' : 'transparent');
         tfoot.innerHTML = `<tr>
-            <td style="padding:0.7rem 1rem;font-size:0.8rem;">TOTAL (${logs.length} records)</td>
-            <td style="padding:0.7rem 1rem;">${totalFG.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
-            <td style="padding:0.7rem 1rem;">${totalRM.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
-            <td style="padding:0.7rem 1rem;">Rs. ${totalVal.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
-            <td style="padding:0.7rem 1rem;background:${totalWIPColor};color:#111827;">${totalWIP.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding:1.2rem 1.5rem;font-size:0.9rem;color:var(--gray-600);text-transform:uppercase;letter-spacing:1px;">TOTAL (${logs.length} records)</td>
+            <td style="padding:1.2rem 1.5rem;font-size:1rem;color:var(--gray-800);">${totalFG.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding:1.2rem 1.5rem;font-size:1rem;color:var(--gray-800);">${totalRM.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding:1.2rem 1.5rem;font-size:1rem;color:#059669;">Rs. ${totalVal.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+            <td style="padding:1.2rem 1.5rem;font-size:1.05rem;background:${totalWIPColor};color:#111827;">${totalWIP.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
         </tr>`;
     }
 }
