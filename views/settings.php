@@ -162,6 +162,14 @@
                     <input type="file" id="restoreFile" accept=".sql" style="display:none;" onchange="handleRestore(event)">
                 </div>
 
+                <!-- Restore Demo Data -->
+                <div style="background: white; border: 1.5px solid #fcd34d; border-radius: 24px; padding: 2.5rem 2rem; text-align: center; transition: all 0.3s ease;">
+                    <h3 style="margin-bottom: 0.8rem; color: #b45309; font-weight: 800;">Restore Demo Data</h3>
+                    <p style="font-size: 0.85rem; color: var(--gray-500); margin-bottom: 1rem; line-height: 1.5;">Wipe current data and inject <b>Softifyx</b> demo data for testing. <i>(Requires Code)</i></p>
+                    <input type="text" id="demoDataCode" placeholder="Enter Code" class="form-control" style="text-align: center; font-weight: 700; margin-bottom: 10px; border-radius: 10px; border: 2px solid #fde68a;">
+                    <button class="btn" onclick="restoreDemoData()" style="background: #f59e0b; color: white; width: 100%; border-radius: 12px; font-weight: 800; padding: 1rem;">Restore Default</button>
+                </div>
+
                 <!-- CSV Data Exchange -->
                 <div style="background: white; border: 1.5px solid #bbf7d0; border-radius: 24px; padding: 2.5rem 2rem; text-align: center;">
                     <h3 style="margin-bottom: 0.8rem; color: var(--gray-800); font-weight: 800;">CSV Data Exchange</h3>

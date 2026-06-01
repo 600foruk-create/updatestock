@@ -10187,4 +10187,43 @@ async function toggleAdminRoleForSelectedUser() {
         }
     } catch (e) { alert('Failed to change role.'); }
 }
+}
 
+// ==========================================
+// Demo Data Restore Functionality
+// ==========================================
+async function restoreDemoData() {
+    const code = document.getElementById('demoDataCode');
+    if (!code || !code.value) {
+        alert("Please enter the authorization code to restore demo data.");
+        return;
+    }
+
+    if (code.value !== "SOFTIFYX-DEMO") {
+        alert("Invalid authorization code. Action denied.");
+        return;
+    }
+
+    if (!confirm("⚠️ WARNING: This will completely WIPE your existing database and replace it with Softifyx Demo Data. This action CANNOT be undone.\n\nAre you absolutely sure you want to proceed?")) {
+        return;
+    }
+
+    try {
+        const response = await fetch('api/demo_data.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: code.value })
+        });
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            alert("Demo data successfully restored! The system will now reload.");
+            window.location.reload();
+        } else {
+            alert("Error: " + (result.message || "Failed to restore demo data."));
+        }
+    } catch (e) {
+        console.error("Restore demo data error:", e);
+        alert("A critical error occurred while attempting to restore demo data.");
+    }
+}
