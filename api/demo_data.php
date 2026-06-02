@@ -155,21 +155,41 @@ try {
 
     // 11. Insert Store Module Mock Data
     try {
-        // Just in case Store main categories doesn't accept code or something, use safe defaults
-        $conn->exec("INSERT INTO `store_main_categories` (`id`, `name`) VALUES (1, 'Stationery'), (2, 'Hardware')");
-        $conn->exec("INSERT INTO `store_sub_categories` (`id`, `main_id`, `name`) VALUES (1, 1, 'Office Supplies'), (2, 2, 'Tools')");
-        
-        $conn->exec("INSERT INTO `store_items` (`id`, `sub_id`, `name`, `opening_stock`, `stock`) VALUES 
-            (1, 1, 'A4 Paper Ream', 50, 45),
-            (2, 1, 'Ballpoint Pens Box', 20, 18),
-            (3, 2, 'Wrench Set', 5, 5),
-            (4, 2, 'Machine Oil (Liter)', 30, 25)
+        // Main Categories (Must include unique 'code')
+        $conn->exec("INSERT INTO `store_main_categories` (`id`, `name`, `code`) VALUES 
+            (1, 'Main Store (Machine Parts)', 'MS-01'), 
+            (2, 'Stationery Store', 'ST-01'),
+            (3, 'Nut Bolts & Hardware', 'NB-01')
         ");
-        $conn->exec("INSERT INTO `store_transactions` (`date`, `item_id`, `quantity`, `type`, `notes`) VALUES 
-            ('$yesterday 10:00:00', 1, 50, 'INWARD', 'Initial Purchase'),
-            ('$today 11:00:00', 1, 5, 'OUTWARD', 'Office Use'),
-            ('$yesterday 10:00:00', 4, 30, 'INWARD', 'Initial Purchase'),
-            ('$today 14:00:00', 4, 5, 'OUTWARD', 'Machine Maintenance')
+        
+        // Sub Categories
+        $conn->exec("INSERT INTO `store_sub_categories` (`id`, `main_id`, `name`, `code`) VALUES 
+            (1, 1, 'PVC Extruder Parts', 'MS-EXT'), 
+            (2, 1, 'Mixer Machine Parts', 'MS-MIX'),
+            (3, 2, 'Office Supplies', 'ST-OFS'),
+            (4, 3, 'Fasteners', 'NB-FST')
+        ");
+        
+        // Store Items
+        $conn->exec("INSERT INTO `store_items` (`id`, `sub_id`, `name`, `code`, `opening_stock`, `stock`, `low_stock_threshold`) VALUES 
+            (1, 1, 'Heater Band (120mm)', 'HT-120', 10, 8, 2),
+            (2, 1, 'Thermocouple Sensor', 'TC-SNSR', 15, 12, 5),
+            (3, 2, 'Mixer Blade Set', 'BLD-MIX', 4, 4, 1),
+            (4, 2, 'Gear Oil (Liter)', 'OIL-G', 50, 42, 10),
+            (5, 3, 'Writing Pads (A4)', 'PAD-A4', 100, 85, 20),
+            (6, 3, 'Blue Ballpoints (Box)', 'PEN-BLU', 30, 25, 5),
+            (7, 4, 'Nut Bolt 1/2\" x 2\"', 'NB-12-2', 500, 450, 100),
+            (8, 4, 'Washer 1/2\"', 'WSH-12', 1000, 800, 200)
+        ");
+        
+        // Store Transactions (History)
+        $conn->exec("INSERT INTO `store_transactions` (`date`, `item_id`, `quantity`, `type`, `ref`, `notes`, `issued_to`, `purpose`) VALUES 
+            ('$yesterday 10:00:00', 1, 10, 'INWARD', 'INV-001', 'Initial Purchase', '', ''),
+            ('$today 11:30:00', 1, 2, 'OUTWARD', 'REQ-01', 'Replaced on Extruder 1', 'Operator Ali', 'Machine Repair'),
+            ('$yesterday 10:00:00', 5, 100, 'INWARD', 'INV-002', 'Monthly Stationery', '', ''),
+            ('$today 09:15:00', 5, 15, 'OUTWARD', 'REQ-02', 'Office Use', 'Accounts Dept', 'Daily Reporting'),
+            ('$yesterday 10:00:00', 7, 500, 'INWARD', 'INV-003', 'Hardware Stock', '', ''),
+            ('$today 14:00:00', 7, 50, 'OUTWARD', 'REQ-03', 'Maintenance', 'Workshop', 'General Fixes')
         ");
     } catch (Exception $e) { $errors[] = "Store: " . $e->getMessage(); }
 
