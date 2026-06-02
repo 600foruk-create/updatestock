@@ -1813,6 +1813,11 @@ function renderAdvancedCharts(brandData) {
 
 function refreshStockList() {
     const search = (document.getElementById('stockSearch')?.value || '').toLowerCase();
+    const lengthFilter = document.getElementById('stockLengthFilter')?.value || '';
+    const availFilter = document.getElementById('stockAvailableFilter')?.value || '';
+    const orderFilter = document.getElementById('stockOrderFilter')?.value || '';
+    const zeroFilter = document.getElementById('stockZeroFilter')?.value || 'all';
+    
     const fromDate = document.getElementById('stockDateFrom')?.value;
     const toDate = document.getElementById('stockDateTo')?.value;
 
@@ -1852,19 +1857,28 @@ function refreshStockList() {
             let sub = subCategories.find(s => s.id == item.subId);
             let sizeName = sub ? sub.name.replace(/[^0-9.]/g, '') : '?';
             
-            // Smart Search logic (e.g. "2m" matches 2" and Brand starting with M)
+            // Smart Search logic
             const itemKey = (sizeName + main.name.charAt(0)).toLowerCase();
             const fullMatch = (main.name + " " + sizeName).toLowerCase();
             const isMatch = search === '' || brandMatches || sizeName.includes(search) || itemKey.includes(search) || fullMatch.includes(search);
 
             if (!isMatch) return;
-            hasVisibleItems = true;
 
             let weightVal = parseFloat(item.weight) || 0;
             let desc = `${sizeName}"( ${weightVal.toFixed(1)} ) Kg`;
             let available = item.stock || 0;
             let inOrder = orderedQtys[item.id] || 0;
             let result = available - inOrder;
+
+            // Apply Advanced Filters
+            if (lengthFilter !== '' && item.length != lengthFilter) return;
+            if (availFilter !== '' && available != availFilter) return;
+            if (orderFilter !== '' && inOrder != orderFilter) return;
+            
+            if (zeroFilter === 'hide_zero' && available === 0) return;
+            if (zeroFilter === 'only_zero' && available !== 0) return;
+
+            hasVisibleItems = true;
 
             totalBrandStock += available;
             totalKg += available * (item.weight || 0);
@@ -1910,9 +1924,15 @@ function refreshStockList() {
 }
 
 function clearStockFilters() {
-    document.getElementById('stockSearch').value = '';
-    document.getElementById('stockDateFrom').value = '';
-    document.getElementById('stockDateTo').value = '';
+    if(document.getElementById('stockSearch')) document.getElementById('stockSearch').value = '';
+    if(document.getElementById('stockLengthFilter')) document.getElementById('stockLengthFilter').value = '';
+    if(document.getElementById('stockAvailableFilter')) document.getElementById('stockAvailableFilter').value = '';
+    if(document.getElementById('stockOrderFilter')) document.getElementById('stockOrderFilter').value = '';
+    if(document.getElementById('stockZeroFilter')) document.getElementById('stockZeroFilter').value = 'all';
+    
+    if(document.getElementById('stockDateFrom')) document.getElementById('stockDateFrom').value = '';
+    if(document.getElementById('stockDateTo')) document.getElementById('stockDateTo').value = '';
+    
     refreshStockList();
 }
 
