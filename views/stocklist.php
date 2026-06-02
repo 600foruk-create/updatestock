@@ -6,15 +6,17 @@
                         </div>
                         <div class="form-group" style="flex: 1; min-width: 120px;">
                             <label>Length (ft/m)</label>
-                            <input type="text" id="stockLengthFilter" class="form-control" placeholder="e.g. 13" oninput="refreshStockList()">
+                            <select id="stockLengthFilter" class="form-control" onchange="refreshStockList()">
+                                <option value="">All Lengths</option>
+                                <!-- Dynamic options inserted by JS -->
+                            </select>
                         </div>
                         <div class="form-group" style="flex: 1; min-width: 120px;">
-                            <label>Available</label>
-                            <input type="number" id="stockAvailableFilter" class="form-control" placeholder="Search exact..." oninput="refreshStockList()">
-                        </div>
-                        <div class="form-group" style="flex: 1; min-width: 120px;">
-                            <label>In Order</label>
-                            <input type="number" id="stockOrderFilter" class="form-control" placeholder="Search exact..." oninput="refreshStockList()">
+                            <label>In Order Status</label>
+                            <select id="stockOrderFilter" class="form-control" onchange="refreshStockList()">
+                                <option value="">All Items</option>
+                                <option value="with_orders">Only With Active Orders</option>
+                            </select>
                         </div>
                         <div class="form-group" style="flex: 1; min-width: 150px;">
                             <label>Zero Stock View</label>

@@ -1813,13 +1813,27 @@ function renderAdvancedCharts(brandData) {
 
 function refreshStockList() {
     const search = (document.getElementById('stockSearch')?.value || '').toLowerCase();
-    const lengthFilter = document.getElementById('stockLengthFilter')?.value || '';
-    const availFilter = document.getElementById('stockAvailableFilter')?.value || '';
+    const lengthSelect = document.getElementById('stockLengthFilter');
+    const lengthFilter = lengthSelect?.value || '';
     const orderFilter = document.getElementById('stockOrderFilter')?.value || '';
     const zeroFilter = document.getElementById('stockZeroFilter')?.value || 'all';
     
     const fromDate = document.getElementById('stockDateFrom')?.value;
     const toDate = document.getElementById('stockDateTo')?.value;
+
+    // Dynamically populate Length dropdown if needed
+    if (lengthSelect && items.length > 0) {
+        const uniqueLengths = [...new Set(items.map(i => parseFloat(i.length) || 0))].filter(l => l > 0).sort((a,b)=>a-b);
+        if (lengthSelect.options.length <= 1 || lengthSelect.dataset.populated !== items.length.toString()) {
+            const currentVal = lengthSelect.value;
+            lengthSelect.innerHTML = '<option value="">All Lengths</option>';
+            uniqueLengths.forEach(len => {
+                lengthSelect.innerHTML += `<option value="${len}">${len} ft</option>`;
+            });
+            lengthSelect.value = currentVal; // Restore selection
+            lengthSelect.dataset.populated = items.length.toString();
+        }
+    }
 
     let orderedQtys = {};
     orders.filter(o => {
@@ -1871,9 +1885,8 @@ function refreshStockList() {
             let result = available - inOrder;
 
             // Apply Advanced Filters
-            if (lengthFilter !== '' && item.length != lengthFilter) return;
-            if (availFilter !== '' && available != availFilter) return;
-            if (orderFilter !== '' && inOrder != orderFilter) return;
+            if (lengthFilter !== '' && parseFloat(item.length) != parseFloat(lengthFilter)) return;
+            if (orderFilter === 'with_orders' && inOrder <= 0) return;
             
             if (zeroFilter === 'hide_zero' && available === 0) return;
             if (zeroFilter === 'only_zero' && available !== 0) return;
@@ -1926,7 +1939,6 @@ function refreshStockList() {
 function clearStockFilters() {
     if(document.getElementById('stockSearch')) document.getElementById('stockSearch').value = '';
     if(document.getElementById('stockLengthFilter')) document.getElementById('stockLengthFilter').value = '';
-    if(document.getElementById('stockAvailableFilter')) document.getElementById('stockAvailableFilter').value = '';
     if(document.getElementById('stockOrderFilter')) document.getElementById('stockOrderFilter').value = '';
     if(document.getElementById('stockZeroFilter')) document.getElementById('stockZeroFilter').value = 'all';
     
