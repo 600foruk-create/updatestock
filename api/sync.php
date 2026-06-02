@@ -892,8 +892,18 @@ try {
 
         elseif ($action === 'delete_rm_item') {
             $id = $input['id'];
-            $conn->prepare("DELETE FROM rm_items WHERE id = ?")->execute([$id]);
-            echo json_encode(['status' => 'success']);
+            $conn->beginTransaction();
+            try {
+                // Delete dependencies first
+                $conn->prepare("DELETE FROM rm_transactions WHERE rm_item_id = ?")->execute([$id]);
+                $conn->prepare("DELETE FROM rm_formula_items WHERE rm_item_id = ?")->execute([$id]);
+                $conn->prepare("DELETE FROM rm_items WHERE id = ?")->execute([$id]);
+                $conn->commit();
+                echo json_encode(['status' => 'success']);
+            } catch (Exception $e) {
+                $conn->rollBack();
+                echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+            }
         }
 
         elseif ($action === 'save_rm_unit') {

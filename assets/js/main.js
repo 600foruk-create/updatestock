@@ -405,11 +405,20 @@ function saveCompanySettings() {
     companySettings.name = document.getElementById('companyNameInput').value || 'StockFlow';
     fetch('api/sync.php?action=save_settings', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ settings: { name: companySettings.name, logo: companySettings.logo } })
+    }).then(res => res.json()).then(result => {
+        if (result.status === 'success') {
+            localStorage.setItem('stock_company', JSON.stringify(companySettings));
+            updateCompanyDisplay();
+            alert('Company settings saved successfully!');
+        } else {
+            alert('Failed to save settings to server.');
+        }
+    }).catch(e => {
+        console.error('Save settings error:', e);
+        alert('Network error while saving settings.');
     });
-    localStorage.setItem('stock_company', JSON.stringify(companySettings));
-    updateCompanyDisplay();
-    alert('Company settings saved!');
 }
 
 function handleLogoUpload(event) {
@@ -417,13 +426,49 @@ function handleLogoUpload(event) {
     if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
-            companySettings.logo = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-            fetch('api/sync.php?action=save_settings', {
-                method: 'POST',
-                body: JSON.stringify({ settings: { name: companySettings.name, logo: companySettings.logo } })
-            });
-            localStorage.setItem('stock_company', JSON.stringify(companySettings));
-            updateCompanyDisplay();
+            // Resize image to prevent LocalStorage QuotaExceededError and PHP POST limit
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const MAX_SIZE = 300;
+                let width = img.width;
+                let height = img.height;
+                
+                if (width > height) {
+                    if (width > MAX_SIZE) {
+                        height *= MAX_SIZE / width;
+                        width = MAX_SIZE;
+                    }
+                } else {
+                    if (height > MAX_SIZE) {
+                        width *= MAX_SIZE / height;
+                        height = MAX_SIZE;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                const resizedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                
+                companySettings.logo = `<img src="${resizedBase64}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                
+                fetch('api/sync.php?action=save_settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ settings: { name: companySettings.name, logo: companySettings.logo } })
+                }).then(() => {
+                    localStorage.setItem('stock_company', JSON.stringify(companySettings));
+                    updateCompanyDisplay();
+                    alert('Logo updated successfully!');
+                }).catch(err => {
+                    console.error('Logo upload error:', err);
+                    alert('Error saving logo to server.');
+                });
+            };
+            img.src = e.target.result;
         };
         reader.readAsDataURL(file);
     }
