@@ -7121,44 +7121,40 @@ async function saveRMConsumptionEntry() {
 }
 
 async function autoSaveRMConsumption(targetDate = null) {
-    // 1. Calculate FG Total (Same logic as refreshRMConsumptionReport)
-    let lastFGDate = targetDate ? new Date(targetDate) : null;
+    // 1. Find the latest date in the entire system (FG or RM)
+    let refDate = targetDate ? new Date(targetDate) : null;
     if (!targetDate) {
+        let maxDate = null;
         transactions.forEach(t => {
             if (t.type === 'IN') {
                 const d = new Date(t.date);
-                if (!isNaN(d.getTime()) && (!lastFGDate || d > lastFGDate)) lastFGDate = d;
+                if (!isNaN(d.getTime()) && (!maxDate || d > maxDate)) maxDate = d;
             }
         });
-    }
-
-    let fgTotalKg = 0;
-    if (lastFGDate) {
-        const lastFGDateStr = lastFGDate.toDateString();
-        transactions.forEach(t => {
-            if (t.type === 'IN' && new Date(t.date).toDateString() === lastFGDateStr) {
-                fgTotalKg += (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
-            }
-        });
-    }
-
-    // 2. Calculate RM Totals (Same logic as refreshRMConsumptionReport)
-    let lastRMDate = targetDate ? new Date(targetDate) : null;
-    if (!targetDate) {
         rmTransactions.forEach(t => {
             if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:')) {
                 const d = new Date(t.date);
-                if (!isNaN(d.getTime()) && (!lastRMDate || d > lastRMDate)) lastRMDate = d;
+                if (!isNaN(d.getTime()) && (!maxDate || d > maxDate)) maxDate = d;
             }
         });
+        refDate = maxDate;
     }
 
+    let fgTotalKg = 0;
     let rmTotalKg = 0;
     let rmTotalValue = 0;
-    if (lastRMDate) {
-        const lastRMDateStr = lastRMDate.toDateString();
+
+    if (refDate) {
+        const refDateStr = refDate.toDateString();
+
+        transactions.forEach(t => {
+            if (t.type === 'IN' && new Date(t.date).toDateString() === refDateStr) {
+                fgTotalKg += (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
+            }
+        });
+
         rmTransactions.forEach(t => {
-            if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === lastRMDateStr) {
+            if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === refDateStr) {
                 const item = rmItems.find(i => i.id == t.rm_item_id);
                 const qty = (parseFloat(t.quantity) || 0);
                 let price = (parseFloat(t.price) || 0);
@@ -7184,10 +7180,6 @@ async function autoSaveRMConsumption(targetDate = null) {
     if (targetDate) {
         logDateStr = targetDate + " 23:59:59";
     } else {
-        // Pick the most recent date between lastFGDate and lastRMDate
-        const refDate = (lastFGDate && lastRMDate)
-            ? (lastFGDate > lastRMDate ? lastFGDate : lastRMDate)
-            : (lastFGDate || lastRMDate);
         if (refDate) {
             // Format as YYYY-MM-DD 23:59:59
             const y = refDate.getFullYear();
@@ -7483,7 +7475,7 @@ function refreshRMConsumptionHistory() {
                 <td style="padding: 0.8rem; text-align: left; color: var(--gray-600);">Rs. ${totalOtherExpenses.toLocaleString()}</td>
                 <td style="padding: 0.8rem; text-align: left; color: var(--success);">Rs. ${totalGrandTotal.toLocaleString()}</td>
                 <td style="padding: 0.8rem; text-align: left;">${totalInProcess.toLocaleString()} KG</td>
-                <td style="padding: 0.8rem; text-align: left; color: ${totalGap < 0 ? '#dc2626' : '#059669'};">
+                <td style="padding: 0.8rem; text-align: left; color: white;">
                     ${totalGap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG
                 </td>
                 <td></td>
