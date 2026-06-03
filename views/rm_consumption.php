@@ -102,7 +102,7 @@
 
         <!-- Scrollable Table Container -->
         <div style="overflow-x: auto; max-height: 700px; overflow-y: auto; position: relative;">
-            <table class="data-table" style="margin-bottom: 0; min-width: 1300px; border-collapse: separate; border-spacing: 0;">
+            <table class="data-table" style="margin-bottom: 0; width: 100%; border-collapse: separate; border-spacing: 0;">
                 <thead style="position: sticky; top: 0; z-index: 20; background: var(--sky-600); color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
                     <tr>
                         <th style="padding: 0.5rem; border-bottom: 2px solid var(--sky-700);">Date & Time</th>

@@ -7437,25 +7437,9 @@ function refreshRMConsumptionHistory() {
                 <td style="padding: 0.5rem; font-size: 0.9rem; line-height: 1.2;">${formatDate(l.date)}</td>
                 <td style="padding: 0.5rem; text-align: left; font-size: 0.9rem;">${fg.toLocaleString()} KG</td>
                 <td style="padding: 0.5rem; text-align: left; font-size: 0.9rem;">${rm.toLocaleString()} KG</td>
-                <td style="padding: 0.5rem; text-align: left;">
-                    <div style="color: var(--gray-600); font-weight: 700; font-size: 0.85rem; margin-bottom: 2px;">Value: Rs. ${val.toLocaleString()}</div>
-                    <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
-                        <span style="font-size: 0.75rem; color: var(--gray-500);">Exp:</span>
-                        <input type="number" step="1" value="${other}" 
-                            onchange="updateRMConsumptionOtherExpenses(${l.id}, this.value)"
-                            style="width: 60px; padding: 0.2rem; text-align: left; border: 1px solid var(--gray-200); border-radius: 4px; font-weight: 600; font-size: 0.75rem;">
-                    </div>
-                    <div style="color: var(--success); font-weight: 800; font-size: 0.95rem;">Total: Rs. ${grandTotal.toLocaleString()}</div>
-                </td>
-                <td style="padding: 0.5rem; text-align: left;">
-                    <div style="color: var(--gray-600); font-weight: 700; font-size: 0.85rem; margin-bottom: 2px;">Gap: ${(rm - fg).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG</div>
-                    <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 2px;">
-                        <span style="font-size: 0.75rem; color: var(--gray-500);">In Proc:</span>
-                        <input type="number" step="0.1" value="${inp}" 
-                            onchange="updateRMConsumptionInProcess(${l.id}, this.value)"
-                            style="width: 60px; padding: 0.2rem; text-align: left; border: 1px solid var(--gray-200); border-radius: 4px; font-weight: 600; font-size: 0.75rem;">
-                    </div>
-                    <div style="color: ${gapColor}; font-weight: bold; font-size: 0.95rem;">Net: ${gap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG</div>
+                <td style="padding: 0.5rem; text-align: left; color: var(--gray-600); font-weight: 700;">Rs. ${val.toLocaleString()}</td>
+                <td style="padding: 0.5rem; text-align: left; color: ${gapColor}; font-weight: bold;">
+                    ${gap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG
                 </td>
                 <td style="padding: 0.5rem; text-align: center;">
                     <button class="btn btn-sm btn-danger" onclick="deleteRMConsumptionEntry(${l.id})" style="padding: 3px 6px; font-size: 0.8rem;">🗑️</button>
@@ -7469,6 +7453,23 @@ function refreshRMConsumptionHistory() {
 
     tbody.innerHTML = html;
 
+    // Read monthly totals from localStorage if filtered by month
+    let monthlyOther = 0;
+    let monthlyInProc = 0;
+    const storageKey = `rm_consumption_monthly_${yearF}_${monthF}`;
+    
+    if (monthF && yearF) {
+        const stored = localStorage.getItem(storageKey);
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            monthlyOther = parsed.other || 0;
+            monthlyInProc = parsed.inProcess || 0;
+        }
+    }
+
+    const finalGrandTotal = totalValue + monthlyOther;
+    const finalGap = (totalRM - totalFG) - monthlyInProc;
+
     if (tfoot) {
         tfoot.innerHTML = `
             <tr>
@@ -7476,14 +7477,26 @@ function refreshRMConsumptionHistory() {
                 <td style="padding: 0.5rem; text-align: left;">${totalFG.toLocaleString()} KG</td>
                 <td style="padding: 0.5rem; text-align: left;">${totalRM.toLocaleString()} KG</td>
                 <td style="padding: 0.5rem; text-align: left;">
-                    <div style="color: rgba(255,255,255,0.8); font-size: 0.8rem;">Val: Rs. ${totalValue.toLocaleString()}</div>
-                    <div style="color: rgba(255,255,255,0.8); font-size: 0.8rem;">Exp: Rs. ${totalOtherExpenses.toLocaleString()}</div>
-                    <div style="color: white; font-weight: bold; font-size: 1rem;">Total: Rs. ${totalGrandTotal.toLocaleString()}</div>
+                    <div style="color: rgba(255,255,255,0.9); font-size: 0.85rem; margin-bottom: 4px;">Val: Rs. ${totalValue.toLocaleString()}</div>
+                    <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;">
+                        <span style="font-size: 0.75rem; color: rgba(255,255,255,0.7);">Exp:</span>
+                        <input type="number" step="1" value="${monthlyOther}" 
+                            onchange="updateMonthlyRMConsumptionData(${yearF}, ${monthF}, 'other', this.value)"
+                            ${!(monthF && yearF) ? 'disabled title="Select month and year to edit"' : ''}
+                            style="width: 80px; padding: 0.2rem; text-align: left; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; background: rgba(255,255,255,0.1); color: white; font-weight: 600; font-size: 0.8rem;">
+                    </div>
+                    <div style="color: white; font-weight: bold; font-size: 1.05rem;">Total: Rs. ${finalGrandTotal.toLocaleString()}</div>
                 </td>
                 <td style="padding: 0.5rem; text-align: left;">
-                    <div style="color: rgba(255,255,255,0.8); font-size: 0.8rem;">Gap: ${(totalRM - totalFG).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG</div>
-                    <div style="color: rgba(255,255,255,0.8); font-size: 0.8rem;">In Proc: ${totalInProcess.toLocaleString()} KG</div>
-                    <div style="color: white; font-weight: bold; font-size: 1rem;">Net: ${totalGap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG</div>
+                    <div style="color: rgba(255,255,255,0.9); font-size: 0.85rem; margin-bottom: 4px;">Gap: ${(totalRM - totalFG).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG</div>
+                    <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;">
+                        <span style="font-size: 0.75rem; color: rgba(255,255,255,0.7);">In Proc:</span>
+                        <input type="number" step="0.1" value="${monthlyInProc}" 
+                            onchange="updateMonthlyRMConsumptionData(${yearF}, ${monthF}, 'inProcess', this.value)"
+                            ${!(monthF && yearF) ? 'disabled title="Select month and year to edit"' : ''}
+                            style="width: 80px; padding: 0.2rem; text-align: left; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; background: rgba(255,255,255,0.1); color: white; font-weight: 600; font-size: 0.8rem;">
+                    </div>
+                    <div style="color: white; font-weight: bold; font-size: 1.05rem;">Net: ${finalGap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG</div>
                 </td>
                 <td style="padding: 0.5rem;"></td>
             </tr>`;
@@ -7493,6 +7506,18 @@ function refreshRMConsumptionHistory() {
     updateTotalWIPSummary();
 }
 
+function updateMonthlyRMConsumptionData(year, month, field, value) {
+    if (!year || !month) return;
+    const storageKey = `rm_consumption_monthly_${year}_${month}`;
+    let data = {};
+    const stored = localStorage.getItem(storageKey);
+    if (stored) {
+        data = JSON.parse(stored);
+    }
+    data[field] = parseFloat(value) || 0;
+    localStorage.setItem(storageKey, JSON.stringify(data));
+    refreshRMConsumptionHistory();
+}
 
 async function updateRMConsumptionInProcess(id, val) {
     const value = parseFloat(val) || 0;
