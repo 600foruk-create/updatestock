@@ -7434,14 +7434,14 @@ function refreshRMConsumptionHistory() {
         const gapColor = gap < 0 ? '#dc2626' : '#059669';
         html += `
             <tr data-id="${l.id}">
-                <td style="padding: 0.5rem; font-size: 0.9rem; line-height: 1.2;">${formatDate(l.date)}</td>
-                <td style="padding: 0.5rem; text-align: left; font-size: 0.9rem;">${fg.toLocaleString()} KG</td>
-                <td style="padding: 0.5rem; text-align: left; font-size: 0.9rem;">${rm.toLocaleString()} KG</td>
-                <td style="padding: 0.5rem; text-align: left; color: var(--gray-600); font-weight: 700;">Rs. ${val.toLocaleString()}</td>
-                <td style="padding: 0.5rem; text-align: left; color: ${gapColor}; font-weight: bold;">
+                <td style="padding: 0.3rem 0.5rem; font-size: 0.9rem; line-height: 1.2;">${formatDate(l.date)}</td>
+                <td style="padding: 0.3rem 0.5rem; text-align: left; font-size: 0.9rem;">${fg.toLocaleString()} KG</td>
+                <td style="padding: 0.3rem 0.5rem; text-align: left; font-size: 0.9rem;">${rm.toLocaleString()} KG</td>
+                <td style="padding: 0.3rem 0.5rem; text-align: left; color: var(--gray-600); font-weight: 700;">Rs. ${val.toLocaleString()}</td>
+                <td style="padding: 0.3rem 0.5rem; text-align: left; color: ${gapColor}; font-weight: bold;">
                     ${gap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG
                 </td>
-                <td style="padding: 0.5rem; text-align: center;">
+                <td style="padding: 0.3rem 0.5rem; text-align: center;">
                     <button class="btn btn-sm btn-danger" onclick="deleteRMConsumptionEntry(${l.id})" style="padding: 3px 6px; font-size: 0.8rem;">🗑️</button>
                 </td>
             </tr>`;
@@ -7472,34 +7472,57 @@ function refreshRMConsumptionHistory() {
 
     if (tfoot) {
         tfoot.innerHTML = `
-            <tr>
-                <td style="padding: 0.5rem;">SUB TOTAL (FILTERED)</td>
-                <td style="padding: 0.5rem; text-align: left;">${totalFG.toLocaleString()} KG</td>
-                <td style="padding: 0.5rem; text-align: left;">${totalRM.toLocaleString()} KG</td>
-                <td style="padding: 0.5rem; text-align: left;">
-                    <div style="color: rgba(255,255,255,0.9); font-size: 0.85rem; margin-bottom: 4px;">Val: Rs. ${totalValue.toLocaleString()}</div>
-                    <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;">
-                        <span style="font-size: 0.75rem; color: rgba(255,255,255,0.7);">Exp:</span>
+            <!-- Sub Total Row -->
+            <tr style="background: var(--sky-700); color: white;">
+                <td style="padding: 0.6rem 0.5rem; font-weight: bold;" colspan="3">SUB TOTAL (FILTERED)</td>
+                <td style="padding: 0.6rem 0.5rem; font-weight: bold; font-size: 0.95rem;">
+                    Rs. ${totalValue.toLocaleString()}
+                </td>
+                <td style="padding: 0.6rem 0.5rem; font-weight: bold; font-size: 0.95rem;">
+                    ${(totalRM - totalFG).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG
+                </td>
+                <td style="padding: 0.6rem 0.5rem;"></td>
+            </tr>
+            <!-- Monthly Adjustments Row -->
+            <tr style="background: #f8fafc; color: var(--gray-800); border-bottom: 2px solid var(--gray-200);">
+                <td style="padding: 0.6rem 0.5rem; font-weight: bold; color: var(--sky-800);" colspan="3">
+                    MONTHLY ADJUSTMENTS ${!(monthF && yearF) ? '<span style="font-size: 0.75rem; color: #ef4444; margin-left: 10px;">(Please select Month & Year above to edit)</span>' : ''}
+                </td>
+                <td style="padding: 0.6rem 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.8rem; font-weight: bold; color: var(--gray-600);">Other Exp: Rs.</span>
                         <input type="number" step="1" value="${monthlyOther}" 
                             onchange="updateMonthlyRMConsumptionData(${yearF}, ${monthF}, 'other', this.value)"
                             ${!(monthF && yearF) ? 'disabled title="Select month and year to edit"' : ''}
-                            style="width: 80px; padding: 0.2rem; text-align: left; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; background: rgba(255,255,255,0.1); color: white; font-weight: 600; font-size: 0.8rem;">
+                            style="width: 100px; padding: 0.3rem 0.5rem; border: 1px solid var(--gray-300); border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: var(--gray-800);">
                     </div>
-                    <div style="color: white; font-weight: bold; font-size: 1.05rem;">Total: Rs. ${finalGrandTotal.toLocaleString()}</div>
                 </td>
-                <td style="padding: 0.5rem; text-align: left;">
-                    <div style="color: rgba(255,255,255,0.9); font-size: 0.85rem; margin-bottom: 4px;">Gap: ${(totalRM - totalFG).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG</div>
-                    <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;">
-                        <span style="font-size: 0.75rem; color: rgba(255,255,255,0.7);">In Proc:</span>
+                <td style="padding: 0.6rem 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.8rem; font-weight: bold; color: var(--gray-600);">In Process:</span>
                         <input type="number" step="0.1" value="${monthlyInProc}" 
                             onchange="updateMonthlyRMConsumptionData(${yearF}, ${monthF}, 'inProcess', this.value)"
                             ${!(monthF && yearF) ? 'disabled title="Select month and year to edit"' : ''}
-                            style="width: 80px; padding: 0.2rem; text-align: left; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; background: rgba(255,255,255,0.1); color: white; font-weight: 600; font-size: 0.8rem;">
+                            style="width: 100px; padding: 0.3rem 0.5rem; border: 1px solid var(--gray-300); border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: var(--gray-800);">
+                        <span style="font-size: 0.8rem; font-weight: bold; color: var(--gray-600);">KG</span>
                     </div>
-                    <div style="color: white; font-weight: bold; font-size: 1.05rem;">Net: ${finalGap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG</div>
                 </td>
-                <td style="padding: 0.5rem;"></td>
-            </tr>`;
+                <td style="padding: 0.6rem 0.5rem;"></td>
+            </tr>
+            <!-- Grand Total Row -->
+            <tr style="background: var(--sky-800); color: white;">
+                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem; text-transform: uppercase;" colspan="3">
+                    GRAND TOTAL (NET)
+                </td>
+                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem; color: #34d399;">
+                    Rs. ${finalGrandTotal.toLocaleString()}
+                </td>
+                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem; color: ${finalGap < 0 ? '#fca5a5' : '#6ee7b7'};">
+                    ${finalGap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG
+                </td>
+                <td style="padding: 0.8rem 0.5rem;"></td>
+            </tr>
+        `;
     }
 
     // Update the Total WIP Summary Card & Breakdown whenever history is refreshed
@@ -7787,6 +7810,7 @@ function updateTotalWIPSummary() {
 
     let grandTotal = 0;
     const monthlyData = {}; // Key: "Month Year", Value: Sum of Gap
+    const monthlyKeys = {}; // Key: "Month Year", Value: { year, month }
 
     // Process all logs (not just filtered ones)
     rmConsumptionLogs.forEach(l => {
@@ -7799,9 +7823,24 @@ function updateTotalWIPSummary() {
         const d = new Date(l.date);
         const monthYear = d.toLocaleString('default', { month: 'long', year: 'numeric' });
         
-        if (!monthlyData[monthYear]) monthlyData[monthYear] = 0;
+        if (!monthlyData[monthYear]) {
+            monthlyData[monthYear] = 0;
+            monthlyKeys[monthYear] = { year: d.getFullYear(), month: d.getMonth() + 1 };
+        }
         monthlyData[monthYear] += gap;
     });
+
+    // Subtract monthly in_process from localStorage
+    for (const [monthYear, keys] of Object.entries(monthlyKeys)) {
+        const storageKey = `rm_consumption_monthly_${keys.year}_${keys.month}`;
+        const stored = localStorage.getItem(storageKey);
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            const monthlyInProc = parsed.inProcess || 0;
+            monthlyData[monthYear] -= monthlyInProc;
+            grandTotal -= monthlyInProc;
+        }
+    }
 
     // Update Grand Total Card
     totalEl.innerText = grandTotal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}) + ' KG';
