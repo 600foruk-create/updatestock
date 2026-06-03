@@ -105,15 +105,12 @@
             <table class="data-table" style="margin-bottom: 0; min-width: 1300px; border-collapse: separate; border-spacing: 0;">
                 <thead style="position: sticky; top: 0; z-index: 20; background: var(--sky-600); color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
                     <tr>
-                        <th style="padding: 1rem 0.8rem; border-bottom: 2px solid var(--sky-700);">Date & Time</th>
-                        <th style="padding: 1rem 0.8rem; text-align: left; border-bottom: 2px solid var(--sky-700);">FG Produced (KG)</th>
-                        <th style="padding: 1rem 0.8rem; text-align: left; border-bottom: 2px solid var(--sky-700);">RM Issued (KG)</th>
-                        <th style="padding: 1rem 0.8rem; text-align: left; border-bottom: 2px solid var(--sky-700);">Issuance Value (Rs.)</th>
-                        <th style="padding: 1rem 0.8rem; text-align: left; border-bottom: 2px solid var(--sky-700);">Other Expenses (Rs.)</th>
-                        <th style="padding: 1rem 0.8rem; text-align: left; border-bottom: 2px solid var(--sky-700);">Grand Total (Rs.)</th>
-                        <th style="padding: 1rem 0.8rem; text-align: left; border-bottom: 2px solid var(--sky-700);">In Process (KG)</th>
-                        <th style="padding: 1rem 0.8rem; text-align: left; border-bottom: 2px solid var(--sky-700);">Gap / WIP (Net)</th>
-                        <th style="padding: 1rem 0.8rem; text-align: center; border-bottom: 2px solid var(--sky-700);">Actions</th>
+                        <th style="padding: 0.5rem; border-bottom: 2px solid var(--sky-700);">Date & Time</th>
+                        <th style="padding: 0.5rem; text-align: left; border-bottom: 2px solid var(--sky-700);">FG Produced (KG)</th>
+                        <th style="padding: 0.5rem; text-align: left; border-bottom: 2px solid var(--sky-700);">RM Issued (KG)</th>
+                        <th style="padding: 0.5rem; text-align: left; border-bottom: 2px solid var(--sky-700);">Issuance Value (Rs.)</th>
+                        <th style="padding: 0.5rem; text-align: left; border-bottom: 2px solid var(--sky-700);">Gap / WIP (Net)</th>
+                        <th style="padding: 0.5rem; text-align: center; border-bottom: 2px solid var(--sky-700);">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="rmConsumptionHistoryTable" class="striped-rows">
