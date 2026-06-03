@@ -7494,21 +7494,21 @@ function refreshRMConsumptionHistory() {
                 <td style="padding: 0.1rem 0.5rem;"></td>
                 <td style="padding: 0.1rem 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 0.8rem; font-weight: bold; color: var(--gray-600);">Other Exp: Rs.</span>
+                        <span style="font-size: 0.8rem; font-weight: bold; color: black;">Other Exp: Rs.</span>
                         <input type="number" step="1" value="${monthlyOther}" 
                             onchange="updateMonthlyRMConsumptionData(${yearF}, ${monthF}, 'other', this.value)"
                             ${!(monthF && yearF) ? 'disabled title="Select month and year to edit"' : ''}
-                            style="width: 100px; padding: 0.1rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: var(--gray-800);">
+                            style="width: 100px; padding: 0.1rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: black;">
                     </div>
                 </td>
                 <td style="padding: 0.1rem 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 0.8rem; font-weight: bold; color: var(--gray-600);">In Process:</span>
+                        <span style="font-size: 0.8rem; font-weight: bold; color: black;">In Process:</span>
                         <input type="number" step="0.1" value="${monthlyInProc}" 
                             onchange="updateMonthlyRMConsumptionData(${yearF}, ${monthF}, 'inProcess', this.value)"
                             ${!(monthF && yearF) ? 'disabled title="Select month and year to edit"' : ''}
-                            style="width: 100px; padding: 0.1rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: var(--gray-800);">
-                        <span style="font-size: 0.8rem; font-weight: bold; color: var(--gray-600);">KG</span>
+                            style="width: 100px; padding: 0.1rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: black;">
+                        <span style="font-size: 0.8rem; font-weight: bold; color: black;">KG</span>
                     </div>
                 </td>
                 <td style="padding: 0.1rem 0.5rem;"></td>
@@ -7524,10 +7524,10 @@ function refreshRMConsumptionHistory() {
                 <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem;">
                     ${totalRM.toLocaleString()} KG
                 </td>
-                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem; color: #34d399;">
+                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem; color: white;">
                     Rs. ${finalGrandTotal.toLocaleString()}
                 </td>
-                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem; color: ${finalGap < 0 ? '#fca5a5' : '#6ee7b7'};">
+                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem; color: white;">
                     ${finalGap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG
                 </td>
                 <td style="padding: 0.8rem 0.5rem;"></td>
