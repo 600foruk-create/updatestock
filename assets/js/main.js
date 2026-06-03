@@ -7434,14 +7434,14 @@ function refreshRMConsumptionHistory() {
         const gapColor = gap < 0 ? '#dc2626' : '#059669';
         html += `
             <tr data-id="${l.id}">
-                <td style="padding: 0.3rem 0.5rem; font-size: 0.9rem; line-height: 1.2;">${formatDate(l.date)}</td>
-                <td style="padding: 0.3rem 0.5rem; text-align: left; font-size: 0.9rem;">${fg.toLocaleString()} KG</td>
-                <td style="padding: 0.3rem 0.5rem; text-align: left; font-size: 0.9rem;">${rm.toLocaleString()} KG</td>
-                <td style="padding: 0.3rem 0.5rem; text-align: left; color: var(--gray-600); font-weight: 700;">Rs. ${val.toLocaleString()}</td>
-                <td style="padding: 0.3rem 0.5rem; text-align: left; color: ${gapColor}; font-weight: bold;">
+                <td style="padding: 0.15rem 0.4rem; font-size: 0.9rem; line-height: 1.2;">${formatDate(l.date)}</td>
+                <td style="padding: 0.15rem 0.4rem; text-align: left; font-size: 0.9rem;">${fg.toLocaleString()} KG</td>
+                <td style="padding: 0.15rem 0.4rem; text-align: left; font-size: 0.9rem;">${rm.toLocaleString()} KG</td>
+                <td style="padding: 0.15rem 0.4rem; text-align: left; color: var(--gray-600); font-weight: 700;">Rs. ${val.toLocaleString()}</td>
+                <td style="padding: 0.15rem 0.4rem; text-align: left; color: ${gapColor}; font-weight: bold;">
                     ${gap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG
                 </td>
-                <td style="padding: 0.3rem 0.5rem; text-align: center;">
+                <td style="padding: 0.15rem 0.4rem; text-align: center;">
                     <button class="btn btn-sm btn-danger" onclick="deleteRMConsumptionEntry(${l.id})" style="padding: 3px 6px; font-size: 0.8rem;">🗑️</button>
                 </td>
             </tr>`;
@@ -7474,7 +7474,9 @@ function refreshRMConsumptionHistory() {
         tfoot.innerHTML = `
             <!-- Sub Total Row -->
             <tr style="background: var(--sky-700); color: white;">
-                <td style="padding: 0.6rem 0.5rem; font-weight: bold;" colspan="3">SUB TOTAL (FILTERED)</td>
+                <td style="padding: 0.6rem 0.5rem; font-weight: bold;">SUB TOTAL (FILTERED)</td>
+                <td style="padding: 0.6rem 0.5rem; font-weight: bold;">${totalFG.toLocaleString()} KG</td>
+                <td style="padding: 0.6rem 0.5rem; font-weight: bold;">${totalRM.toLocaleString()} KG</td>
                 <td style="padding: 0.6rem 0.5rem; font-weight: bold; font-size: 0.95rem;">
                     Rs. ${totalValue.toLocaleString()}
                 </td>
@@ -7484,35 +7486,43 @@ function refreshRMConsumptionHistory() {
                 <td style="padding: 0.6rem 0.5rem;"></td>
             </tr>
             <!-- Monthly Adjustments Row -->
-            <tr style="background: #f8fafc; color: var(--gray-800); border-bottom: 2px solid var(--gray-200);">
-                <td style="padding: 0.6rem 0.5rem; font-weight: bold; color: var(--sky-800);" colspan="3">
-                    MONTHLY ADJUSTMENTS ${!(monthF && yearF) ? '<span style="font-size: 0.75rem; color: #ef4444; margin-left: 10px;">(Please select Month & Year above to edit)</span>' : ''}
+            <tr style="background: #f8fafc; border-bottom: 2px solid var(--gray-200);">
+                <td style="padding: 0.3rem 0.5rem; font-weight: bold; color: var(--sky-800);">
+                    MONTHLY ADJUSTMENTS ${!(monthF && yearF) ? '<br><span style="font-size: 0.75rem; color: #ef4444;">(Please select Month & Year above to edit)</span>' : ''}
                 </td>
-                <td style="padding: 0.6rem 0.5rem;">
+                <td style="padding: 0.3rem 0.5rem;"></td>
+                <td style="padding: 0.3rem 0.5rem;"></td>
+                <td style="padding: 0.3rem 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span style="font-size: 0.8rem; font-weight: bold; color: var(--gray-600);">Other Exp: Rs.</span>
                         <input type="number" step="1" value="${monthlyOther}" 
                             onchange="updateMonthlyRMConsumptionData(${yearF}, ${monthF}, 'other', this.value)"
                             ${!(monthF && yearF) ? 'disabled title="Select month and year to edit"' : ''}
-                            style="width: 100px; padding: 0.3rem 0.5rem; border: 1px solid var(--gray-300); border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: var(--gray-800);">
+                            style="width: 100px; padding: 0.15rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: var(--gray-800);">
                     </div>
                 </td>
-                <td style="padding: 0.6rem 0.5rem;">
+                <td style="padding: 0.3rem 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span style="font-size: 0.8rem; font-weight: bold; color: var(--gray-600);">In Process:</span>
                         <input type="number" step="0.1" value="${monthlyInProc}" 
                             onchange="updateMonthlyRMConsumptionData(${yearF}, ${monthF}, 'inProcess', this.value)"
                             ${!(monthF && yearF) ? 'disabled title="Select month and year to edit"' : ''}
-                            style="width: 100px; padding: 0.3rem 0.5rem; border: 1px solid var(--gray-300); border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: var(--gray-800);">
+                            style="width: 100px; padding: 0.15rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: var(--gray-800);">
                         <span style="font-size: 0.8rem; font-weight: bold; color: var(--gray-600);">KG</span>
                     </div>
                 </td>
-                <td style="padding: 0.6rem 0.5rem;"></td>
+                <td style="padding: 0.3rem 0.5rem;"></td>
             </tr>
             <!-- Grand Total Row -->
             <tr style="background: var(--sky-800); color: white;">
-                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem; text-transform: uppercase;" colspan="3">
+                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem; text-transform: uppercase;">
                     GRAND TOTAL (NET)
+                </td>
+                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem;">
+                    ${totalFG.toLocaleString()} KG
+                </td>
+                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem;">
+                    ${totalRM.toLocaleString()} KG
                 </td>
                 <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem; color: #34d399;">
                     Rs. ${finalGrandTotal.toLocaleString()}
