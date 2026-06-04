@@ -7647,6 +7647,11 @@ async function deleteRMConsumptionEntry(id) {
 }
 
 async function clearRMConsumptionHistory() {
+    const pwd = prompt('Enter Admin Password to clear history:');
+    if (pwd !== 'admin123') {
+        if (pwd !== null) alert('Incorrect password!');
+        return;
+    }
     if (!confirm('CAUTION: This will delete ALL records from the history list. Proceed?')) return;
     try {
         const response = await fetch('api/sync.php?action=clear_rm_consumption_history', {
