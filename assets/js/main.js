@@ -7442,7 +7442,7 @@ function refreshRMConsumptionHistory() {
                     ${gap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG
                 </td>
                 <td style="padding: 0.15rem 0.4rem; text-align: center;">
-                    <button class="btn btn-sm btn-danger" onclick="deleteRMConsumptionEntry(${l.id})" style="padding: 3px 6px; font-size: 0.8rem;">🗑️</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteRMConsumptionEntry(${l.id})" title="Delete" style="padding: 3px 6px; font-size: 0.8rem;">🗑️</button>
                 </td>
             </tr>`;
     });
@@ -7632,6 +7632,11 @@ function populateRMHistoryYearFilter() {
 }
 
 async function deleteRMConsumptionEntry(id) {
+    const pwd = prompt('Enter Admin Password to delete this entry:');
+    if (pwd !== 'admin123') {
+        if (pwd !== null) alert('Incorrect password!');
+        return;
+    }
     if (!confirm('Are you sure you want to delete this entry?')) return;
     try {
         const response = await fetch('api/sync.php?action=delete_rm_consumption_log', {
