@@ -7,7 +7,7 @@
     </div>
     <div id="rmInventoryContainer">
         <div class="table-container">
-            <p style="text-align:center; padding:2rem; color:var(--gray-500);">Loading RM Inventory...</p>
+            <p style="text-align:center; padding:2rem; color:var(--gray-500);">Loading Chart of Inventory...</p>
         </div>
     </div>
 </div>

@@ -59,7 +59,7 @@
                     <button class="nav-tab" onclick="showTab('rm_in')">RM IN</button>
                     <button class="nav-tab" onclick="showTab('rm_out')">RM OUT</button>
                     <button class="nav-tab" onclick="showTab('rm_formulas')">Formulas</button>
-                    <button class="nav-tab" onclick="showTab('rm_inventory')">RM Inventory</button>
+                    <button class="nav-tab" onclick="showTab('rm_inventory')">Chart of Inventory</button>
                     <button class="nav-tab" onclick="showTab('rm_balance')">Inventory Balance</button>
                     <button class="nav-tab" onclick="showTab('rm_audit')">Monthly Audit</button>
                     <button class="nav-tab" onclick="showTab('rm_reports')">Reports</button>

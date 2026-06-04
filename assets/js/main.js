@@ -9927,7 +9927,7 @@ const systemModules = [
     { id: "rm_purchase", name: "Raw Materials: Purchase (IN)" },
     { id: "rm_consumption", name: "Raw Materials: Usage (OUT)" },
     { id: "rm_formula", name: "Raw Materials: Production Formulas" },
-    { id: "rm_inventory", name: "Raw Materials: RM Inventory" },
+    { id: "rm_inventory", name: "Raw Materials: Chart of Inventory" },
     { id: "rm_balance", name: "Raw Materials: Inventory Balance" },
     { id: "rm_audit", name: "Raw Materials: Monthly Audit" },
     { id: "rm_reports", name: "Raw Materials: Reports" },
