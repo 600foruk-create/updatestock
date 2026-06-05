@@ -34,6 +34,13 @@
                 <input type="text" id="mainCategoryName" class="form-control">
             </div>
             <div class="form-group">
+                <label>Brand Type</label>
+                <select id="mainCategoryType" class="form-control">
+                    <option value="Pipe">PVC Pipe (Measured in Feet)</option>
+                    <option value="Fitting">PVC Fitting (Measured in Pieces)</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label>Brand Code (e.g., 01)</label>
                 <input type="text" id="mainCategoryCode" class="form-control" placeholder="01" maxlength="2">
             </div>
@@ -83,7 +90,7 @@
             <input type="hidden" id="editItemId">
             <input type="hidden" id="itemMainId">
             <input type="hidden" id="itemSubId">
-            <div class="form-group">
+            <div class="form-group" id="itemLengthGroup">
                 <label>Length</label>
                 <div class="input-group" style="display: flex; gap: 0.5rem; align-items: center;">
                     <select id="itemLength" class="form-control" style="flex: 1;"></select>
@@ -92,13 +99,16 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>Weight</label>
-                <div class="input-group">
-                    <input type="number" id="itemWeight" step="0.01" class="form-control">
-                    <span>KG</span>
+                <label id="itemWeightLabel">Weight</label>
+                <div class="input-group" style="display: flex; gap: 0.5rem;">
+                    <input type="number" id="itemWeight" step="0.001" class="form-control" style="flex: 2;">
+                    <select id="itemWeightUnit" class="form-control" style="flex: 1;">
+                        <option value="kg">KG</option>
+                        <option value="g">Grams</option>
+                    </select>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display: none;">
                 <label>Opening Stock</label>
                 <input type="number" id="itemStock" class="form-control" value="0" min="0">
             </div>
@@ -215,6 +225,13 @@
                 <input type="text" id="quickBrandName" class="form-control">
             </div>
             <div class="form-group">
+                <label>Brand Type</label>
+                <select id="quickBrandType" class="form-control">
+                    <option value="Pipe">PVC Pipe (Measured in Feet)</option>
+                    <option value="Fitting">PVC Fitting (Measured in Pieces)</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label>Brand Code</label>
                 <input type="text" id="quickBrandCode" class="form-control" placeholder="01" maxlength="2">
             </div>
@@ -263,7 +280,7 @@
             </div>
             <input type="hidden" id="quickItemMainId">
             <input type="hidden" id="quickItemSubId">
-            <div class="form-group">
+            <div class="form-group" id="quickItemLengthGroup">
                 <label>Length (ft)</label>
                 <div class="input-group" style="display: flex; gap: 0.5rem; align-items: center;">
                     <select id="quickItemLength" class="form-control" style="flex: 1;"></select>
@@ -271,8 +288,14 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>Weight (kg)</label>
-                <input type="number" id="quickItemWeight" class="form-control" step="0.01">
+                <label id="quickItemWeightLabel">Weight</label>
+                <div class="input-group" style="display: flex; gap: 0.5rem;">
+                    <input type="number" id="quickItemWeight" class="form-control" step="0.001" style="flex: 2;">
+                    <select id="quickItemWeightUnit" class="form-control" style="flex: 1;">
+                        <option value="kg">KG</option>
+                        <option value="g">Grams</option>
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label>Low Stock Limit</label>

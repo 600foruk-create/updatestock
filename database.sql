@@ -25,8 +25,10 @@ INSERT IGNORE INTO `users` (`name`, `username`, `password`, `role`) VALUES
 CREATE TABLE IF NOT EXISTS `main_categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
+  `code` varchar(50) DEFAULT NULL,
   `color` varchar(50) DEFAULT '#2196f3',
   `low_stock_limit` int(11) DEFAULT 10,
+  `type` enum('Pipe','Fitting') DEFAULT 'Pipe',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -50,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   `sub_id` int(11) NOT NULL,
   `name` varchar(255) DEFAULT '',
   `length` decimal(10,2) DEFAULT '13.00',
-  `weight` decimal(10,2) DEFAULT '0.00',
+  `weight` decimal(10,3) DEFAULT '0.000',
   `stock` int(11) DEFAULT 0,
   `low_stock_limit` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),

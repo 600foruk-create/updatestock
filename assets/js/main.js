@@ -505,6 +505,9 @@ function resequenceCodes() {
 function getProductCode(item, main, sub) {
     if (!item || !main || !sub) return 'N/A';
     let size = sub.name.replace(/[^0-9.]/g, '') || '0';
+    if (main.type === 'Fitting') {
+        return `${size}" ${main.name} (${item.weight}KG)`;
+    }
     return `${size}"×${item.length}' ${item.weight}KG ${main.name}`;
 }
 
@@ -1320,6 +1323,7 @@ function createSearchableInput(placeholder, options, onSelect, disabled = false,
 // Quick Add Functions
 function showQuickAddBrand() {
     document.getElementById('quickBrandName').value = '';
+    document.getElementById('quickBrandType').value = 'Pipe';
     document.getElementById('quickBrandCode').value = '';
     document.getElementById('quickBrandColor').value = '#2196f3';
     document.getElementById('quickBrandLowStock').value = '10';
@@ -1332,6 +1336,7 @@ function closeQuickAddBrandModal() {
 
 async function saveQuickBrand() {
     let name = document.getElementById('quickBrandName').value;
+    let type = document.getElementById('quickBrandType').value || 'Pipe';
     let code = document.getElementById('quickBrandCode').value;
     let color = document.getElementById('quickBrandColor').value;
     let lowStock = parseInt(document.getElementById('quickBrandLowStock').value) || 10;
@@ -1341,7 +1346,7 @@ async function saveQuickBrand() {
         return;
     }
 
-    let catData = { name, color, lowStockLimit: lowStock };
+    let catData = { name, type, code, color, lowStockLimit: lowStock };
     
     try {
         const response = await fetch('api/sync.php?action=save_category', {
@@ -1436,11 +1441,15 @@ function showQuickAddItem(brandId, sizeId) {
         alert('Please select Brand and Size first');
         return;
     }
+    let main = mainCategories.find(m => m.id == brandId);
+    let isFitting = main && main.type === 'Fitting';
+    document.getElementById('quickItemLengthGroup').style.display = isFitting ? 'none' : 'block';
+
     document.getElementById('quickItemMainId').value = brandId;
     document.getElementById('quickItemSubId').value = sizeId;
     document.getElementById('quickItemWeight').value = '';
     updateLengthDropdowns('quickItemLength');
-    document.getElementById('quickItemLength').value = '13';
+    document.getElementById('quickItemLength').value = isFitting ? '0' : '13';
     document.getElementById('quickAddItemModal').style.display = 'block';
 }
 
@@ -1496,10 +1505,16 @@ function closeQuickAddItemModal() {
 }
 
 async function saveQuickItem() {
-    let weight = parseFloat(document.getElementById('quickItemWeight').value);
-    let length = parseFloat(document.getElementById('quickItemLength').value);
     let mainId = parseInt(document.getElementById('quickItemMainId').value);
     let subId = parseInt(document.getElementById('quickItemSubId').value);
+    
+    let main = mainCategories.find(m => m.id === mainId);
+    let isFitting = main && main.type === 'Fitting';
+    
+    let length = isFitting ? 0 : parseFloat(document.getElementById('quickItemLength').value);
+    let weightUnit = document.getElementById('quickItemWeightUnit').value;
+    let rawWeight = parseFloat(document.getElementById('quickItemWeight').value);
+    let weight = weightUnit === 'g' ? rawWeight / 1000 : rawWeight;
 
     if (!weight || weight <= 0) {
         alert('Please enter a valid weight');
@@ -1878,8 +1893,11 @@ function refreshStockList() {
 
             if (!isMatch) return;
 
+            let isFitting = main.type === 'Fitting';
             let weightVal = parseFloat(item.weight) || 0;
-            let desc = `${sizeName}"( ${weightVal.toFixed(1)} ) Kg`;
+            let weightUnit = isFitting && weightVal < 1 ? 'Grams' : 'Kg';
+            let displayWeight = isFitting && weightVal < 1 ? (weightVal * 1000).toFixed(0) : weightVal.toFixed(3);
+            let desc = isFitting ? `${sizeName}" (${displayWeight} ${weightUnit})` : `${sizeName}"( ${weightVal.toFixed(1)} ) Kg`;
             let available = item.stock || 0;
             let inOrder = orderedQtys[item.id] || 0;
             let result = available - inOrder;
@@ -1899,12 +1917,14 @@ function refreshStockList() {
 
             let resColor = result === 0 ? 'var(--gray-500)' : (result < 0 ? '#ef4444' : 'var(--green-600)');
             let ioColor = inOrder === 0 ? 'var(--gray-500)' : '#dc2626';
+            
+            let displayLength = isFitting ? '-' : `${item.length} ft`;
 
             itemsHtml += `
                         <tr style="background: white;">
                             <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200);"><strong>${sizeName}"</strong></td>
                             <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); color: var(--gray-700);">${desc}</td>
-                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center;">${item.length} ft</td>
+                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center;">${displayLength}</td>
                             <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:var(--orange-500);">${available}</td>
                             <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:${ioColor};">${inOrder}</td>
                             <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:700; color:${resColor};">${result}</td>
@@ -2759,19 +2779,27 @@ function printLowStock() {
 function addProductionRow() {
     const row = document.createElement('div');
     row.className = 'entry-row';
+    const lengthInput = document.createElement('select');
+    lengthInput.className = 'searchable-input length-input';
+    const lengths = [...new Set(companySettings.availableLengths)].sort((a, b) => a - b);
+    lengthInput.innerHTML = lengths.map(l => `<option value="${l}">${l}</option>`).join('');
+    lengthInput.value = '13';
+
     const brandOptions = mainCategories.map(m => ({ value: m.id, text: m.name }));
     const brandWrapper = createSearchableInput('Brand...', brandOptions, (opt) => {
         row.dataset.brandId = opt.value;
+        let main = mainCategories.find(m => m.id == opt.value);
+        if (main && main.type === 'Fitting') {
+            lengthInput.style.display = 'none';
+            lengthInput.value = '0';
+        } else {
+            lengthInput.style.display = 'block';
+            if(lengthInput.value == '0') lengthInput.value = '13';
+        }
         updateSizeDropdown(row, opt.value, 'production');
     }, false, 'brand');
     const sizeWrapper = createSearchableInput('Size...', [], null, true, null);
     const itemWrapper = createSearchableInput('...', [], null, true, null);
-
-    const lengthInput = document.createElement('select');
-    lengthInput.className = 'searchable-input';
-    const lengths = [...new Set(companySettings.availableLengths)].sort((a, b) => a - b);
-    lengthInput.innerHTML = lengths.map(l => `<option value="${l}">${l}</option>`).join('');
-    lengthInput.value = '13';
 
     const qtyInput = document.createElement('input');
     qtyInput.type = 'number';
@@ -2797,19 +2825,27 @@ function addProductionRow() {
 function addSaleRow() {
     const row = document.createElement('div');
     row.className = 'entry-row';
+    const lengthInput = document.createElement('select');
+    lengthInput.className = 'searchable-input length-input';
+    const lengths = [...new Set(companySettings.availableLengths)].sort((a, b) => a - b);
+    lengthInput.innerHTML = lengths.map(l => `<option value="${l}">${l}</option>`).join('');
+    lengthInput.value = '13';
+
     const brandOptions = mainCategories.map(m => ({ value: m.id, text: m.name }));
     const brandWrapper = createSearchableInput('Brand...', brandOptions, (opt) => {
         row.dataset.brandId = opt.value;
+        let main = mainCategories.find(m => m.id == opt.value);
+        if (main && main.type === 'Fitting') {
+            lengthInput.style.display = 'none';
+            lengthInput.value = '0';
+        } else {
+            lengthInput.style.display = 'block';
+            if(lengthInput.value == '0') lengthInput.value = '13';
+        }
         updateSizeDropdown(row, opt.value, 'sale');
     }, false, 'brand');
     const sizeWrapper = createSearchableInput('Size...', [], null, true, null);
     const itemWrapper = createSearchableInput('...', [], null, true, null);
-
-    const lengthInput = document.createElement('select');
-    lengthInput.className = 'searchable-input';
-    const lengths = [...new Set(companySettings.availableLengths)].sort((a, b) => a - b);
-    lengthInput.innerHTML = lengths.map(l => `<option value="${l}">${l}</option>`).join('');
-    lengthInput.value = '13';
 
     const qtyInput = document.createElement('input');
     qtyInput.type = 'number';
@@ -2835,19 +2871,27 @@ function addSaleRow() {
 function addAdjustmentRow() {
     const row = document.createElement('div');
     row.className = 'entry-row';
+    const lengthInput = document.createElement('select');
+    lengthInput.className = 'searchable-input length-input';
+    const lengths = [...new Set(companySettings.availableLengths)].sort((a, b) => a - b);
+    lengthInput.innerHTML = lengths.map(l => `<option value="${l}">${l}</option>`).join('');
+    lengthInput.value = '13';
+
     const brandOptions = mainCategories.map(m => ({ value: m.id, text: m.name }));
     const brandWrapper = createSearchableInput('Brand...', brandOptions, (opt) => {
         row.dataset.brandId = opt.value;
+        let main = mainCategories.find(m => m.id == opt.value);
+        if (main && main.type === 'Fitting') {
+            lengthInput.style.display = 'none';
+            lengthInput.value = '0';
+        } else {
+            lengthInput.style.display = 'block';
+            if(lengthInput.value == '0') lengthInput.value = '13';
+        }
         updateSizeDropdown(row, opt.value, 'adjustment');
     }, false, 'brand');
     const sizeWrapper = createSearchableInput('Size...', [], null, true, null);
     const itemWrapper = createSearchableInput('...', [], null, true, null);
-
-    const lengthInput = document.createElement('select');
-    lengthInput.className = 'searchable-input';
-    const lengths = [...new Set(companySettings.availableLengths)].sort((a, b) => a - b);
-    lengthInput.innerHTML = lengths.map(l => `<option value="${l}">${l}</option>`).join('');
-    lengthInput.value = '13';
 
     const typeSelect = document.createElement('select');
     typeSelect.className = 'searchable-input';
@@ -4402,7 +4446,12 @@ function showAddItemModalFor(mainId, subId) {
     document.getElementById('itemSubId').value = subId;
     document.getElementById('itemModalTitle').textContent = '➕ Add Item';
     document.getElementById('editItemId').value = '';
-    document.getElementById('itemLength').value = '13';
+    
+    let main = mainCategories.find(m => m.id == mainId);
+    let isFitting = main && main.type === 'Fitting';
+    document.getElementById('itemLengthGroup').style.display = isFitting ? 'none' : 'block';
+    
+    document.getElementById('itemLength').value = isFitting ? '0' : '13';
     document.getElementById('itemWeight').value = '';
     document.getElementById('itemStock').value = '0';
     document.getElementById('addItemModal').style.display = 'block';
@@ -4413,6 +4462,7 @@ function showAddMainCategoryModal() {
     document.getElementById('mainCategoryModalTitle').textContent = '➕ Add Brand';
     document.getElementById('editMainCategoryId').value = '';
     document.getElementById('mainCategoryName').value = '';
+    document.getElementById('mainCategoryType').value = 'Pipe';
     document.getElementById('mainCategoryCode').value = '';
     document.getElementById('mainCategoryColor').value = '#2196f3';
     document.getElementById('mainCategoryLowStock').value = '10';
@@ -4429,6 +4479,7 @@ function editMainCategory(id) {
         document.getElementById('mainCategoryModalTitle').textContent = '✏️ Edit Brand';
         document.getElementById('editMainCategoryId').value = main.id;
         document.getElementById('mainCategoryName').value = main.name;
+        document.getElementById('mainCategoryType').value = main.type || 'Pipe';
         document.getElementById('mainCategoryCode').value = main.code || '';
         document.getElementById('mainCategoryColor').value = main.color;
         document.getElementById('mainCategoryLowStock').value = main.lowStockLimit || 10;
@@ -4466,12 +4517,13 @@ async function deleteMainCategory(id) {
 async function saveMainCategory() {
     let id = document.getElementById('editMainCategoryId').value;
     let name = document.getElementById('mainCategoryName').value;
+    let type = document.getElementById('mainCategoryType').value || 'Pipe';
     let code = document.getElementById('mainCategoryCode').value;
     let color = document.getElementById('mainCategoryColor').value;
     let lowStockLimit = parseInt(document.getElementById('mainCategoryLowStock').value) || 10;
     if (!name) { alert('Enter brand name'); return; }
 
-    let catData = { id, name, code, color, lowStockLimit };
+    let catData = { id, name, type, code, color, lowStockLimit };
     try {
         const response = await fetch('api/sync.php?action=save_category', {
             method: 'POST',
@@ -4483,11 +4535,11 @@ async function saveMainCategory() {
             if (id) {
                 let main = mainCategories.find(m => m.id == id);
                 if (main) {
-                    main.name = name; main.code = code; main.color = color; main.lowStockLimit = lowStockLimit;
+                    main.name = name; main.type = type; main.code = code; main.color = color; main.lowStockLimit = lowStockLimit;
                 }
             } else {
                 let newId = result.id;
-                mainCategories.push({ id: newId, code, name, color, lowStockLimit });
+                mainCategories.push({ id: newId, type, code, name, color, lowStockLimit });
             }
             saveData();
             refreshCategoriesView();
@@ -4661,15 +4713,26 @@ function editItem(id) {
         document.getElementById('itemMainId').value = item.mainId;
         document.getElementById('itemSubId').value = item.subId;
         
+        let main = mainCategories.find(m => m.id == item.mainId);
+        let isFitting = main && main.type === 'Fitting';
+        document.getElementById('itemLengthGroup').style.display = isFitting ? 'none' : 'block';
+        
         // Ensure length exists in dropdown before selecting
-        let len = parseFloat(item.length) || 13;
-        if (!companySettings.availableLengths.includes(len)) {
+        let len = parseFloat(item.length) || (isFitting ? 0 : 13);
+        if (!isFitting && !companySettings.availableLengths.includes(len)) {
             companySettings.availableLengths.push(len);
             updateLengthDropdowns();
         }
         document.getElementById('itemLength').value = len;
 
-        document.getElementById('itemWeight').value = item.weight || '';
+        let weightVal = parseFloat(item.weight) || 0;
+        if (weightVal > 0 && weightVal < 1 && isFitting) {
+            document.getElementById('itemWeight').value = weightVal * 1000;
+            document.getElementById('itemWeightUnit').value = 'g';
+        } else {
+            document.getElementById('itemWeight').value = weightVal || '';
+            document.getElementById('itemWeightUnit').value = 'kg';
+        }
         document.getElementById('itemStock').value = item.stock || 0;
         document.getElementById('itemLowStock').value = item.lowStockLimit || '';
         document.getElementById('addItemModal').style.display = 'block';
@@ -4702,8 +4765,15 @@ async function saveItem() {
     let id = document.getElementById('editItemId').value;
     let mainId = parseInt(document.getElementById('itemMainId').value);
     let subId = parseInt(document.getElementById('itemSubId').value);
-    let length = parseFloat(document.getElementById('itemLength').value) || 13;
-    let weight = parseFloat(document.getElementById('itemWeight').value);
+    let main = mainCategories.find(m => m.id === mainId);
+    let isFitting = main && main.type === 'Fitting';
+    
+    let length = isFitting ? 0 : (parseFloat(document.getElementById('itemLength').value) || 13);
+    
+    let weightUnit = document.getElementById('itemWeightUnit').value;
+    let rawWeight = parseFloat(document.getElementById('itemWeight').value);
+    let weight = weightUnit === 'g' ? rawWeight / 1000 : rawWeight;
+    
     let stock = parseInt(document.getElementById('itemStock').value) || 0;
     let lowStockLimit = parseInt(document.getElementById('itemLowStock').value) || null;
 
@@ -4711,8 +4781,6 @@ async function saveItem() {
         alert('Please fill all required fields (Weight is required)');
         return;
     }
-
-    let main = mainCategories.find(m => m.id === mainId);
     let sub = subCategories.find(s => s.id === subId);
     let minStock = main ? main.lowStockLimit : 10;
 
