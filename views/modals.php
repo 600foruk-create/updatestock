@@ -65,9 +65,11 @@
             <input type="hidden" id="editSubCategoryId">
             <div class="form-group">
                 <label>Brand</label>
-                <select id="subCategoryMainSelect" class="form-control"></select>
+                <select id="subCategoryMainSelect" class="form-control" onchange="toggleSubCategoryType()"></select>
             </div>
-            <div class="form-group">
+            
+            <!-- Standard Size Group for Pipes -->
+            <div class="form-group" id="subCategorySizeGroup">
                 <label>Size</label>
                 <div class="input-group" style="display: flex; gap: 0.5rem;">
                     <input type="number" id="subCategoryName" class="form-control" step="0.1" min="0" placeholder="e.g., 4" style="flex: 2;">
@@ -77,7 +79,15 @@
                     </select>
                 </div>
             </div>
-            <button class="btn btn-success" onclick="saveSubCategory()" style="width:100%;">Save Size</button>
+
+            <!-- Description Group for Fittings -->
+            <div class="form-group" id="subCategoryDescGroup" style="display: none;">
+                <label>Description</label>
+                <input type="text" id="subCategoryDesc" class="form-control" placeholder="e.g., Elbow 90 Degree">
+                <small style="color: var(--gray-500);">Type any custom description for this fitting.</small>
+            </div>
+
+            <button class="btn btn-success" id="saveSubCategoryBtn" onclick="saveSubCategory()" style="width:100%;">Save Size</button>
         </div>
     </div>
 
@@ -98,6 +108,10 @@
                     <button type="button" class="btn btn-sm btn-primary" onclick="promptNewLength('itemLength')" title="Add New Length" style="padding: 0 8px; font-size: 1.2rem; height: 38px;">+</button>
                 </div>
             </div>
+            <div class="form-group" id="itemFittingSizeGroup" style="display: none;">
+                <label>Fitting Size</label>
+                <input type="text" id="itemFittingSize" class="form-control" placeholder="e.g., 1/2 inch">
+            </div>
             <div class="form-group">
                 <label id="itemWeightLabel">Weight</label>
                 <div class="input-group" style="display: flex; gap: 0.5rem;">
@@ -107,6 +121,10 @@
                         <option value="g">Grams</option>
                     </select>
                 </div>
+            </div>
+            <div class="form-group" id="itemPackingGroup" style="display: none;">
+                <label>Carton / Packing (KG)</label>
+                <input type="number" id="itemPackingQty" step="0.01" class="form-control" placeholder="e.g., 25">
             </div>
             <div class="form-group" style="display: none;">
                 <label>Opening Stock</label>
@@ -287,6 +305,10 @@
                     <button type="button" class="btn btn-sm btn-primary" onclick="promptNewLength('quickItemLength')" title="Add New Length" style="padding: 0 8px; font-size: 1.2rem; height: 38px;">+</button>
                 </div>
             </div>
+            <div class="form-group" id="quickItemFittingSizeGroup" style="display: none;">
+                <label>Fitting Size</label>
+                <input type="text" id="quickItemFittingSize" class="form-control" placeholder="e.g., 1/2 inch">
+            </div>
             <div class="form-group">
                 <label id="quickItemWeightLabel">Weight</label>
                 <div class="input-group" style="display: flex; gap: 0.5rem;">
@@ -296,6 +318,10 @@
                         <option value="g">Grams</option>
                     </select>
                 </div>
+            </div>
+            <div class="form-group" id="quickItemPackingGroup" style="display: none;">
+                <label>Carton / Packing (KG)</label>
+                <input type="number" id="quickItemPackingQty" step="0.01" class="form-control" placeholder="e.g., 25">
             </div>
             <div class="form-group">
                 <label>Low Stock Limit</label>

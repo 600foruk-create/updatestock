@@ -47,10 +47,16 @@ try {
                     }
                 } catch(Exception $e) {}
 
-                // AUTO-REPAIR: Item Low Stock Limit & Weight Precision
+                // AUTO-REPAIR: Item Low Stock Limit, Weight Precision, Fitting Size, Packing Qty
                 $itemCols = $conn->query("SHOW COLUMNS FROM items")->fetchAll(PDO::FETCH_COLUMN);
                 if (!in_array('low_stock_limit', $itemCols)) {
                     $conn->exec("ALTER TABLE items ADD COLUMN low_stock_limit INT DEFAULT NULL");
+                }
+                if (!in_array('fitting_size', $itemCols)) {
+                    $conn->exec("ALTER TABLE items ADD COLUMN fitting_size VARCHAR(255) DEFAULT ''");
+                }
+                if (!in_array('packing_qty', $itemCols)) {
+                    $conn->exec("ALTER TABLE items ADD COLUMN packing_qty DECIMAL(10,2) DEFAULT '0.00'");
                 }
                 try {
                     $conn->exec("ALTER TABLE items MODIFY weight DECIMAL(10,3) DEFAULT 0.000");
@@ -189,7 +195,7 @@ try {
                 'users' => $conn->query("SELECT id, name, username, password, role, permissions FROM users")->fetchAll(PDO::FETCH_ASSOC),
                 'mainCategories' => $conn->query("SELECT id, name, code, color, low_stock_limit AS lowStockLimit, type FROM main_categories")->fetchAll(PDO::FETCH_ASSOC),
                 'subCategories' => $conn->query("SELECT id, main_id AS mainId, name FROM sub_categories")->fetchAll(PDO::FETCH_ASSOC),
-                'items' => $conn->query("SELECT id, main_id AS mainId, sub_id AS subId, name, length, weight, stock, low_stock_limit AS lowStockLimit FROM items")->fetchAll(PDO::FETCH_ASSOC),
+                'items' => $conn->query("SELECT id, main_id AS mainId, sub_id AS subId, name, length, weight, stock, low_stock_limit AS lowStockLimit, fitting_size, packing_qty FROM items")->fetchAll(PDO::FETCH_ASSOC),
                 'customers' => $conn->query("SELECT id, unique_id AS uniqueId, name, address, mobile, main_id AS mainId, sub_id AS subId FROM customers")->fetchAll(PDO::FETCH_ASSOC),
                 'customerProvinces' => $conn->query("SELECT id, name FROM customer_main_categories")->fetchAll(PDO::FETCH_ASSOC),
                 'customerDistricts' => $conn->query("SELECT id, main_id AS mainId, name FROM customer_sub_categories")->fetchAll(PDO::FETCH_ASSOC),
@@ -245,11 +251,11 @@ try {
         elseif ($action === 'save_item') {
             $item = $input['item'];
             if (isset($item['id']) && !empty($item['id'])) {
-                $stmt = $conn->prepare("UPDATE items SET main_id = ?, sub_id = ?, name = ?, length = ?, weight = ?, stock = ?, low_stock_limit = ? WHERE id = ?");
-                $stmt->execute([$item['mainId'], $item['subId'], $item['name'] ?? '', $item['length'] ?? 13, $item['weight'] ?? 0, $item['stock'] ?? 0, $item['lowStockLimit'] ?? null, $item['id']]);
+                $stmt = $conn->prepare("UPDATE items SET main_id = ?, sub_id = ?, name = ?, length = ?, weight = ?, stock = ?, low_stock_limit = ?, fitting_size = ?, packing_qty = ? WHERE id = ?");
+                $stmt->execute([$item['mainId'], $item['subId'], $item['name'] ?? '', $item['length'] ?? 13, $item['weight'] ?? 0, $item['stock'] ?? 0, $item['lowStockLimit'] ?? null, $item['fitting_size'] ?? '', $item['packing_qty'] ?? 0, $item['id']]);
             } else {
-                $stmt = $conn->prepare("INSERT INTO items (main_id, sub_id, name, length, weight, stock, low_stock_limit) VALUES (?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$item['mainId'], $item['subId'], $item['name'] ?? '', $item['length'] ?? 13, $item['weight'] ?? 0, $item['stock'] ?? 0, $item['lowStockLimit'] ?? null]);
+                $stmt = $conn->prepare("INSERT INTO items (main_id, sub_id, name, length, weight, stock, low_stock_limit, fitting_size, packing_qty) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$item['mainId'], $item['subId'], $item['name'] ?? '', $item['length'] ?? 13, $item['weight'] ?? 0, $item['stock'] ?? 0, $item['lowStockLimit'] ?? null, $item['fitting_size'] ?? '', $item['packing_qty'] ?? 0]);
                 $item['id'] = $conn->lastInsertId();
             }
             echo json_encode(['status' => 'success', 'id' => $item['id']]);
