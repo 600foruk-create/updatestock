@@ -531,8 +531,24 @@ function sortSubCategories(subs) {
 
 function sortItems(itemsList) {
     return [...itemsList].sort((a, b) => {
-        if (a.length !== b.length) return a.length - b.length;
-        return (a.weight || 0) - (b.weight || 0);
+        let mainA = mainCategories.find(m => m.id == a.mainId);
+        let mainB = mainCategories.find(m => m.id == b.mainId);
+        let isFitA = mainA && mainA.type === 'Fitting';
+        let isFitB = mainB && mainB.type === 'Fitting';
+        
+        if (isFitA && isFitB) {
+            let sizeA = a.fitting_size || '';
+            let sizeB = b.fitting_size || '';
+            if (sizeA !== sizeB) {
+                let numA = parseFloat(sizeA);
+                let numB = parseFloat(sizeB);
+                if (!isNaN(numA) && !isNaN(numB) && numA !== numB) return numA - numB;
+                return sizeA.localeCompare(sizeB);
+            }
+        } else {
+            if (a.length !== b.length) return (parseFloat(a.length) || 0) - (parseFloat(b.length) || 0);
+        }
+        return (parseFloat(a.weight) || 0) - (parseFloat(b.weight) || 0);
     });
 }
 
@@ -1903,12 +1919,12 @@ function refreshStockList() {
             if (!isMatch) return;
 
             let weightVal = parseFloat(item.weight) || 0;
-            let weightUnit = isFitting && weightVal < 1 ? 'Grams' : 'Kg';
+            let weightUnit = isFitting && weightVal < 1 ? 'gram' : 'Kg';
             let displayWeight = isFitting && weightVal < 1 ? (weightVal * 1000).toFixed(0) : weightVal.toFixed(3);
-            let packing = item.packing_qty ? ` | Packing: ${item.packing_qty}KG` : '';
+            let packing = item.packing_qty ? ` | Packing: ${item.packing_qty}` : '';
             
             let desc = isFitting 
-                ? `${item.fitting_size ? item.fitting_size + ' - ' : ''}${sizeName} (${displayWeight} ${weightUnit})${packing}`
+                ? `${item.fitting_size || ''} ${displayWeight} ${weightUnit} ${main.name} ${sub?.name || ''}${packing}`.trim()
                 : `${sizeName}"( ${weightVal.toFixed(1)} ) Kg`;
             let available = item.stock || 0;
             let inOrder = orderedQtys[item.id] || 0;
@@ -1931,7 +1947,7 @@ function refreshStockList() {
             let ioColor = inOrder === 0 ? 'var(--gray-500)' : '#dc2626';
             
             let displayLength = isFitting ? '-' : `${item.length} ft`;
-            let displaySizeHeader = isFitting ? 'Fitting' : `${sizeName}"`;
+            let displaySizeHeader = isFitting ? (item.fitting_size || 'Fitting') : `${sizeName}"`;
 
             itemsHtml += `
                         <tr style="background: white;">
@@ -1997,7 +2013,8 @@ function refreshAuditList() {
         let sizeGroups = {};
         brandItems.forEach(item => {
             let sub = subCategories.find(s => s.id == item.subId);
-            let sizeName = sub ? sub.name.replace(/[^0-9.]/g, '') : '?';
+            let isFitting = main.type === 'Fitting';
+            let sizeName = isFitting ? (item.fitting_size || '?') : (sub ? sub.name.replace(/[^0-9.]/g, '') : '?');
             const isMatch = search === '' || brandMatches || sizeName.includes(search);
             if (!isMatch) return;
 
@@ -2009,7 +2026,11 @@ function refreshAuditList() {
         let bSysPcs = 0, bSysKg = 0;
         
         // Sort sizes numerically
-        const sortedSizes = Object.keys(sizeGroups).sort((a, b) => parseFloat(a) - parseFloat(b));
+        const sortedSizes = Object.keys(sizeGroups).sort((a, b) => {
+            let numA = parseFloat(a); let numB = parseFloat(b);
+            if (!isNaN(numA) && !isNaN(numB) && numA !== numB) return numA - numB;
+            return a.localeCompare(b);
+        });
 
         sortedSizes.forEach(sizeName => {
             const group = sortItems(sizeGroups[sizeName]);
@@ -2039,9 +2060,9 @@ function refreshAuditList() {
 
                 rowsHtml += `
                     <tr id="auditRow_${item.id}" data-unit-weight="${weightVal}" data-brand-id="${main.id}" class="${rowClass}">
-                        ${index === 0 ? `<td rowspan="${group.length}" class="group-row-end" style="font-weight:700; background: var(--gray-50); font-size: 0.9rem; border-right: 2px solid var(--gray-300);">${sizeName}"</td>` : ''}
+                        ${index === 0 ? `<td rowspan="${group.length}" class="group-row-end" style="font-weight:700; background: var(--gray-50); font-size: 0.9rem; border-right: 2px solid var(--gray-300);">${main.type === 'Fitting' ? sizeName : sizeName + '"'}</td>` : ''}
                         <td>${weightVal.toFixed(2)} KG</td>
-                        <td style="text-align:center;">${item.length} ft</td>
+                        <td style="text-align:center; font-weight: 500;">${main.type === 'Fitting' ? (subCategories.find(s => s.id == item.subId)?.name || '-') : item.length + ' ft'}</td>
                         <td style="color:${main.color}; font-weight:600;">${main.name}</td>
                         <td id="auditSysPcs_${item.id}" class="sys-pcs-val">${effectivePcs}</td>
                         <td id="auditSysKg_${item.id}" class="sys-kg-val">${systemKg}</td>
@@ -2075,7 +2096,7 @@ function refreshAuditList() {
                             <tr>
                                 <th rowspan="2">Size</th>
                                 <th rowspan="2">KG/Pcs</th>
-                                <th rowspan="2">Length</th>
+                                <th rowspan="2">Length/Type</th>
                                 <th rowspan="2">Brand</th>
                                 <th colspan="2" style="background: var(--sky-50);">Result Stock (System)</th>
                                 <th colspan="2" style="background: var(--orange-50);">Godown Stock (Manual)</th>
