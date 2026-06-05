@@ -4372,8 +4372,13 @@ function refreshCategoriesView() {
                                 <div class="item-info">
                                     <span class="item-name-badge">[${itemCode}] ${item.name || 'Item'}</span>
                                     <div class="item-specs">
-                                        <span class="item-spec">${item.length} ft</span>
-                                        <span class="item-spec">${item.weight} KG</span>
+                                        ${main.type === 'Fitting' 
+                                            ? `<span class="item-spec">${item.fitting_size || '-'}</span>
+                                               ${item.packing_qty ? `<span class="item-spec">Pack: ${item.packing_qty}KG</span>` : ''}
+                                               <span class="item-spec">${item.weight} KG</span>`
+                                            : `<span class="item-spec">${item.length} ft</span>
+                                               <span class="item-spec">${item.weight} KG</span>`
+                                        }
                                     </div>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 1rem;">
@@ -4421,11 +4426,11 @@ function refreshCategoriesView() {
                             <div class="category-actions">
                                 <button class="btn-icon" onclick="editMainCategory(${main.id}); event.stopPropagation();" title="Edit Brand">✏️</button>
                                 <button class="btn-icon" onclick="deleteMainCategory(${main.id}); event.stopPropagation();" title="Delete Brand">🗑️</button>
-                                <button class="add-btn" onclick="showAddSubCategoryModalFor(${main.id}); event.stopPropagation();">+ Add Size</button>
+                                <button class="add-btn" onclick="showAddSubCategoryModalFor(${main.id}); event.stopPropagation();">${main.type === 'Fitting' ? '+ Add Sub Category' : '+ Add Size'}</button>
                             </div>
                         </div>
                         <div class="sub-category-container">
-                            ${subHtml || '<div style="color: var(--gray-500); text-align: center; padding: 2rem;">No sizes added yet. Click "Add Size" to create one.</div>'}
+                            ${subHtml || `<div style="color: var(--gray-500); text-align: center; padding: 2rem;">No entries yet. Click "${main.type === 'Fitting' ? '+ Add Sub Category' : '+ Add Size'}" to create one.</div>`}
                         </div>
                     </div>
                 `;
