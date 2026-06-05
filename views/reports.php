@@ -16,7 +16,7 @@
             <tbody id="archivedReportsBody">
                 <!-- Data will be injected here -->
                 <tr>
-                    <td colspan="3" style="text-align: center; padding: 3rem; color: var(--gray-400);">
+                    <td colspan="3" style="text-align: center; padding: 0.2rem 0.5rem; color: var(--gray-400);">
                         <div style="font-size: 3rem; margin-bottom: 1rem;">📂</div>
                         No archived reports found.
                     </td>
@@ -25,3 +25,4 @@
         </table>
     </div>
 </div>
+

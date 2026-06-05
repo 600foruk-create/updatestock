@@ -1902,12 +1902,12 @@ function refreshStockList() {
 
             itemsHtml += `
                         <tr style="background: white;">
-                            <td style="padding: 0.8rem; border-bottom: 1px solid var(--gray-200);"><strong>${sizeName}"</strong></td>
-                            <td style="padding: 0.8rem; border-bottom: 1px solid var(--gray-200); color: var(--gray-700);">${desc}</td>
-                            <td style="padding: 0.8rem; border-bottom: 1px solid var(--gray-200); text-align:center;">${item.length} ft</td>
-                            <td style="padding: 0.8rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:var(--orange-500);">${available}</td>
-                            <td style="padding: 0.8rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:${ioColor};">${inOrder}</td>
-                            <td style="padding: 0.8rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:700; color:${resColor};">${result}</td>
+                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200);"><strong>${sizeName}"</strong></td>
+                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); color: var(--gray-700);">${desc}</td>
+                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center;">${item.length} ft</td>
+                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:var(--orange-500);">${available}</td>
+                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:${ioColor};">${inOrder}</td>
+                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:700; color:${resColor};">${result}</td>
                         </tr>
                     `;
         });
@@ -2006,7 +2006,7 @@ function refreshAuditList() {
 
                 rowsHtml += `
                     <tr id="auditRow_${item.id}" data-unit-weight="${weightVal}" data-brand-id="${main.id}" class="${rowClass}">
-                        ${index === 0 ? `<td rowspan="${group.length}" class="group-row-end" style="font-weight:700; background: var(--gray-50); font-size: 1.1rem; border-right: 2px solid var(--gray-300);">${sizeName}"</td>` : ''}
+                        ${index === 0 ? `<td rowspan="${group.length}" class="group-row-end" style="font-weight:700; background: var(--gray-50); font-size: 0.9rem; border-right: 2px solid var(--gray-300);">${sizeName}"</td>` : ''}
                         <td>${weightVal.toFixed(2)} KG</td>
                         <td style="text-align:center;">${item.length} ft</td>
                         <td style="color:${main.color}; font-weight:600;">${main.name}</td>
@@ -2464,9 +2464,9 @@ async function refreshArchivedReportsList() {
             
             const fgRows = archivedReports.filter(r => (r.report_type || 'FG') === 'FG').map(r => `
                 <tr>
-                    <td style="padding: 1.2rem; font-weight: 600; color: var(--gray-800);">${r.title}</td>
-                    <td style="padding: 1.2rem; color: var(--gray-500);">${new Date(r.date).toLocaleString()}</td>
-                    <td style="padding: 1.2rem; display: flex; gap: 0.5rem; justify-content: center;">
+                    <td style="padding: 0.2rem 0.5rem; font-weight: 600; color: var(--gray-800);">${r.title}</td>
+                    <td style="padding: 0.2rem 0.5rem; color: var(--gray-500);">${new Date(r.date).toLocaleString()}</td>
+                    <td style="padding: 0.2rem 0.5rem; display: flex; gap: 0.5rem; justify-content: center;">
                         <button class="report-action-btn" onclick="viewArchivedReport(${r.id})">👁️ View</button>
                         <button class="report-action-btn delete" onclick="deleteArchivedReport(${r.id})">🗑️ Delete</button>
                     </td>
@@ -2474,19 +2474,19 @@ async function refreshArchivedReportsList() {
             
             const rmRows = archivedReports.filter(r => r.report_type === 'RM').map(r => `
                 <tr>
-                    <td style="padding: 1.2rem; font-weight: 600; color: var(--gray-800);">${r.title}</td>
-                    <td style="padding: 1.2rem; color: var(--gray-500);">${new Date(r.date).toLocaleString()}</td>
-                    <td style="padding: 1.2rem; display: flex; gap: 0.5rem; justify-content: center;">
+                    <td style="padding: 0.2rem 0.5rem; font-weight: 600; color: var(--gray-800);">${r.title}</td>
+                    <td style="padding: 0.2rem 0.5rem; color: var(--gray-500);">${new Date(r.date).toLocaleString()}</td>
+                    <td style="padding: 0.2rem 0.5rem; display: flex; gap: 0.5rem; justify-content: center;">
                         <button class="report-action-btn" onclick="viewArchivedReport(${r.id})">👁️ View</button>
                         <button class="report-action-btn delete" onclick="deleteArchivedReport(${r.id})">🗑️ Delete</button>
                     </td>
                 </tr>`).join('');
 
-            if (tbody) tbody.innerHTML = fgRows || `<tr><td colspan="3" style="text-align: center; padding: 3rem; color: var(--gray-400);">No Finish Good reports found.</td></tr>`;
+            if (tbody) tbody.innerHTML = fgRows || `<tr><td colspan="3" style="text-align: center; padding: 0.2rem 0.5rem; color: var(--gray-400);">No Finish Good reports found.</td></tr>`;
             
             // Also populate RM Reports Table if it exists
             const rmTable = document.getElementById('rmReportsTable');
-            if (rmTable) rmTable.innerHTML = rmRows || `<tr><td colspan="4" style="text-align: center; padding: 3rem; color: var(--gray-400);">No Raw Material reports found.</td></tr>`;
+            if (rmTable) rmTable.innerHTML = rmRows || `<tr><td colspan="4" style="text-align: center; padding: 0.2rem 0.5rem; color: var(--gray-400);">No Raw Material reports found.</td></tr>`;
         }
     } catch (e) { console.error(e); }
 }
@@ -2530,11 +2530,11 @@ function renderArchivedContent(data, type = 'FG') {
             const diffClass = diff > 0 ? 'diff-plus' : (diff < 0 ? 'diff-minus' : '');
             const diffText = diff > 0 ? `+${diff.toFixed(2)}` : diff.toFixed(2);
             html += `<tr>
-                <td style="padding: 0.6rem; border: 1px solid var(--gray-200); text-align: left; font-weight:600;">${item.name}</td>
-                <td style="padding: 0.6rem; border: 1px solid var(--gray-200); text-align: center; color:var(--gray-500); font-family:monospace;">${item.code}</td>
-                <td style="padding: 0.6rem; border: 1px solid var(--gray-200); text-align: center;">${parseFloat(item.system).toFixed(2)} ${item.unit}</td>
-                <td style="padding: 0.6rem; border: 1px solid var(--gray-200); text-align: center;"><strong>${parseFloat(item.physical).toFixed(2)}</strong> ${item.unit}</td>
-                <td style="padding: 0.6rem; border: 1px solid var(--gray-200); text-align: center;" class="${diffClass}">${diffText}</td>
+                <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: left; font-weight:600;">${item.name}</td>
+                <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center; color:var(--gray-500); font-family:monospace;">${item.code}</td>
+                <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;">${parseFloat(item.system).toFixed(2)} ${item.unit}</td>
+                <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;"><strong>${parseFloat(item.physical).toFixed(2)}</strong> ${item.unit}</td>
+                <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;" class="${diffClass}">${diffText}</td>
             </tr>`;
         });
         html += `</tbody></table>`;
@@ -2560,11 +2560,11 @@ function renderArchivedContent(data, type = 'FG') {
                 const diffClass = item.diff > 0 ? 'diff-plus' : (item.diff < 0 ? 'diff-minus' : '');
                 const diffText = item.diff > 0 ? `+${item.diff}` : item.diff;
                 html += `<tr>
-                    <td style="padding: 0.6rem; border: 1px solid var(--gray-200); text-align: center;">${item.productCode}</td>
-                    <td style="padding: 0.6rem; border: 1px solid var(--gray-200); text-align: center;">${item.size}</td>
-                    <td style="padding: 0.6rem; border: 1px solid var(--gray-200); text-align: center;">${item.systemQty}</td>
-                    <td style="padding: 0.6rem; border: 1px solid var(--gray-200); text-align: center;"><strong>${item.godownQty}</strong></td>
-                    <td style="padding: 0.6rem; border: 1px solid var(--gray-200); text-align: center;" class="${diffClass}">${diffText}</td>
+                    <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;">${item.productCode}</td>
+                    <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;">${item.size}</td>
+                    <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;">${item.systemQty}</td>
+                    <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;"><strong>${item.godownQty}</strong></td>
+                    <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;" class="${diffClass}">${diffText}</td>
                 </tr>`;
             });
             html += `</tbody></table></div>`;
@@ -4834,10 +4834,10 @@ function refreshUsersList() {
 
     users.forEach(user => {
         listHtml += `<tr>
-                    <td style="padding:0.5rem; border-bottom:1px solid #eee;">${user.name}</td>
-                    <td style="padding:0.5rem; border-bottom:1px solid #eee;">${user.username}</td>
-                    <td style="padding:0.5rem; border-bottom:1px solid #eee;">${user.role}</td>
-                    <td style="padding:0.5rem; border-bottom:1px solid #eee;">
+                    <td style="padding: 0.2rem 0.5rem; border-bottom:1px solid #eee;">${user.name}</td>
+                    <td style="padding: 0.2rem 0.5rem; border-bottom:1px solid #eee;">${user.username}</td>
+                    <td style="padding: 0.2rem 0.5rem; border-bottom:1px solid #eee;">${user.role}</td>
+                    <td style="padding: 0.2rem 0.5rem; border-bottom:1px solid #eee;">
                         <button class="btn btn-success btn-sm" onclick="editUser(${user.id})">Edit</button>
                         ${user.id != 1 ? `<button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">Delete</button>` : ''}
                     </td>
@@ -5081,7 +5081,7 @@ function refreshTransactions() {
     }
 
     if (transViewCleared) {
-        document.getElementById('transactionsBody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--gray-500);">Screen cleared. Use search or dates to find records.</td></tr>';
+        document.getElementById('transactionsBody').innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 0.2rem 0.5rem; color:var(--gray-500);">Screen cleared. Use search or dates to find records.</td></tr>';
         return;
     }
 
@@ -5103,18 +5103,18 @@ function refreshTransactions() {
     filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     if (filtered.length === 0) {
-        rows = '<tr><td colspan="7" style="text-align:center; padding:1rem;">No transactions found matching your filters</td></tr>';
+        rows = '<tr><td colspan="7" style="text-align:center; padding: 0.2rem 0.5rem;">No transactions found matching your filters</td></tr>';
     } else {
         const displayList = (search || fromDate || toDate) ? filtered : filtered.slice(0, 100);
         displayList.forEach(t => {
             rows += `<tr>
-                        <td style="padding:0.5rem; border-bottom:1px solid #eee;">${formatDate(t.date)}</td>
-                        <td style="padding:0.5rem; border-bottom:1px solid #eee;"><span class="badge badge-${t.type.toLowerCase()}">${t.type}</span></td>
-                        <td style="padding:0.5rem; border-bottom:1px solid #eee;">${t.mainName || 'N/A'}</td>
-                        <td style="padding:0.5rem; border-bottom:1px solid #eee;">${t.itemName || t.subName || 'N/A'}</td>
-                        <td style="padding:0.5rem; border-bottom:1px solid #eee;"><strong>${t.quantity}</strong></td>
-                        <td style="padding:0.5rem; border-bottom:1px solid #eee;">${t.customer || '-'}</td>
-                        <td style="padding:0.5rem; border-bottom:1px solid #eee;">
+                        <td style="padding: 0.2rem 0.5rem; border-bottom:1px solid #eee;">${formatDate(t.date)}</td>
+                        <td style="padding: 0.2rem 0.5rem; border-bottom:1px solid #eee;"><span class="badge badge-${t.type.toLowerCase()}">${t.type}</span></td>
+                        <td style="padding: 0.2rem 0.5rem; border-bottom:1px solid #eee;">${t.mainName || 'N/A'}</td>
+                        <td style="padding: 0.2rem 0.5rem; border-bottom:1px solid #eee;">${t.itemName || t.subName || 'N/A'}</td>
+                        <td style="padding: 0.2rem 0.5rem; border-bottom:1px solid #eee;"><strong>${t.quantity}</strong></td>
+                        <td style="padding: 0.2rem 0.5rem; border-bottom:1px solid #eee;">${t.customer || '-'}</td>
+                        <td style="padding: 0.2rem 0.5rem; border-bottom:1px solid #eee;">
                             <div style="display:flex; gap:0.3rem; flex-wrap: wrap;">
                                 <button class="btn btn-primary btn-sm" onclick="revertTransaction(${t.id})" style="background:#0ea5e9; border:none; padding: 4px 8px; font-size: 0.75rem;" title="Remove & Revert Stock"><i class="fas fa-undo"></i> Remove</button>
                                 <button class="btn btn-danger btn-sm" onclick="deleteTransaction(${t.id})" style="padding: 4px 8px; font-size: 0.75rem;" title="Delete record only"><i class="fas fa-trash"></i> Delete</button>
@@ -5596,7 +5596,7 @@ function generateProductionReport() {
         html += `</tbody>
                 <tfoot style="background: var(--gray-100); font-weight: 900; color: #000;">
                     <tr>
-                        <td colspan="4" style="text-align: right; padding: 0.8rem; font-weight: 900;">${brandName} Totals:</td>
+                        <td colspan="4" style="text-align: right; padding: 0.2rem 0.5rem; font-weight: 900;">${brandName} Totals:</td>
                         <td style="text-align: center; font-weight: 900;">${bPcs.toLocaleString()}</td>
                         <td style="text-align: center; color: #0284c7; font-weight: 900;">${bKg.toLocaleString()} KG</td>
                         <td colspan="2" style="text-align: center; color: #0369a1; background: #e0f2fe; font-weight: 900;">Total Material Value: Rs. ${totalRMCost.toLocaleString()}</td>
@@ -6020,18 +6020,18 @@ function refreshRMInventory() {
                 
                 const itemsList = rmItems.filter(i => i.subId == sub.id).sort((a,b) => a.code.localeCompare(b.code));
                 if (itemsList.length === 0) {
-                    html += `<tr><td colspan="6" style="text-align:center; color: var(--gray-400); padding: 2rem;">No items added yet.</td></tr>`;
+                    html += `<tr><td colspan="6" style="text-align:center; color: var(--gray-400); padding: 0.2rem 0.5rem;">No items added yet.</td></tr>`;
                 } else {
                     itemsList.forEach(item => {
                         const isLow = parseFloat(item.stock) <= parseFloat(item.threshold);
                         html += `
                         <tr style="border-bottom: 1px solid var(--gray-100);">
-                            <td style="font-weight: 600; padding: 0.7rem 1.2rem; color: var(--gray-800);">${item.name}</td>
+                            <td style="font-weight: 600; padding: 0.2rem 0.5rem; color: var(--gray-800);">${item.name}</td>
                             <td style="font-family: monospace; color: var(--gray-600); font-weight: 500;">${item.code}</td>
                             <td><span class="badge ${isLow ? 'badge-error' : 'badge-success'}" style="font-size: 0.85rem; padding: 4px 10px; font-weight: bold;">${item.stock}</span></td>
                             <td style="font-weight: 500; color: var(--gray-600);">${item.unit}</td>
                             <td style="color: var(--gray-500);">${item.threshold}</td>
-                            <td style="text-align: center; padding: 0.5rem;">
+                            <td style="text-align: center; padding: 0.2rem 0.5rem;">
                                 <div style="display: flex; justify-content: center; gap: 0.4rem;">
                                     <button class="btn-icon" style="padding: 4px; background: #f8fafc; border: 1px solid var(--gray-200);" onclick="editRMItem(${item.id})">✏️</button>
                                     <button class="btn-icon text-error" style="padding: 4px; background: #f8fafc; border: 1px solid var(--gray-200);" onclick="deleteRMItem(${item.id})">🗑️</button>
@@ -6439,7 +6439,7 @@ function refreshRMFormulas() {
 
         html += `
         <tr>
-            <td style="font-weight: bold; color: var(--sky-700); font-size: 1.1rem;">${f.name}</td>
+            <td style="font-weight: bold; color: var(--sky-700); font-size: 0.9rem;">${f.name}</td>
             <td>${brandName}</td>
             <td>${itemsHtml}</td>
             <td style="text-align: center;">
@@ -6850,7 +6850,7 @@ function refreshRMOutHistoryTable() {
             <td style="font-weight: 600;">${item ? item.name : 'Unknown'}</td>
             <td><span class="badge" style="background: #fff5f5; color: var(--error); border: 1px solid #feb2b2;">CONSUMPTION</span></td>
             <td style="font-weight: bold;">${t.quantity} ${item ? item.unit : ''}</td>
-            <td style="color: var(--gray-500); font-style: italic; font-size: 0.85rem;">${t.notes || ''}</td>
+            <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">${t.notes || ''}</td>
             <td style="text-align: center; display: flex; gap: 4px; justify-content: center;">
                 <button class="btn btn-sm" onclick="revertRMTransaction(${t.id})" style="background:#0ea5e9; color:white; padding: 3px 6px; font-size: 0.7rem;" title="Remove & Revert RM Stock">🔄 Remove</button>
                 <button class="btn btn-icon text-error" onclick="deleteRMTransaction(${t.id})" title="Delete record only">🗑️</button>
@@ -7303,7 +7303,7 @@ function showBrandHistoryModal(brandId) {
                         </tr>
                     </thead>
                     <tbody id="brandHistoryTableBody">
-                        <tr><td colspan="5" style="text-align:center;padding:3rem;color:#9ca3af;font-size:1.1rem;">Loading...</td></tr>
+                        <tr><td colspan="5" style="text-align:center;padding: 0.2rem 0.5rem;color:#9ca3af;font-size: 0.9rem;">Loading...</td></tr>
                     </tbody>
                     <tfoot id="brandHistoryTableFoot" style="background:#f8fafc;font-weight:bold;position:sticky;bottom:0;box-shadow:0 -1px 3px rgba(0,0,0,0.05);"></tfoot>
                 </table>
@@ -7332,7 +7332,7 @@ function renderBrandHistoryTable(brandId) {
     }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
     if (logs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:#9ca3af;">No records found for this filter.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding: 0.2rem 0.5rem;color:#9ca3af;">No records found for this filter.</td></tr>`;
         if (tfoot) tfoot.innerHTML = '';
         return;
     }
@@ -7348,11 +7348,11 @@ function renderBrandHistoryTable(brandId) {
         const wipColor = wip < -0.01 ? '#dc2626' : (wip > 0.01 ? '#059669' : '#374151');
         const bg = i % 2 === 0 ? 'white' : '#f8fafc';
         html += `<tr style="background:${bg}; border-bottom: 1px solid #f1f5f9; transition: background 0.15s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='${bg}'">
-            <td style="padding:1rem 1.5rem;font-size:0.9rem;color:var(--gray-800);">${formatDate(l.date)}</td>
-            <td style="padding:1rem 1.5rem;font-size:0.9rem;font-weight:700;color:var(--gray-800);">${fg.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
-            <td style="padding:1rem 1.5rem;font-size:0.9rem;font-weight:700;color:var(--gray-800);">${rm.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
-            <td style="padding:1rem 1.5rem;font-size:0.9rem;font-weight:700;color:#059669;">Rs. ${val.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
-            <td style="padding:1rem 1.5rem;font-size:0.95rem;font-weight:800;color:${wipColor};">${wip.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding: 0.2rem 0.5rem;font-size: 0.9rem;color:var(--gray-800);">${formatDate(l.date)}</td>
+            <td style="padding: 0.2rem 0.5rem;font-size: 0.9rem;font-weight:700;color:var(--gray-800);">${fg.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding: 0.2rem 0.5rem;font-size: 0.9rem;font-weight:700;color:var(--gray-800);">${rm.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding: 0.2rem 0.5rem;font-size: 0.9rem;font-weight:700;color:#059669;">Rs. ${val.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+            <td style="padding: 0.2rem 0.5rem;font-size: 0.9rem;font-weight:800;color:${wipColor};">${wip.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
         </tr>`;
     });
     tbody.innerHTML = html;
@@ -7360,11 +7360,11 @@ function renderBrandHistoryTable(brandId) {
     if (tfoot) {
         const totalWIPColor = totalWIP < -0.01 ? '#ffcdd2' : (totalWIP > 0.01 ? '#c8e6c9' : 'transparent');
         tfoot.innerHTML = `<tr>
-            <td style="padding:1.2rem 1.5rem;font-size:0.9rem;color:var(--gray-600);text-transform:uppercase;letter-spacing:1px;">TOTAL (${logs.length} records)</td>
-            <td style="padding:1.2rem 1.5rem;font-size:1rem;color:var(--gray-800);">${totalFG.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
-            <td style="padding:1.2rem 1.5rem;font-size:1rem;color:var(--gray-800);">${totalRM.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
-            <td style="padding:1.2rem 1.5rem;font-size:1rem;color:#059669;">Rs. ${totalVal.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
-            <td style="padding:1.2rem 1.5rem;font-size:1.05rem;background:${totalWIPColor};color:#111827;">${totalWIP.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding: 0.2rem 0.5rem;font-size: 0.9rem;color:var(--gray-600);text-transform:uppercase;letter-spacing:1px;">TOTAL (${logs.length} records)</td>
+            <td style="padding: 0.2rem 0.5rem;font-size: 0.9rem;color:var(--gray-800);">${totalFG.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding: 0.2rem 0.5rem;font-size: 0.9rem;color:var(--gray-800);">${totalRM.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
+            <td style="padding: 0.2rem 0.5rem;font-size: 0.9rem;color:#059669;">Rs. ${totalVal.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+            <td style="padding: 0.2rem 0.5rem;font-size: 0.9rem;background:${totalWIPColor};color:#111827;">${totalWIP.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})} KG</td>
         </tr>`;
     }
 }
@@ -7438,21 +7438,21 @@ function refreshRMConsumptionHistory() {
         const gapColor = gap < 0 ? '#dc2626' : '#059669';
         html += `
             <tr data-id="${l.id}">
-                <td style="padding: 0.15rem 0.4rem; font-size: 0.9rem; line-height: 1.2;">${formatDate(l.date)}</td>
-                <td style="padding: 0.15rem 0.4rem; text-align: left; font-size: 0.9rem;">${fg.toLocaleString()} KG</td>
-                <td style="padding: 0.15rem 0.4rem; text-align: left; font-size: 0.9rem;">${rm.toLocaleString()} KG</td>
-                <td style="padding: 0.15rem 0.4rem; text-align: left; color: var(--gray-600); font-weight: 700;">Rs. ${val.toLocaleString()}</td>
-                <td style="padding: 0.15rem 0.4rem; text-align: left; color: ${gapColor}; font-weight: bold;">
+                <td style="padding: 0.2rem 0.5rem; font-size: 0.9rem; line-height: 1.2;">${formatDate(l.date)}</td>
+                <td style="padding: 0.2rem 0.5rem; text-align: left; font-size: 0.9rem;">${fg.toLocaleString()} KG</td>
+                <td style="padding: 0.2rem 0.5rem; text-align: left; font-size: 0.9rem;">${rm.toLocaleString()} KG</td>
+                <td style="padding: 0.2rem 0.5rem; text-align: left; color: var(--gray-600); font-weight: 700;">Rs. ${val.toLocaleString()}</td>
+                <td style="padding: 0.2rem 0.5rem; text-align: left; color: ${gapColor}; font-weight: bold;">
                     ${gap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG
                 </td>
-                <td style="padding: 0.15rem 0.4rem; text-align: center;">
+                <td style="padding: 0.2rem 0.5rem; text-align: center;">
                     <button class="btn btn-sm btn-danger" onclick="deleteRMConsumptionEntry(${l.id})" title="Delete" style="padding: 3px 6px; font-size: 0.8rem;">🗑️</button>
                 </td>
             </tr>`;
     });
 
     if (filteredLogs.length === 0) {
-        html = `<tr><td colspan="6" style="text-align: center; padding: 3rem; color: var(--gray-400);">No history records found for selected filters.</td></tr>`;
+        html = `<tr><td colspan="6" style="text-align: center; padding: 0.2rem 0.5rem; color: var(--gray-400);">No history records found for selected filters.</td></tr>`;
     }
 
     tbody.innerHTML = html;
@@ -7478,25 +7478,25 @@ function refreshRMConsumptionHistory() {
         tfoot.innerHTML = `
             <!-- Sub Total Row -->
             <tr style="background: var(--sky-700); color: white;">
-                <td style="padding: 0.6rem 0.5rem; font-weight: bold;">SUB TOTAL (FILTERED)</td>
-                <td style="padding: 0.6rem 0.5rem; font-weight: bold;">${totalFG.toLocaleString()} KG</td>
-                <td style="padding: 0.6rem 0.5rem; font-weight: bold;">${totalRM.toLocaleString()} KG</td>
-                <td style="padding: 0.6rem 0.5rem; font-weight: bold; font-size: 0.95rem;">
+                <td style="padding: 0.2rem 0.5rem; font-weight: bold;">SUB TOTAL (FILTERED)</td>
+                <td style="padding: 0.2rem 0.5rem; font-weight: bold;">${totalFG.toLocaleString()} KG</td>
+                <td style="padding: 0.2rem 0.5rem; font-weight: bold;">${totalRM.toLocaleString()} KG</td>
+                <td style="padding: 0.2rem 0.5rem; font-weight: bold; font-size: 0.9rem;">
                     Rs. ${totalValue.toLocaleString()}
                 </td>
-                <td style="padding: 0.6rem 0.5rem; font-weight: bold; font-size: 0.95rem;">
+                <td style="padding: 0.2rem 0.5rem; font-weight: bold; font-size: 0.9rem;">
                     ${(totalRM - totalFG).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG
                 </td>
-                <td style="padding: 0.6rem 0.5rem;"></td>
+                <td style="padding: 0.2rem 0.5rem;"></td>
             </tr>
             <!-- Monthly Adjustments Row -->
             <tr style="background: #f8fafc; border-bottom: 2px solid var(--gray-200);">
-                <td style="padding: 0.1rem 0.5rem; font-weight: bold; color: black;">
+                <td style="padding: 0.2rem 0.5rem; font-weight: bold; color: black;">
                     MONTHLY ADJUSTMENTS ${!(monthF && yearF) ? '<br><span style="font-size: 0.75rem; color: #ef4444;">(Please select Month & Year above to edit)</span>' : ''}
                 </td>
-                <td style="padding: 0.1rem 0.5rem;"></td>
-                <td style="padding: 0.1rem 0.5rem;"></td>
-                <td style="padding: 0.1rem 0.5rem;">
+                <td style="padding: 0.2rem 0.5rem;"></td>
+                <td style="padding: 0.2rem 0.5rem;"></td>
+                <td style="padding: 0.2rem 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span style="font-size: 0.8rem; font-weight: bold; color: black;">Other Exp: Rs.</span>
                         <input type="number" step="1" value="${monthlyOther}" 
@@ -7505,7 +7505,7 @@ function refreshRMConsumptionHistory() {
                             style="width: 100px; padding: 0.1rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: black;">
                     </div>
                 </td>
-                <td style="padding: 0.1rem 0.5rem;">
+                <td style="padding: 0.2rem 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span style="font-size: 0.8rem; font-weight: bold; color: black;">In Process:</span>
                         <input type="number" step="0.1" value="${monthlyInProc}" 
@@ -7515,26 +7515,26 @@ function refreshRMConsumptionHistory() {
                         <span style="font-size: 0.8rem; font-weight: bold; color: black;">KG</span>
                     </div>
                 </td>
-                <td style="padding: 0.1rem 0.5rem;"></td>
+                <td style="padding: 0.2rem 0.5rem;"></td>
             </tr>
             <!-- Grand Total Row -->
             <tr style="background: var(--sky-800); color: white;">
-                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem; text-transform: uppercase;">
+                <td style="padding: 0.2rem 0.5rem; font-weight: 900; font-size: 0.9rem; text-transform: uppercase;">
                     GRAND TOTAL (NET)
                 </td>
-                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem;">
+                <td style="padding: 0.2rem 0.5rem; font-weight: 900; font-size: 0.9rem;">
                     ${totalFG.toLocaleString()} KG
                 </td>
-                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem;">
+                <td style="padding: 0.2rem 0.5rem; font-weight: 900; font-size: 0.9rem;">
                     ${totalRM.toLocaleString()} KG
                 </td>
-                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem; color: white;">
+                <td style="padding: 0.2rem 0.5rem; font-weight: 900; font-size: 0.9rem; color: white;">
                     Rs. ${finalGrandTotal.toLocaleString()}
                 </td>
-                <td style="padding: 0.8rem 0.5rem; font-weight: 900; font-size: 1.1rem; color: white;">
+                <td style="padding: 0.2rem 0.5rem; font-weight: 900; font-size: 0.9rem; color: white;">
                     ${finalGap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG
                 </td>
-                <td style="padding: 0.8rem 0.5rem;"></td>
+                <td style="padding: 0.2rem 0.5rem;"></td>
             </tr>
         `;
     }
@@ -7986,10 +7986,10 @@ function refreshRMInHistoryTable() {
         row.innerHTML = `
             <td>${t.date ? t.date.split(' ')[0] : '---'}</td>
             <td style="font-weight: 600;">${item ? item.name : 'Unknown'}</td>
-            <td style="font-weight: bold; color: var(--success); font-size: 1.1rem;">+${qty.toLocaleString()} ${item ? 'KG' : ''}</td>
+            <td style="font-weight: bold; color: var(--success); font-size: 0.9rem;">+${qty.toLocaleString()} ${item ? 'KG' : ''}</td>
             <td style="text-align: right;">${pricePerKg.toLocaleString(undefined, {minimumFractionDigits: 1})} / KG</td>
             <td style="text-align: right; font-weight: bold; color: var(--sky-600);">Rs. ${totalAmount.toLocaleString(undefined, {minimumFractionDigits: 1})}</td>
-            <td style="color: var(--gray-500); font-style: italic; font-size: 0.85rem;">${t.notes || ''}</td>
+            <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">${t.notes || ''}</td>
             <td style="text-align: center; display: flex; gap: 4px; justify-content: center;">
                 <button class="btn btn-sm" onclick="revertRMTransaction(${t.id})" style="background:#0ea5e9; color:white; padding: 3px 6px; font-size: 0.7rem;" title="Remove & Revert RM Stock">🔄 Remove</button>
                 <button class="btn btn-icon text-error" onclick="deleteRMTransaction(${t.id})" title="Delete record only">🗑️</button>
@@ -8111,7 +8111,7 @@ function refreshRMInventoryBalance() {
     const selectedSubId = subFilter ? subFilter.value : '';
 
     if (!rmItems || rmItems.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:2rem; color:var(--gray-500);">No raw materials found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding: 0.2rem 0.5rem; color:var(--gray-500);">No raw materials found.</td></tr>';
         return;
     }
 
@@ -8135,7 +8135,7 @@ function refreshRMInventoryBalance() {
     const sortedItems = [...filteredItems].sort((a, b) => a.name.localeCompare(b.name));
 
     if (sortedItems.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--gray-500);">No items match your filters.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 0.2rem 0.5rem; color:var(--gray-500);">No items match your filters.</td></tr>';
         return;
     }
 
@@ -8181,7 +8181,7 @@ function refreshRMInventoryBalance() {
         const row = document.createElement('tr');
         row.style.borderBottom = '1px solid var(--gray-100)';
         row.innerHTML = `
-            <td style="padding: 1.2rem 1.5rem;">
+            <td style="padding: 0.2rem 0.5rem;">
                 <div style="font-weight: 700; color: var(--gray-800); font-size: 1.05rem;">${item.name}</div>
                 <div style="font-size: 0.75rem; color: var(--gray-500); font-family: monospace; background: #f1f5f9; display: inline-block; padding: 2px 8px; border-radius: 4px; margin-top: 5px; border: 1px solid var(--gray-200);">${item.code}</div>
             </td>
@@ -8260,7 +8260,7 @@ function refreshRMAudit() {
     if (!tbody) return;
 
     if (!rmItems || rmItems.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--gray-500);">No raw materials found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 0.2rem 0.5rem; color:var(--gray-500);">No raw materials found.</td></tr>';
         return;
     }
 
@@ -8279,7 +8279,7 @@ function refreshRMAudit() {
 
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td style="padding: 0.8rem 1.5rem;">
+            <td style="padding: 0.2rem 0.5rem;">
                 <div style="font-weight: 700;">${item.name}</div>
                 <div style="font-size: 0.75rem; color: var(--gray-400); font-family: monospace;">${item.code}</div>
             </td>
@@ -8455,7 +8455,7 @@ function refreshRMAudit() {
     if (!tbody) return;
 
     if (!rmItems || rmItems.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--gray-500);">No raw materials found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 0.2rem 0.5rem; color:var(--gray-500);">No raw materials found.</td></tr>';
         return;
     }
 
@@ -8474,7 +8474,7 @@ function refreshRMAudit() {
 
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td style="padding: 0.8rem 1.5rem;">
+            <td style="padding: 0.2rem 0.5rem;">
                 <div style="font-weight: 700;">${item.name}</div>
                 <div style="font-size: 0.75rem; color: var(--gray-400); font-family: monospace;">${item.code}</div>
             </td>
@@ -9109,7 +9109,7 @@ function refreshStoreInwardHistory() {
     });
 
     if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 3rem; color: #94a3b8; font-style: italic;">No inward records found for this period.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 0.2rem 0.5rem; color: #94a3b8; font-style: italic;">No inward records found for this period.</td></tr>';
         return;
     }
 
@@ -9143,7 +9143,7 @@ function refreshStoreOutwardHistory() {
     });
 
     if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 3rem; color: #94a3b8; font-style: italic;">No outward records found for this period.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 0.2rem 0.5rem; color: #94a3b8; font-style: italic;">No outward records found for this period.</td></tr>';
         return;
     }
 
@@ -9474,7 +9474,7 @@ function refreshStoreItems() {
     );
     
     if (filteredItems.length === 0) {
-        html += '<tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--gray-400);">No matching items found.</td></tr>';
+        html += '<tr><td colspan="5" style="text-align:center; padding: 0.2rem 0.5rem; color: var(--gray-400);">No matching items found.</td></tr>';
     } else {
         filteredItems.forEach(i => {
             const isLow = parseFloat(i.stock) <= parseFloat(i.low_stock_threshold);
@@ -9959,7 +9959,7 @@ function renderPermissionsTable() {
     
     tbody.innerHTML = systemModules.map(m => `
         <tr style="border-bottom: 1px solid var(--gray-100);">
-            <td style="padding: 10px; font-size: 0.85rem; font-weight: 600; color: var(--gray-700);">${m.name}</td>
+            <td style="padding: 10px; font-size: 0.9rem; font-weight: 600; color: var(--gray-700);">${m.name}</td>
             <td style="padding: 10px; text-align: center;">
                 <input type="checkbox" class="perm-check perm-view" data-module="${m.id}" onchange="syncEditorCheck(this)">
             </td>
@@ -10390,3 +10390,4 @@ async function restoreDemoData() {
         alert("A critical error occurred while attempting to restore demo data.");
     }
 }
+
