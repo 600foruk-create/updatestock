@@ -36,8 +36,8 @@
             <div class="form-group">
                 <label>Brand Type</label>
                 <select id="mainCategoryType" class="form-control">
-                    <option value="Pipe">PVC Pipe (Measured in Feet)</option>
-                    <option value="Fitting">PVC Fitting (Measured in Pieces)</option>
+                    <option value="Pipe">PVC Pipe</option>
+                    <option value="Fitting">PVC Fitting</option>
                 </select>
             </div>
             <div class="form-group">
@@ -245,8 +245,8 @@
             <div class="form-group">
                 <label>Brand Type</label>
                 <select id="quickBrandType" class="form-control">
-                    <option value="Pipe">PVC Pipe (Measured in Feet)</option>
-                    <option value="Fitting">PVC Fitting (Measured in Pieces)</option>
+                    <option value="Pipe">PVC Pipe</option>
+                    <option value="Fitting">PVC Fitting</option>
                 </select>
             </div>
             <div class="form-group">
