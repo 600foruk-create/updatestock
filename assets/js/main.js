@@ -4451,6 +4451,8 @@ function showAddSubCategoryModalFor(mainId) {
     document.getElementById('editSubCategoryId').value = '';
     document.getElementById('subCategoryName').value = '';
     document.getElementById('subCategoryUnit').value = 'inch';
+    document.getElementById('subCategoryDesc').value = '';
+    toggleSubCategoryType();
     document.getElementById('addSubCategoryModal').style.display = 'block';
 }
 
