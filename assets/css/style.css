@@ -540,7 +540,7 @@
             font-size: 0.85rem;
         }
 
-        .item-info {
+        .item-row .item-info {
             display: flex;
             flex-direction: column;
         }
@@ -1076,7 +1076,7 @@
             border-bottom: none;
         }
 
-        .item-info {
+        .item-row .item-info {
             display: flex;
             gap: 1.5rem;
             align-items: center;

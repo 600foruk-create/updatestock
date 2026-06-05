@@ -4484,7 +4484,7 @@ function refreshCategoriesView() {
                 let itemCode = item.code || 'ITEM_ERR';
                 itemsHtml += `
                             <div class="item-row">
-                                <div class="item-info" style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: nowrap; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                <div class="item-info" style="display: flex; align-items: center; gap: 0.8rem; flex-direction: row !important; flex-wrap: nowrap; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     <span class="item-name-badge" style="margin: 0; white-space: nowrap;">[${itemCode}] ${item.name || 'Item'}</span>
                                     <div class="item-specs" style="margin: 0; display: flex; gap: 0.5rem; align-items: center; flex-wrap: nowrap;">
                                         ${main.type === 'Fitting' 
