@@ -5605,9 +5605,9 @@ function generateProductionReport() {
             </table>
 
             ${Object.keys(rmSummary).length > 0 ? `
-                <div style="background: #f8fafc; padding: 0.8rem; border-radius: 8px; border: 1px solid var(--gray-200);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; border-bottom: 2px solid var(--gray-300); padding-bottom: 5px;">
-                        <h6 style="margin: 0; font-size: 0.75rem; text-transform: uppercase; color: #000; letter-spacing: 0.5px; font-weight: 900;">Material Consumption Summary:</h6>
+                <div style="background: #fffbeb; padding: 1rem; border-radius: 8px; border: 1px solid #fde68a; border-left: 5px solid #f59e0b; box-shadow: var(--shadow-sm); margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; border-bottom: 2px solid #fde68a; padding-bottom: 5px;">
+                        <h6 style="margin: 0; font-size: 0.85rem; text-transform: uppercase; color: #b45309; letter-spacing: 0.5px; font-weight: 900;">Material Consumption Summary:</h6>
                         <div style="display: flex; gap: 15px; font-size: 0.85rem; font-weight: 900;">
                             <div style="color: #000;">Material: <span style="color: #ef4444;">${bRMKg.toLocaleString()} KG</span></div>
                             <div style="color: #000;">Production: <span style="color: #0284c7;">${bKg.toLocaleString()} KG</span></div>
