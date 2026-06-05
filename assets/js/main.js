@@ -5480,8 +5480,13 @@ function generateProductionReport() {
     
     const grouped = {};
     filtered.forEach(t => {
-        if (!grouped[t.mainName]) grouped[t.mainName] = [];
-        grouped[t.mainName].push(t);
+        let mName = t.mainName;
+        if (!mName || mName.trim() === '') {
+            const mCat = mainCategories.find(c => c.id == t.mainId);
+            mName = mCat ? mCat.name : "Unknown Brand";
+        }
+        if (!grouped[mName]) grouped[mName] = [];
+        grouped[mName].push(t);
     });
     
     let html = `
@@ -5571,14 +5576,14 @@ function generateProductionReport() {
             const entryValue = entryKg * brandRate;
             
             html += `<tr style="font-size: 0.9rem; border-bottom: 1px solid var(--gray-100);">
-                <td style="padding: 0.7rem; text-align: center; color: var(--gray-500);">${new Date(t.date).toLocaleDateString()}</td>
-                <td style="padding: 0.7rem; font-weight: 500;">${t.subName} (${t.itemName})</td>
-                <td style="padding: 0.7rem; text-align: center;">${t.itemLength || '-'} ft</td>
-                <td style="padding: 0.7rem; text-align: center;">${w.toFixed(2)}</td>
-                <td style="padding: 0.7rem; text-align: center; font-weight: 700;">${q}</td>
-                <td style="padding: 0.7rem; text-align: center; font-weight: 700; color: var(--sky-600);">${entryKg.toFixed(2)}</td>
-                <td style="padding: 0.7rem; text-align: center; color: #0369a1; font-weight: 600;">${brandRate.toFixed(2)}</td>
-                <td style="padding: 0.7rem; text-align: center; font-weight: 700; color: #0369a1; background: #f0f9ff;">${entryValue.toFixed(2)}</td>
+                <td style="padding: 0.2rem 0.5rem; text-align: center; color: var(--gray-500);">${new Date(t.date).toLocaleDateString()}</td>
+                <td style="padding: 0.2rem 0.5rem; font-weight: 500;">${t.subName} (${t.itemName})</td>
+                <td style="padding: 0.2rem 0.5rem; text-align: center;">${t.itemLength || '-'} ft</td>
+                <td style="padding: 0.2rem 0.5rem; text-align: center;">${w.toFixed(2)}</td>
+                <td style="padding: 0.2rem 0.5rem; text-align: center; font-weight: 700;">${q}</td>
+                <td style="padding: 0.2rem 0.5rem; text-align: center; font-weight: 700; color: var(--sky-600);">${entryKg.toFixed(2)}</td>
+                <td style="padding: 0.2rem 0.5rem; text-align: center; color: #0369a1; font-weight: 600;">${brandRate.toFixed(2)}</td>
+                <td style="padding: 0.2rem 0.5rem; text-align: center; font-weight: 700; color: #0369a1; background: #f0f9ff;">${entryValue.toFixed(2)}</td>
             </tr>`;
         });
         
