@@ -3300,7 +3300,6 @@ async function saveProduction() {
 
             if (!isFitting && length && length > 0) item.length = length;
 
-            let main = mainCategories.find(m => m.id === item.mainId);
             let sub = subCategories.find(s => s.id === item.subId);
 
             let tData = {
@@ -3412,7 +3411,6 @@ async function saveSale() {
             continue;
         }
 
-        let main = mainCategories.find(m => m.id === item.mainId);
         let sub = subCategories.find(s => s.id === item.subId);
 
         let tData = {
@@ -3511,7 +3509,6 @@ async function saveAdjustment() {
             continue;
         }
 
-        let main = mainCategories.find(m => m.id === item.mainId);
         let sub = subCategories.find(s => s.id === item.subId);
         let finalQty = type === 'add' ? qty : -qty;
 
