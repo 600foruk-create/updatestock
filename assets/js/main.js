@@ -5544,8 +5544,7 @@ function generateProductionReport() {
         html += `<div class="audit-group" style="margin-bottom: 2.5rem; border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden; background: white;">
             <div style="background: var(--gray-800); color: white; padding: 0.8rem 1.2rem; font-weight: 600; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="background: var(--sky-500); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase;">Brand</span>
-                    <span style="font-weight: 900; font-size: 1.3rem;">${brandName}</span>
+                    <span style="background: var(--sky-500); color: white; padding: 6px 14px; border-radius: 6px; font-size: 1rem; text-transform: uppercase; font-weight: 900; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">BRAND: ${brandName}</span>
                 </div>
                 <div style="text-align: right;">
                     <div style="font-size: 0.85rem; font-weight: 800; color: #fff;">Material Cost: Rs. ${totalRMCost.toLocaleString()}</div>
