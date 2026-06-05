@@ -2805,9 +2805,11 @@ function addProductionRow() {
         if (main && main.type === 'Fitting') {
             lengthInput.style.display = 'none';
             lengthInput.value = '0';
+            if(row.querySelector('.unit-input')) row.querySelector('.unit-input').style.display = 'block';
         } else {
             lengthInput.style.display = 'block';
             if(lengthInput.value == '0') lengthInput.value = '13';
+            if(row.querySelector('.unit-input')) row.querySelector('.unit-input').style.display = 'none';
         }
         updateSizeDropdown(row, opt.value, 'production');
     }, false, 'brand');
@@ -2820,6 +2822,12 @@ function addProductionRow() {
     qtyInput.placeholder = 'Qty';
     qtyInput.min = '1';
 
+    const unitInput = document.createElement('select');
+    unitInput.className = 'searchable-input unit-input';
+    unitInput.style.display = 'none';
+    unitInput.style.width = '80px';
+    unitInput.innerHTML = `<option value="Pieces">PCS</option><option value="Carton">Carton</option>`;
+
     const removeBtn = document.createElement('button');
     removeBtn.className = 'btn btn-danger btn-sm';
     removeBtn.textContent = '✖';
@@ -2830,6 +2838,7 @@ function addProductionRow() {
     row.appendChild(itemWrapper);
     row.appendChild(lengthInput);
     row.appendChild(qtyInput);
+    row.appendChild(unitInput);
     row.appendChild(removeBtn);
 
     document.getElementById('productionRows').appendChild(row);
@@ -2851,9 +2860,11 @@ function addSaleRow() {
         if (main && main.type === 'Fitting') {
             lengthInput.style.display = 'none';
             lengthInput.value = '0';
+            if(row.querySelector('.unit-input')) row.querySelector('.unit-input').style.display = 'block';
         } else {
             lengthInput.style.display = 'block';
             if(lengthInput.value == '0') lengthInput.value = '13';
+            if(row.querySelector('.unit-input')) row.querySelector('.unit-input').style.display = 'none';
         }
         updateSizeDropdown(row, opt.value, 'sale');
     }, false, 'brand');
@@ -2866,6 +2877,12 @@ function addSaleRow() {
     qtyInput.placeholder = 'Qty';
     qtyInput.min = '1';
 
+    const unitInput = document.createElement('select');
+    unitInput.className = 'searchable-input unit-input';
+    unitInput.style.display = 'none';
+    unitInput.style.width = '80px';
+    unitInput.innerHTML = `<option value="Pieces">PCS</option><option value="Carton">Carton</option>`;
+
     const removeBtn = document.createElement('button');
     removeBtn.className = 'btn btn-danger btn-sm';
     removeBtn.textContent = '✖';
@@ -2876,6 +2893,7 @@ function addSaleRow() {
     row.appendChild(itemWrapper);
     row.appendChild(lengthInput);
     row.appendChild(qtyInput);
+    row.appendChild(unitInput);
     row.appendChild(removeBtn);
 
     document.getElementById('saleRows').appendChild(row);
@@ -2897,9 +2915,11 @@ function addAdjustmentRow() {
         if (main && main.type === 'Fitting') {
             lengthInput.style.display = 'none';
             lengthInput.value = '0';
+            if(row.querySelector('.unit-input')) row.querySelector('.unit-input').style.display = 'block';
         } else {
             lengthInput.style.display = 'block';
             if(lengthInput.value == '0') lengthInput.value = '13';
+            if(row.querySelector('.unit-input')) row.querySelector('.unit-input').style.display = 'none';
         }
         updateSizeDropdown(row, opt.value, 'adjustment');
     }, false, 'brand');
@@ -2919,6 +2939,12 @@ function addAdjustmentRow() {
     qtyInput.placeholder = 'Qty';
     qtyInput.min = '1';
 
+    const unitInput = document.createElement('select');
+    unitInput.className = 'searchable-input unit-input';
+    unitInput.style.display = 'none';
+    unitInput.style.width = '80px';
+    unitInput.innerHTML = `<option value="Pieces">PCS</option><option value="Carton">Carton</option>`;
+
     const removeBtn = document.createElement('button');
     removeBtn.className = 'btn btn-danger btn-sm';
     removeBtn.textContent = '✖';
@@ -2930,6 +2956,7 @@ function addAdjustmentRow() {
     row.appendChild(lengthInput);
     row.appendChild(typeSelect);
     row.appendChild(qtyInput);
+    row.appendChild(unitInput);
     row.appendChild(removeBtn);
 
     document.getElementById('adjustmentRows').appendChild(row);
@@ -3034,13 +3061,22 @@ function addNewOrderRow() {
     const brandOptions = mainCategories.map(m => ({ value: m.id, text: m.name }));
     const brandWrapper = createSearchableInput('Brand...', brandOptions, (opt) => {
         row.dataset.brandId = opt.value;
+        let main = mainCategories.find(m => m.id == opt.value);
+        let lenInput = row.querySelector('.searchable-input.length-input');
+        if (main && main.type === 'Fitting') {
+            if(lenInput) { lenInput.style.display = 'none'; lenInput.value = '0'; }
+            if(row.querySelector('.unit-input')) row.querySelector('.unit-input').style.display = 'block';
+        } else {
+            if(lenInput) { lenInput.style.display = 'block'; if(lenInput.value == '0') lenInput.value = '13'; }
+            if(row.querySelector('.unit-input')) row.querySelector('.unit-input').style.display = 'none';
+        }
         updateSizeDropdown(row, opt.value, 'order');
     }, false, 'brand');
     const sizeWrapper = createSearchableInput('Size...', [], null, true, null);
     const itemWrapper = createSearchableInput('...', [], null, true, null);
 
     const lengthInput = document.createElement('select');
-    lengthInput.className = 'searchable-input';
+    lengthInput.className = 'searchable-input length-input';
     const lengths = [...new Set(companySettings.availableLengths)].sort((a, b) => a - b);
     lengthInput.innerHTML = lengths.map(l => `<option value="${l}">${l}</option>`).join('');
     lengthInput.value = '13';
@@ -3050,6 +3086,12 @@ function addNewOrderRow() {
     qtyInput.className = 'searchable-input';
     qtyInput.placeholder = 'Qty';
     qtyInput.min = '1';
+
+    const unitInput = document.createElement('select');
+    unitInput.className = 'searchable-input unit-input';
+    unitInput.style.display = 'none';
+    unitInput.style.width = '80px';
+    unitInput.innerHTML = `<option value="Pieces">PCS</option><option value="Carton">Carton</option>`;
 
     const removeBtn = document.createElement('button');
     removeBtn.className = 'btn btn-danger btn-sm';
@@ -3061,6 +3103,7 @@ function addNewOrderRow() {
     row.appendChild(itemWrapper);
     row.appendChild(lengthInput);
     row.appendChild(qtyInput);
+    row.appendChild(unitInput);
     row.appendChild(removeBtn);
 
     document.getElementById('newOrderRows').appendChild(row);
@@ -3086,32 +3129,47 @@ function updateSizeDropdown(row, brandId, type) {
 function updateItemDropdown(row, brandId, sizeId, type) {
     const itemWrapper = row.children[2];
     const lengthInput = row.children[3];
+    const main = mainCategories.find(m => m.id == brandId);
+    const isFitting = main && main.type === 'Fitting';
 
     const itemOptions = items
         .filter(i => i.mainId == brandId && i.subId == sizeId)
-        .map(i => ({
-            value: i.id,
-            text: (i.name ? i.name + ' ' : '') + `(${i.length}ft ${i.weight}KG)`,
-            stock: i.stock || 0,
-            minStock: i.minStock || mainCategories.find(m => m.id === brandId)?.lowStockLimit || 10,
-            length: i.length,
-            weight: i.weight,
-            item: i
-        }));
+        .map(i => {
+            let descText = '';
+            if (isFitting) {
+                let pQty = parseFloat(i.packing_qty) || 0;
+                descText = (i.name ? i.name + ' ' : '') + `(Size: ${i.fitting_size || '-'}, Pack: ${pQty}, ${i.weight}KG)`;
+            } else {
+                descText = (i.name ? i.name + ' ' : '') + `(${i.length}ft ${i.weight}KG)`;
+            }
+            return {
+                value: i.id,
+                text: descText,
+                stock: i.stock || 0,
+                minStock: i.minStock || main?.lowStockLimit || 10,
+                length: i.length,
+                weight: i.weight,
+                packing_qty: parseFloat(i.packing_qty) || 0,
+                item: i
+            };
+        });
 
     const newItemWrapper = createSearchableInput('Item...', itemOptions, (opt) => {
         row.dataset.itemId = opt.value;
         row.dataset.itemName = opt.item.name;
         row.dataset.itemWeight = opt.item.weight;
         row.dataset.itemLength = opt.item.length;
+        row.dataset.packingQty = opt.packing_qty;
         
         let len = parseFloat(opt.item.length);
-        if (!companySettings.availableLengths.includes(len)) {
+        if (!isFitting && !companySettings.availableLengths.includes(len)) {
             companySettings.availableLengths.push(len);
             saveLengthSettings();
             updateLengthDropdowns();
         }
-        lengthInput.value = len;
+        if (!isFitting) {
+            lengthInput.value = len;
+        }
     }, false, 'item', { brandId, sizeId });
     row.replaceChild(newItemWrapper, itemWrapper);
 }
@@ -3220,9 +3278,10 @@ async function saveProduction() {
         // Process rows...
         for (let row of rows) {
             const itemId = row.dataset.itemId;
-            const lengthInput = row.children[3];
-            const qtyInput = row.children[4];
-            const qty = parseInt(qtyInput ? qtyInput.value : 0);
+            const lengthInput = row.querySelector('.searchable-input.length-input');
+            const qtyInput = row.querySelector('input[type="number"]');
+            const unitInput = row.querySelector('.searchable-input.unit-input');
+            let qty = parseInt(qtyInput ? qtyInput.value : 0);
             const length = parseInt(lengthInput ? lengthInput.value : 13);
 
             if (!itemId) { errors.push('Select item'); continue; }
@@ -3230,7 +3289,16 @@ async function saveProduction() {
             let item = items.find(i => i.id == itemId);
             if (!item) { errors.push('Item not found'); continue; }
 
-            if (length && length > 0) item.length = length;
+            let main = mainCategories.find(m => m.id === item.mainId);
+            const isFitting = main && main.type === 'Fitting';
+            if (isFitting && unitInput && unitInput.value === 'Carton') {
+                let pQty = parseFloat(item.packing_qty) || 0;
+                if (pQty > 0) {
+                    qty = qty * pQty;
+                }
+            }
+
+            if (!isFitting && length && length > 0) item.length = length;
 
             let main = mainCategories.find(m => m.id === item.mainId);
             let sub = subCategories.find(s => s.id === item.subId);
@@ -3318,9 +3386,10 @@ async function saveSale() {
 
     for (let row of rows) {
         const itemId = row.dataset.itemId;
-        const lengthInput = row.children[3];
-        const qtyInput = row.children[4];
-        const qty = parseInt(qtyInput ? qtyInput.value : 0);
+        const lengthInput = row.querySelector('.searchable-input.length-input');
+        const qtyInput = row.querySelector('input[type="number"]');
+        const unitInput = row.querySelector('.searchable-input.unit-input');
+        let qty = parseInt(qtyInput ? qtyInput.value : 0);
         const length = parseInt(lengthInput ? lengthInput.value : 13);
 
         if (!itemId) { errors.push('Select item'); continue; }
@@ -3328,7 +3397,16 @@ async function saveSale() {
         let item = items.find(i => i.id == itemId);
         if (!item) { errors.push('Item not found'); continue; }
 
-        if (length && length > 0) item.length = length;
+        let main = mainCategories.find(m => m.id === item.mainId);
+        const isFitting = main && main.type === 'Fitting';
+        if (isFitting && unitInput && unitInput.value === 'Carton') {
+            let pQty = parseFloat(item.packing_qty) || 0;
+            if (pQty > 0) {
+                qty = qty * pQty;
+            }
+        }
+
+        if (!isFitting && length && length > 0) item.length = length;
         if (qty > (item.stock || 0)) {
             errors.push(`Insufficient stock for ${item.name}. Available: ${item.stock}`);
             continue;
@@ -3405,11 +3483,12 @@ async function saveAdjustment() {
 
     for (let row of rows) {
         const itemId = row.dataset.itemId;
-        const lengthInput = row.children[3];
-        const typeSelect = row.children[4];
+        const lengthInput = row.querySelector('.searchable-input.length-input');
+        const typeSelect = row.children[4]; // add/remove select is specific to adjustment row format
         const type = typeSelect ? typeSelect.value : 'add';
-        const qtyInput = row.children[5];
-        const qty = parseInt(qtyInput ? qtyInput.value : 0);
+        const qtyInput = row.querySelector('input[type="number"]');
+        const unitInput = row.querySelector('.searchable-input.unit-input');
+        let qty = parseInt(qtyInput ? qtyInput.value : 0);
         const length = parseInt(lengthInput ? lengthInput.value : 13);
 
         if (!itemId) { errors.push('Select item'); continue; }
@@ -3417,7 +3496,16 @@ async function saveAdjustment() {
         let item = items.find(i => i.id == itemId);
         if (!item) { errors.push('Item not found'); continue; }
 
-        if (length && length > 0) item.length = length;
+        let main = mainCategories.find(m => m.id === item.mainId);
+        const isFitting = main && main.type === 'Fitting';
+        if (isFitting && unitInput && unitInput.value === 'Carton') {
+            let pQty = parseFloat(item.packing_qty) || 0;
+            if (pQty > 0) {
+                qty = qty * pQty;
+            }
+        }
+
+        if (!isFitting && length && length > 0) item.length = length;
         if (type === 'remove' && qty > (item.stock || 0)) {
             errors.push(`Cannot remove ${qty} PCS. Available: ${item.stock}`);
             continue;
@@ -3482,18 +3570,27 @@ async function saveNewOrder() {
     
     for (let row of rows) {
         const itemId = row.dataset.itemId;
-        const lengthInput = row.children[3];
-        const qtyInput = row.children[4];
-        const qty = parseInt(qtyInput ? qtyInput.value : 0);
+        const lengthInput = row.querySelector('.searchable-input.length-input');
+        const qtyInput = row.querySelector('input[type="number"]');
+        const unitInput = row.querySelector('.searchable-input.unit-input');
+        let qty = parseInt(qtyInput ? qtyInput.value : 0);
         const length = parseInt(lengthInput ? lengthInput.value : 13);
 
         if (!itemId || !qty || qty <= 0) continue;
         let item = items.find(i => i.id == itemId);
         if (!item) continue;
-
-        if (length && length > 0) item.length = length;
-
+        
         let main = mainCategories.find(m => m.id === item.mainId);
+        const isFitting = main && main.type === 'Fitting';
+        if (isFitting && unitInput && unitInput.value === 'Carton') {
+            let pQty = parseFloat(item.packing_qty) || 0;
+            if (pQty > 0) {
+                qty = qty * pQty;
+            }
+        }
+        
+        if (!isFitting && length && length > 0) item.length = length;
+
         let sub = subCategories.find(s => s.id === item.subId);
         orderItems.push({
             itemId: itemId,
@@ -5689,7 +5786,7 @@ function generateProductionReport() {
                         <tr style="background: var(--gray-100); font-size: 0.85rem; text-transform: uppercase; color: #000; font-weight: 900;">
                             <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Date</th>
                             <th style="padding: 0.8rem; border: 1px solid var(--gray-200); text-align: left;">Product</th>
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Length</th>
+                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Length / Size</th>
                             <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Weight</th>
                             <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Qty</th>
                             <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Total KG</th>
@@ -5705,10 +5802,15 @@ function generateProductionReport() {
             const entryKg = w * q;
             const entryValue = entryKg * brandRate;
             
+            const pItem = items.find(i => i.id == t.itemId);
+            const mainCat = mainCategories.find(m => m.id == t.mainId);
+            const isFitting = mainCat && mainCat.type === 'Fitting';
+            const displayLength = isFitting ? (pItem?.fitting_size || '-') : (t.itemLength || '-') + ' ft';
+            
             html += `<tr style="font-size: 0.9rem; border-bottom: 1px solid var(--gray-100);">
                 <td style="padding: 0.2rem 0.5rem; text-align: center; color: var(--gray-500);">${new Date(t.date).toLocaleDateString()}</td>
                 <td style="padding: 0.2rem 0.5rem; font-weight: 500;">${t.subName} (${t.itemName})</td>
-                <td style="padding: 0.2rem 0.5rem; text-align: center;">${t.itemLength || '-'} ft</td>
+                <td style="padding: 0.2rem 0.5rem; text-align: center;">${displayLength}</td>
                 <td style="padding: 0.2rem 0.5rem; text-align: center;">${w.toFixed(2)}</td>
                 <td style="padding: 0.2rem 0.5rem; text-align: center; font-weight: 700;">${q}</td>
                 <td style="padding: 0.2rem 0.5rem; text-align: center; font-weight: 700; color: var(--sky-600);">${entryKg.toFixed(2)}</td>
