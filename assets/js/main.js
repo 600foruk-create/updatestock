@@ -1952,6 +1952,7 @@ function refreshStockList() {
         
         let lenWeightHeader = isFitting ? 'Weight' : 'Length';
         if (isFitting) {
+            itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Pack Size</th>';
             itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Packing</th>';
         }
         itemsHtml += `<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">${lenWeightHeader}</th>`;
@@ -2029,7 +2030,7 @@ function refreshStockList() {
                         }
                         
                         let desc = isFitting 
-                            ? `${main.name} ${sub.name}${packDescSuffix}`.trim()
+                            ? `${main.name} ${sub.name}`.trim()
                             : `${sizeName}"( ${weightVal.toFixed(1)} ) Kg`;
                             
                         let displayLengthOrWeight = isFitting ? `${displayWeight} ${weightUnit}` : `${item.length} ft`;
@@ -2054,6 +2055,12 @@ function refreshStockList() {
                             ? `<td rowspan="${visibleItems.length}" style="padding: 0.2rem 0.5rem; border-bottom: ${groupBorderBottom}; border-right: 1px solid #000; background: var(--sky-50); vertical-align: middle; font-weight: 800; color: #000; text-align: center; width: 140px;">${sub.name}</td>` 
                             : '';
 
+                        let packSizeStr = packing_qty > 0 ? `1 Pck = ${packing_qty} ${packingUnit}` : '-';
+
+                        let packSizeColHtml = isFitting 
+                            ? `<td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; color: #000; border-right: 1px solid #000;">${packSizeStr}</td>`
+                            : '';
+
                         let packingColHtml = isFitting 
                             ? `<td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; font-weight:600; color: #000; border-right: 1px solid #000;">${packingStr}</td>`
                             : '';
@@ -2063,6 +2070,7 @@ function refreshStockList() {
                                         ${groupColHtml}
                                         <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; border-right: 1px solid #000;"><strong>${displaySizeHeader}</strong></td>
                                         <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; color: #000; border-right: 1px solid #000;">${desc}</td>
+                                        ${packSizeColHtml}
                                         ${packingColHtml}
                                         <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; border-right: 1px solid #000; color: #000;">${displayLengthOrWeight}</td>
                                         <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; font-weight:700; color:var(--orange-600); border-right: 1px solid #000;">${available}</td>
@@ -2085,7 +2093,7 @@ function refreshStockList() {
             let brandPrefixHtml = '';
             if (isFitting) {
                 brandPrefixHtml = `
-                    <td colspan="3" style="text-align: right; padding: 0.6rem 0.5rem; font-weight: 800; color: #000; font-size: 1.05rem; text-transform: uppercase; border-right: 1px solid #000;">TOTAL FOR ${main.name}:</td>
+                    <td colspan="4" style="text-align: right; padding: 0.6rem 0.5rem; font-weight: 800; color: #000; font-size: 1.05rem; text-transform: uppercase; border-right: 1px solid #000;">TOTAL FOR ${main.name}:</td>
                     <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: #000; font-size: 1.05rem; border-right: 1px solid #000;">${totalBrandPacks > 0 ? totalBrandPacks + ' Pck' : '-'}</td>
                     <td style="text-align: center; padding: 0.6rem 0.5rem; border-right: 1px solid #000;"></td>
                 `;
