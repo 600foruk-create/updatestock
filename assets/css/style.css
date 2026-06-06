@@ -536,7 +536,7 @@
             display: flex;
             justify-content: space-between;
             padding: 0.3rem 0;
-            border-bottom: 1px solid #000;
+            border-bottom: 1px solid var(--gray-200);
             font-size: 0.85rem;
         }
 
@@ -571,7 +571,7 @@
             background: white;
             border-radius: 0.8rem;
             overflow: hidden;
-            border: 1px solid #000;
+            border: 1px solid var(--gray-200);
         }
 
         .low-brand-header {
@@ -800,7 +800,7 @@
             display: flex;
             justify-content: space-between;
             padding: 0.3rem 0;
-            border-bottom: 1px dashed #000;
+            border-bottom: 1px dashed var(--gray-200);
             font-size: 0.9rem;
         }
 
@@ -815,7 +815,7 @@
             align-items: center;
             margin-top: 0.8rem;
             padding-top: 0.5rem;
-            border-top: 1px solid #000;
+            border-top: 1px solid var(--gray-200);
         }
 
         .order-total {
