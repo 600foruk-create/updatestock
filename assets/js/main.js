@@ -2203,10 +2203,10 @@ function refreshAuditList() {
 
                 rowsHtml += `
                     <tr id="auditRow_${item.id}" data-unit-weight="${weightVal}" data-brand-id="${main.id}" class="${rowClass}">
-                        ${index === 0 ? `<td rowspan="${group.length}" class="group-row-end" style="font-weight:700; background: var(--gray-50); font-size: 0.9rem; border-right: 2px solid #000;">${main.type === 'Fitting' ? sizeName : sizeName + '"'}</td>` : ''}
+                        ${index === 0 ? `<td rowspan="${group.length}" class="group-row-end" style="font-weight:600; background: var(--gray-50); font-size: 0.9rem; border-right: 1px solid #000;">${main.type === 'Fitting' ? sizeName : sizeName + '"'}</td>` : ''}
                         <td>${weightVal.toFixed(2)} KG</td>
                         <td style="text-align:center; font-weight: 500;">${main.type === 'Fitting' ? (subCategories.find(s => s.id == item.subId)?.name || '-') : item.length + ' ft'}</td>
-                        <td style="color:${main.color}; font-weight:600;">${main.name}</td>
+                        <td style="color:${main.color}; font-weight:500;">${main.name}</td>
                         <td id="auditSysPcs_${item.id}" class="sys-pcs-val">${effectivePcs}</td>
                         <td id="auditSysKg_${item.id}" class="sys-kg-val">${systemKg}</td>
                         <td>

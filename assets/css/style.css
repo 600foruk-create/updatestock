@@ -1742,15 +1742,15 @@
 }
 .audit-table th {
     background: var(--gray-100);
-    color: var(--gray-700);
+    color: #000;
     padding: 10px;
-    border: 1px solid var(--gray-300);
+    border: 1px solid #000;
     text-align: center;
     font-weight: 600;
 }
 .audit-table td {
     padding: 8px;
-    border: 1px solid var(--gray-200);
+    border: 1px solid #000;
     text-align: center;
 }
 .audit-brand-header {
@@ -1767,10 +1767,10 @@
 .godown-input {
     width: 80px;
     padding: 5px;
-    border: 2px solid var(--sky-200);
+    border: 1px solid var(--sky-200);
     border-radius: 4px;
     text-align: center;
-    font-weight: bold;
+    font-weight: 600;
     transition: all 0.2s;
 }
 .godown-input:focus {
@@ -1778,7 +1778,8 @@
     outline: none;
     box-shadow: 0 0 5px rgba(14, 165, 233, 0.2);
 }
-.diff-plus { color: var(--green-600); font-weight: bold; }
+.diff-plus { color: var(--green-600); font-weight: 600; }
+.diff-minus { color: #ef4444; font-weight: 600; }
 .chart-main-wrapper {
     margin-top: 1rem;
 }
