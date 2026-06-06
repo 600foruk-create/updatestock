@@ -1916,6 +1916,7 @@ function refreshStockList() {
         const brandMatches = main.name.toLowerCase().includes(search);
         let brandItems = items.filter(i => i.mainId == main.id);
         let totalBrandStock = 0;
+        let totalBrandPacks = 0;
         let totalKg = 0;
         let totalInOrder = 0;
         let isFitting = main.type === 'Fitting';
@@ -1991,6 +1992,7 @@ function refreshStockList() {
                         if (packing_qty > 0) {
                             packDescSuffix = ` | 1 Pack = ${packing_qty} ${packingUnit}`;
                             let packs = Math.floor(available / packing_qty);
+                            totalBrandPacks += packs;
                             let remainder = available % packing_qty;
                             
                             if (packs > 0 && remainder > 0) {
@@ -2052,11 +2054,23 @@ function refreshStockList() {
             
             let brandResColor = totalResult === 0 ? 'var(--gray-500)' : (totalResult < 0 ? '#ef4444' : 'var(--green-600)');
             let brandIoColor = totalInOrder === 0 ? 'var(--gray-500)' : '#dc2626';
-            let colspan = isFitting ? 5 : 4;
+            
+            let brandPrefixHtml = '';
+            if (isFitting) {
+                brandPrefixHtml = `
+                    <td colspan="3" style="text-align: right; padding: 0.6rem 0.5rem; font-weight: 800; color: var(--sky-900); font-size: 1.05rem; text-transform: uppercase;">TOTAL FOR ${main.name}:</td>
+                    <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: var(--sky-900); font-size: 1.05rem;">${totalBrandPacks > 0 ? totalBrandPacks + ' Pck' : '-'}</td>
+                    <td style="text-align: center; padding: 0.6rem 0.5rem;"></td>
+                `;
+            } else {
+                brandPrefixHtml = `
+                    <td colspan="4" style="text-align: right; padding: 0.6rem 0.5rem; font-weight: 800; color: var(--sky-900); font-size: 1.05rem; text-transform: uppercase;">TOTAL FOR ${main.name}:</td>
+                `;
+            }
             
             itemsHtml += `
                 <tr style="background: var(--sky-100); border-top: 3px solid var(--sky-300); border-bottom: 3px solid var(--sky-300);">
-                    <td colspan="${colspan}" style="text-align: right; padding: 0.6rem 0.5rem; font-weight: 800; color: var(--sky-900); font-size: 1.05rem; text-transform: uppercase;">TOTAL FOR ${main.name}:</td>
+                    ${brandPrefixHtml}
                     <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: var(--orange-600); font-size: 1.15rem;">${totalBrandStock}</td>
                     <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: ${brandIoColor}; font-size: 1.15rem;">${totalInOrder}</td>
                     <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: ${brandResColor}; font-size: 1.15rem;">${totalResult}</td>
