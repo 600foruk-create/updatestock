@@ -1925,7 +1925,6 @@ function refreshStockList() {
         itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">Group</th>';
         itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100);">Size</th>';
         itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100);">Description</th>';
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">Packing</th>';
         
         let lenWeightHeader = isFitting ? 'Weight' : 'Length';
         itemsHtml += `<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">${lenWeightHeader}</th>`;
@@ -1976,10 +1975,10 @@ function refreshStockList() {
                         let weightVal = parseFloat(item.weight) || 0;
                         let weightUnit = isFitting && weightVal < 1 ? 'gram' : 'Kg';
                         let displayWeight = isFitting && weightVal < 1 ? (weightVal * 1000).toFixed(0) : weightVal.toFixed(3);
-                        let packingVal = item.packing_qty ? `${item.packing_qty} ${item.packing_unit || 'KG'}` : '---';
+                        let packing = item.packing_qty ? ` | Packing: ${item.packing_qty} ${item.packing_unit || 'KG'}` : '';
                         
                         let desc = isFitting 
-                            ? `${main.name} ${sub.name}`.trim()
+                            ? `${main.name} ${sub.name}${packing}`.trim()
                             : `${sizeName}"( ${weightVal.toFixed(1)} ) Kg`;
                             
                         let displayLengthOrWeight = isFitting ? `${displayWeight} ${weightUnit}` : `${item.length} ft`;
@@ -2002,7 +2001,6 @@ function refreshStockList() {
                                         ${groupColHtml}
                                         <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200);"><strong>${displaySizeHeader}</strong></td>
                                         <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); color: var(--gray-700);">${desc}</td>
-                                        <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; color: var(--gray-600); font-size: 0.9rem;">${packingVal}</td>
                                         <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center;">${displayLengthOrWeight}</td>
                                         <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:var(--orange-500);">${available}</td>
                                         <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:${ioColor};">${inOrder}</td>
