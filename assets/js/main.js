@@ -1888,10 +1888,42 @@ function refreshStockList() {
         });
     });
 
-    let brandCardsHtml = '';
+    let groupsToProcess = [];
     sortMainCategories(mainCategories).forEach(main => {
-        const brandMatches = main.name.toLowerCase().includes(search);
+        if (main.type === 'Fitting') {
+            let subs = subCategories.filter(s => s.mainId == main.id);
+            subs.forEach(sub => {
+                groupsToProcess.push({
+                    isFitting: true,
+                    main: main,
+                    sub: sub,
+                    id: `fit_${main.id}_${sub.id}`,
+                    name: `${main.name} - ${sub.name}`,
+                    color: main.color
+                });
+            });
+        } else {
+            groupsToProcess.push({
+                isFitting: false,
+                main: main,
+                id: `pipe_${main.id}`,
+                name: main.name,
+                color: main.color
+            });
+        }
+    });
+
+    let brandCardsHtml = '';
+    groupsToProcess.forEach(group => {
+        let main = group.main;
+        let isFitting = group.isFitting;
+        const brandMatches = group.name.toLowerCase().includes(search);
+        
         let brandItems = items.filter(i => i.mainId == main.id);
+        if (isFitting) {
+            brandItems = brandItems.filter(i => i.subId == group.sub.id);
+        }
+
         let totalBrandStock = 0;
         let totalKg = 0;
         let totalInOrder = 0;
@@ -1900,7 +1932,10 @@ function refreshStockList() {
         itemsHtml += '<thead><tr>';
         itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100);">Size</th>';
         itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100);">Description</th>';
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">Length</th>';
+        
+        let lenWeightHeader = isFitting ? 'Weight' : 'Length';
+        itemsHtml += `<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">${lenWeightHeader}</th>`;
+        
         itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">Available</th>';
         itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">In Order</th>';
         itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">Result</th>';
@@ -1908,8 +1943,7 @@ function refreshStockList() {
 
         let hasVisibleItems = false;
         sortItems(brandItems).forEach(item => {
-            let sub = subCategories.find(s => s.id == item.subId);
-            let isFitting = main.type === 'Fitting';
+            let sub = isFitting ? group.sub : subCategories.find(s => s.id == item.subId);
             let sizeName = sub ? (isFitting ? sub.name : sub.name.replace(/[^0-9.]/g, '')) : '?';
             
             // Smart Search logic
@@ -1925,8 +1959,11 @@ function refreshStockList() {
             let packing = item.packing_qty ? ` | Packing: ${item.packing_qty} ${item.packing_unit || 'KG'}` : '';
             
             let desc = isFitting 
-                ? `${item.fitting_size || ''} ${displayWeight} ${weightUnit} ${main.name} ${sub?.name || ''}${packing}`.trim()
+                ? `${main.name} ${sub?.name || ''}${packing}`.trim()
                 : `${sizeName}"( ${weightVal.toFixed(1)} ) Kg`;
+                
+            let displayLengthOrWeight = isFitting ? `${displayWeight} ${weightUnit}` : `${item.length} ft`;
+
             let available = item.stock || 0;
             let inOrder = orderedQtys[item.id] || 0;
             let result = available - inOrder;
@@ -1947,14 +1984,13 @@ function refreshStockList() {
             let resColor = result === 0 ? 'var(--gray-500)' : (result < 0 ? '#ef4444' : 'var(--green-600)');
             let ioColor = inOrder === 0 ? 'var(--gray-500)' : '#dc2626';
             
-            let displayLength = isFitting ? '-' : `${item.length} ft`;
             let displaySizeHeader = isFitting ? (item.fitting_size || 'Fitting') : `${sizeName}"`;
 
             itemsHtml += `
                         <tr style="background: white;">
                             <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200);"><strong>${displaySizeHeader}</strong></td>
                             <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); color: var(--gray-700);">${desc}</td>
-                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center;">${displayLength}</td>
+                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center;">${displayLengthOrWeight}</td>
                             <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:var(--orange-500);">${available}</td>
                             <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:${ioColor};">${inOrder}</td>
                             <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:700; color:${resColor};">${result}</td>
@@ -1967,9 +2003,9 @@ function refreshStockList() {
         if (hasVisibleItems) {
             let totalResult = totalBrandStock - totalInOrder;
             brandCardsHtml += `
-                        <div class="brand-card expanded" id="stockCard_${main.id}">
-                            <div class="brand-header" style="background: ${main.color};" onclick="toggleBrandCard(document.getElementById('stockCard_${main.id}'))">
-                                <h4>${main.name}</h4>
+                        <div class="brand-card expanded" id="stockCard_${group.id}">
+                            <div class="brand-header" style="background: ${group.color};" onclick="toggleBrandCard(document.getElementById('stockCard_${group.id}'))">
+                                <h4>${group.name}</h4>
                                 <span class="brand-total">Total: ${totalBrandStock} | Order: ${totalInOrder} | Res: ${totalResult}</span>
                             </div>
                             <div class="brand-body" style="padding:0;">
