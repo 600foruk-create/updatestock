@@ -1952,6 +1952,7 @@ function refreshStockList() {
         
         let lenWeightHeader = isFitting ? 'Weight' : 'Length';
         if (isFitting) {
+            itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Pck Qty</th>';
             itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Packing</th>';
         }
         itemsHtml += `<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">${lenWeightHeader}</th>`;
@@ -2011,10 +2012,9 @@ function refreshStockList() {
                         let packing_qty = parseFloat(item.packing_qty) || 0;
                         let packingUnit = item.packing_unit || 'PCS';
                         let packingStr = '-';
-                        let packDescSuffix = '';
+                        let pckQtyStr = packing_qty > 0 ? `${packing_qty} ${packingUnit}` : '-';
                         
                         if (packing_qty > 0) {
-                            packDescSuffix = ` | 1 Pack = ${packing_qty} ${packingUnit}`;
                             let packs = Math.floor(available / packing_qty);
                             totalBrandPacks += packs;
                             let remainder = available % packing_qty;
@@ -2029,7 +2029,7 @@ function refreshStockList() {
                         }
                         
                         let desc = isFitting 
-                            ? `${main.name} ${sub.name}${packDescSuffix}`.trim()
+                            ? `${main.name} ${sub.name}`.trim()
                             : `${sizeName}"( ${weightVal.toFixed(1)} ) Kg`;
                             
                         let displayLengthOrWeight = isFitting ? `${displayWeight} ${weightUnit}` : `${item.length} ft`;
@@ -2055,7 +2055,8 @@ function refreshStockList() {
                             : '';
 
                         let packingColHtml = isFitting 
-                            ? `<td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; font-weight:600; color: #000; border-right: 1px solid #000;">${packingStr}</td>`
+                            ? `<td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; font-weight:600; color: #000; border-right: 1px solid #000;">${pckQtyStr}</td>
+                               <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; font-weight:600; color: #000; border-right: 1px solid #000;">${packingStr}</td>`
                             : '';
 
                         itemsHtml += `
@@ -2085,7 +2086,7 @@ function refreshStockList() {
             let brandPrefixHtml = '';
             if (isFitting) {
                 brandPrefixHtml = `
-                    <td colspan="3" style="text-align: right; padding: 0.6rem 0.5rem; font-weight: 800; color: #000; font-size: 1.05rem; text-transform: uppercase; border-right: 1px solid #000;">TOTAL FOR ${main.name}:</td>
+                    <td colspan="4" style="text-align: right; padding: 0.6rem 0.5rem; font-weight: 800; color: #000; font-size: 1.05rem; text-transform: uppercase; border-right: 1px solid #000;">TOTAL FOR ${main.name}:</td>
                     <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: #000; font-size: 1.05rem; border-right: 1px solid #000;">${totalBrandPacks > 0 ? totalBrandPacks + ' Pck' : '-'}</td>
                     <td style="text-align: center; padding: 0.6rem 0.5rem; border-right: 1px solid #000;"></td>
                 `;
