@@ -1,5 +1,5 @@
 <div id="stockList" class="tab-content">
-                    <div class="search-filter-bar no-print" style="flex-wrap: wrap; gap: 0.5rem;">
+                    <div class="search-filter-bar no-print" style="flex-wrap: wrap; gap: 0.5rem; align-items: flex-end; margin-bottom: 0.5rem;">
                         <div class="form-group" style="flex: 1; min-width: 120px;">
                             <label style="font-size: 0.85rem; margin-bottom: 2px;">Search Item</label>
                             <input type="text" id="stockSearch" class="form-control" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" placeholder="Search..." oninput="refreshStockList()">
@@ -41,7 +41,7 @@
                             <label style="font-size: 0.85rem; margin-bottom: 2px;">To Date</label>
                             <input type="date" id="stockDateTo" class="form-control" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" onchange="refreshStockList()">
                         </div>
-                        <div class="btn-group" style="margin-top: 18px; flex: 1; min-width: 150px;">
+                        <div class="btn-group" style="margin-left: auto; flex: 0 1 auto; justify-content: flex-end;">
                             <button class="btn btn-print" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" onclick="printStockList()">🖨️ Print</button>
                             <button class="btn btn-secondary" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" onclick="clearStockFilters()">🧹 Clear</button>
                         </div>
@@ -56,7 +56,7 @@
                             <p>Complete Stock Report - <span id="printDate"></span></p>
                         </div>
                         
-                        <h3 class="no-print" style="color:var(--sky-600); margin-bottom:1rem;">📦 Complete Stock</h3>
+                        <h3 class="no-print" style="color:var(--sky-600); margin-top: 0; margin-bottom: 0.5rem;">📦 Complete Stock</h3>
                         <div class="stock-list-grid" id="stockListCards"></div>
                     </div>
                 </div>

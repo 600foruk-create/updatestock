@@ -1944,21 +1944,21 @@ function refreshStockList() {
         let totalInOrder = 0;
         let isFitting = main.type === 'Fitting';
 
-        let itemsHtml = '<table class="data-table" style="margin: 0; width: 100%; border-collapse: collapse; font-size: 0.95rem;">';
+        let itemsHtml = '<table class="data-table" style="margin: 0; width: 100%; border-collapse: collapse; font-size: 0.95rem; border: 1px solid #000;">';
         itemsHtml += '<thead><tr>';
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">Group</th>';
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100);">Size</th>';
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100);">Description</th>';
+        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Group</th>';
+        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); color: #000;">Size</th>';
+        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); color: #000;">Description</th>';
         
         let lenWeightHeader = isFitting ? 'Weight' : 'Length';
         if (isFitting) {
-            itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">Packing</th>';
+            itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Packing</th>';
         }
-        itemsHtml += `<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">${lenWeightHeader}</th>`;
+        itemsHtml += `<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">${lenWeightHeader}</th>`;
         
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">Available</th>';
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">In Order</th>';
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">Result</th>';
+        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Available</th>';
+        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">In Order</th>';
+        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Result</th>';
         itemsHtml += '</tr></thead><tbody>';
 
         let hasVisibleItems = false;
@@ -2085,21 +2085,21 @@ function refreshStockList() {
             let brandPrefixHtml = '';
             if (isFitting) {
                 brandPrefixHtml = `
-                    <td colspan="3" style="text-align: right; padding: 0.6rem 0.5rem; font-weight: 800; color: var(--sky-900); font-size: 1.05rem; text-transform: uppercase;">TOTAL FOR ${main.name}:</td>
-                    <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: var(--sky-900); font-size: 1.05rem;">${totalBrandPacks > 0 ? totalBrandPacks + ' Pck' : '-'}</td>
-                    <td style="text-align: center; padding: 0.6rem 0.5rem;"></td>
+                    <td colspan="3" style="text-align: right; padding: 0.6rem 0.5rem; font-weight: 800; color: #000; font-size: 1.05rem; text-transform: uppercase; border-right: 1px solid #000;">TOTAL FOR ${main.name}:</td>
+                    <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: #000; font-size: 1.05rem; border-right: 1px solid #000;">${totalBrandPacks > 0 ? totalBrandPacks + ' Pck' : '-'}</td>
+                    <td style="text-align: center; padding: 0.6rem 0.5rem; border-right: 1px solid #000;"></td>
                 `;
             } else {
                 brandPrefixHtml = `
-                    <td colspan="4" style="text-align: right; padding: 0.6rem 0.5rem; font-weight: 800; color: var(--sky-900); font-size: 1.05rem; text-transform: uppercase;">TOTAL FOR ${main.name}:</td>
+                    <td colspan="4" style="text-align: right; padding: 0.6rem 0.5rem; font-weight: 800; color: #000; font-size: 1.05rem; text-transform: uppercase; border-right: 1px solid #000;">TOTAL FOR ${main.name}:</td>
                 `;
             }
             
             itemsHtml += `
-                <tr style="background: var(--sky-100); border-top: 3px solid var(--sky-300); border-bottom: 3px solid var(--sky-300);">
+                <tr style="background: var(--sky-100); border-top: 1px solid #000; border-bottom: 1px solid #000;">
                     ${brandPrefixHtml}
-                    <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: var(--orange-600); font-size: 1.15rem;">${totalBrandStock}</td>
-                    <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: ${brandIoColor}; font-size: 1.15rem;">${totalInOrder}</td>
+                    <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: var(--orange-600); font-size: 1.15rem; border-right: 1px solid #000;">${totalBrandStock}</td>
+                    <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: ${brandIoColor}; font-size: 1.15rem; border-right: 1px solid #000;">${totalInOrder}</td>
                     <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: ${brandResColor}; font-size: 1.15rem;">${totalResult}</td>
                 </tr>
             `;
