@@ -32,7 +32,7 @@
         </div>
                 <div class="form-group" style="margin-bottom: 1rem;">
             <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Issue Date</label>
-            <input type="date" id="rmOutDate" class="form-control" style="height: 40px; border-radius: 8px; border: 2px solid #cbd5e1; width: 250px; background: white;">
+            <input type="date" id="rmOutDate" class="form-control" style="height: 40px; border-radius: 8px; border: 2px solid #000; width: 250px; background: white;">
         </div>
 
         <!-- Single Item Mode Container -->
@@ -57,11 +57,11 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                     <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Batch Multiplier</label>
-                    <input type="number" id="rmOutFormulaQty" class="form-control" style="height: 48px; padding: 0.6rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid #cbd5e1; background: white; width: 100%;" value="1" step="0.1" oninput="recalculateFormulaTotalValue()">
+                    <input type="number" id="rmOutFormulaQty" class="form-control" style="height: 48px; padding: 0.6rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid #000; background: white; width: 100%;" value="1" step="0.1" oninput="recalculateFormulaTotalValue()">
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                     <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Formula Reference Notes</label>
-                    <input type="text" id="rmOutFormulaNotes" class="form-control" style="height: 48px; padding: 0.6rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid #cbd5e1; background: white; width: 100%;" placeholder="Batch #, Order ID...">
+                    <input type="text" id="rmOutFormulaNotes" class="form-control" style="height: 48px; padding: 0.6rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid #000; background: white; width: 100%;" placeholder="Batch #, Order ID...">
                 </div>
             </div>
         </div>
@@ -139,4 +139,5 @@
     color: var(--gray-700);
 }
 </style>
+
 

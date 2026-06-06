@@ -2202,7 +2202,7 @@ function refreshAuditList() {
 
                 rowsHtml += `
                     <tr id="auditRow_${item.id}" data-unit-weight="${weightVal}" data-brand-id="${main.id}" class="${rowClass}">
-                        ${index === 0 ? `<td rowspan="${group.length}" class="group-row-end" style="font-weight:700; background: var(--gray-50); font-size: 0.9rem; border-right: 2px solid var(--gray-300);">${main.type === 'Fitting' ? sizeName : sizeName + '"'}</td>` : ''}
+                        ${index === 0 ? `<td rowspan="${group.length}" class="group-row-end" style="font-weight:700; background: var(--gray-50); font-size: 0.9rem; border-right: 2px solid #000;">${main.type === 'Fitting' ? sizeName : sizeName + '"'}</td>` : ''}
                         <td>${weightVal.toFixed(2)} KG</td>
                         <td style="text-align:center; font-weight: 500;">${main.type === 'Fitting' ? (subCategories.find(s => s.id == item.subId)?.name || '-') : item.length + ' ft'}</td>
                         <td style="color:${main.color}; font-weight:600;">${main.name}</td>
@@ -2277,8 +2277,8 @@ function refreshAuditList() {
 
     // Add Grand Total Summary at the bottom
     html += `
-        <div id="grandTotalContainer" style="margin-top: 3rem; background: var(--gray-50); padding: 2rem; border-radius: 12px; border: 2px solid var(--gray-300);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid var(--gray-300); padding-bottom: 0.5rem;">
+        <div id="grandTotalContainer" style="margin-top: 3rem; background: var(--gray-50); padding: 2rem; border-radius: 12px; border: 2px solid #000;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid #000; padding-bottom: 0.5rem;">
                 <h2 style="margin: 0; color: var(--gray-800);">🏆 Audit Grand Summary</h2>
                 <span style="font-size: 0.9rem; color: var(--gray-500);">All Brands Combined</span>
             </div>
@@ -2710,14 +2710,14 @@ function renderArchivedContent(data, type = 'FG') {
     
     if (type === 'RM') {
         html = `
-            <table class="audit-table" style="width: 100%; border-collapse: collapse; background: white; border: 1px solid var(--gray-200);">
+            <table class="audit-table" style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #000;">
                 <thead>
                     <tr style="background: var(--gray-50);">
-                        <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Material Name</th>
-                        <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Code</th>
-                        <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">System Stock</th>
-                        <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Physical Stock</th>
-                        <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Difference</th>
+                        <th style="padding: 0.8rem; border: 1px solid #000;">Material Name</th>
+                        <th style="padding: 0.8rem; border: 1px solid #000;">Code</th>
+                        <th style="padding: 0.8rem; border: 1px solid #000;">System Stock</th>
+                        <th style="padding: 0.8rem; border: 1px solid #000;">Physical Stock</th>
+                        <th style="padding: 0.8rem; border: 1px solid #000;">Difference</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -2726,11 +2726,11 @@ function renderArchivedContent(data, type = 'FG') {
             const diffClass = diff > 0 ? 'diff-plus' : (diff < 0 ? 'diff-minus' : '');
             const diffText = diff > 0 ? `+${diff.toFixed(2)}` : diff.toFixed(2);
             html += `<tr>
-                <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: left; font-weight:600;">${item.name}</td>
-                <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center; color:var(--gray-500); font-family:monospace;">${item.code}</td>
-                <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;">${parseFloat(item.system).toFixed(2)} ${item.unit}</td>
-                <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;"><strong>${parseFloat(item.physical).toFixed(2)}</strong> ${item.unit}</td>
-                <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;" class="${diffClass}">${diffText}</td>
+                <td style="padding: 0.2rem 0.5rem; border: 1px solid #000; text-align: left; font-weight:600;">${item.name}</td>
+                <td style="padding: 0.2rem 0.5rem; border: 1px solid #000; text-align: center; color:var(--gray-500); font-family:monospace;">${item.code}</td>
+                <td style="padding: 0.2rem 0.5rem; border: 1px solid #000; text-align: center;">${parseFloat(item.system).toFixed(2)} ${item.unit}</td>
+                <td style="padding: 0.2rem 0.5rem; border: 1px solid #000; text-align: center;"><strong>${parseFloat(item.physical).toFixed(2)}</strong> ${item.unit}</td>
+                <td style="padding: 0.2rem 0.5rem; border: 1px solid #000; text-align: center;" class="${diffClass}">${diffText}</td>
             </tr>`;
         });
         html += `</tbody></table>`;
@@ -2741,14 +2741,14 @@ function renderArchivedContent(data, type = 'FG') {
                 <div class="audit-brand-header" style="background: var(--sky-600); color: white; padding: 0.8rem 1.2rem; border-radius: 8px 8px 0 0; font-weight: 600;">
                     ${group.brandName}
                 </div>
-                <table class="audit-table" style="width: 100%; border-collapse: collapse; background: white; border: 1px solid var(--gray-200);">
+                <table class="audit-table" style="width: 100%; border-collapse: collapse; background: white; border: 1px solid #000;">
                     <thead>
                         <tr style="background: var(--gray-50);">
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Code</th>
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Size</th>
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">System Qty</th>
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Godown Qty</th>
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Difference</th>
+                            <th style="padding: 0.8rem; border: 1px solid #000;">Code</th>
+                            <th style="padding: 0.8rem; border: 1px solid #000;">Size</th>
+                            <th style="padding: 0.8rem; border: 1px solid #000;">System Qty</th>
+                            <th style="padding: 0.8rem; border: 1px solid #000;">Godown Qty</th>
+                            <th style="padding: 0.8rem; border: 1px solid #000;">Difference</th>
                         </tr>
                     </thead>
                     <tbody>`;
@@ -2756,11 +2756,11 @@ function renderArchivedContent(data, type = 'FG') {
                 const diffClass = item.diff > 0 ? 'diff-plus' : (item.diff < 0 ? 'diff-minus' : '');
                 const diffText = item.diff > 0 ? `+${item.diff}` : item.diff;
                 html += `<tr>
-                    <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;">${item.productCode}</td>
-                    <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;">${item.size}</td>
-                    <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;">${item.systemQty}</td>
-                    <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;"><strong>${item.godownQty}</strong></td>
-                    <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--gray-200); text-align: center;" class="${diffClass}">${diffText}</td>
+                    <td style="padding: 0.2rem 0.5rem; border: 1px solid #000; text-align: center;">${item.productCode}</td>
+                    <td style="padding: 0.2rem 0.5rem; border: 1px solid #000; text-align: center;">${item.size}</td>
+                    <td style="padding: 0.2rem 0.5rem; border: 1px solid #000; text-align: center;">${item.systemQty}</td>
+                    <td style="padding: 0.2rem 0.5rem; border: 1px solid #000; text-align: center;"><strong>${item.godownQty}</strong></td>
+                    <td style="padding: 0.2rem 0.5rem; border: 1px solid #000; text-align: center;" class="${diffClass}">${diffText}</td>
                 </tr>`;
             });
             html += `</tbody></table></div>`;
@@ -6005,7 +6005,7 @@ function generateProductionReport() {
         
         const brandRate = bKg > 0 ? (totalRMCost / bKg) : 0;
 
-        html += `<div class="audit-group" style="margin-bottom: 2.5rem; border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden; background: white;">
+        html += `<div class="audit-group" style="margin-bottom: 2.5rem; border: 1px solid #000; border-radius: 8px; overflow: hidden; background: white;">
             <div style="background: var(--gray-800); color: white; padding: 0.8rem 1.2rem; font-weight: 600; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span style="background: var(--sky-500); color: white; padding: 6px 14px; border-radius: 6px; font-size: 1rem; text-transform: uppercase; font-weight: 900; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">BRAND: ${brandName}</span>
@@ -6020,14 +6020,14 @@ function generateProductionReport() {
                 <table class="audit-table" style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem;">
                     <thead>
                         <tr style="background: var(--gray-100); font-size: 0.85rem; text-transform: uppercase; color: #000; font-weight: 900;">
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Date</th>
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200); text-align: left;">Product</th>
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Length / Size</th>
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Weight</th>
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Qty</th>
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200);">Total KG</th>
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200); background: #f0f9ff; color: #0369a1;">Rate/KG</th>
-                            <th style="padding: 0.8rem; border: 1px solid var(--gray-200); background: #f0f9ff; color: #0369a1;">Value</th>
+                            <th style="padding: 0.8rem; border: 1px solid #000;">Date</th>
+                            <th style="padding: 0.8rem; border: 1px solid #000; text-align: left;">Product</th>
+                            <th style="padding: 0.8rem; border: 1px solid #000;">Length / Size</th>
+                            <th style="padding: 0.8rem; border: 1px solid #000;">Weight</th>
+                            <th style="padding: 0.8rem; border: 1px solid #000;">Qty</th>
+                            <th style="padding: 0.8rem; border: 1px solid #000;">Total KG</th>
+                            <th style="padding: 0.8rem; border: 1px solid #000; background: #f0f9ff; color: #0369a1;">Rate/KG</th>
+                            <th style="padding: 0.8rem; border: 1px solid #000; background: #f0f9ff; color: #0369a1;">Value</th>
                         </tr>
                     </thead>
                     <tbody>`;
@@ -6085,7 +6085,7 @@ function generateProductionReport() {
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px;">
                         ${Object.keys(rmSummary).sort().map(name => `
-                            <div style="background: white; padding: 6px 10px; border-radius: 5px; border: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="background: white; padding: 6px 10px; border-radius: 5px; border: 1px solid #000; display: flex; justify-content: space-between; align-items: center;">
                                 <div style="flex: 1; min-width: 0;">
                                     <div style="font-size: 0.65rem; color: var(--gray-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${name}</div>
                                     <div style="font-size: 0.8rem; font-weight: 800; color: var(--gray-800);">${rmSummary[name].qty.toLocaleString()} <small style="font-size: 0.6rem; opacity: 0.5;">${rmSummary[name].unit}</small></div>
@@ -6153,7 +6153,7 @@ function generateProductionReport() {
                 </div>
 
                 ${Object.keys(globalRMSummary).length > 0 ? `
-                    <div style="background: #fafafa; border: 1px solid var(--gray-200); border-radius: 8px; padding: 1.2rem;">
+                    <div style="background: #fafafa; border: 1px solid #000; border-radius: 8px; padding: 1.2rem;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                             <h4 style="margin: 0; font-size: 0.85rem; color: var(--gray-800); text-transform: uppercase; font-weight: 800; display: flex; align-items: center; gap: 8px;">
                                 <span style="width: 12px; height: 12px; background: var(--error); border-radius: 50%;"></span>
@@ -6163,7 +6163,7 @@ function generateProductionReport() {
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
                             ${Object.keys(globalRMSummary).sort().map(name => `
-                                <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid var(--gray-200); box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center;">
+                                <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #000; box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center;">
                                     <div>
                                         <div style="font-size: 0.7rem; color: var(--gray-500); font-weight: 600;">${name}</div>
                                         <div style="font-size: 0.9rem; font-weight: 900; color: var(--gray-900);">${globalRMSummary[name].qty.toLocaleString()} <span style="font-size: 0.65rem; font-weight: 400; color: var(--gray-400);">${globalRMSummary[name].unit}</span></div>
@@ -6453,13 +6453,13 @@ function refreshRMInventory() {
 
         const subs = rmSubCategories.filter(s => s.mainId == main.id).sort((a,b) => a.code.localeCompare(b.code));
         if (subs.length === 0) {
-            html += `<p style="color: var(--gray-400); font-style: italic; font-size: 0.95rem; padding: 1rem; background: white; border-radius: 8px; border: 1px dashed var(--gray-200);">No sub-categories in this category.</p>`;
+            html += `<p style="color: var(--gray-400); font-style: italic; font-size: 0.95rem; padding: 1rem; background: white; border-radius: 8px; border: 1px dashed #000;">No sub-categories in this category.</p>`;
         } else {
             subs.forEach(sub => {
                 const isSubExpanded = rmExpandedIds.has(`sub_${sub.id}`);
                 html += `
-                <div class="sub-category-item" style="margin-bottom: 1.2rem; border: 1px solid var(--gray-200); border-radius: 8px; background: white; box-shadow: var(--shadow-sm);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1.2rem; background: #edf2f7; border-bottom: 1px solid var(--gray-200); cursor: pointer;" onclick="toggleRMCollapse('sub_${sub.id}')">
+                <div class="sub-category-item" style="margin-bottom: 1.2rem; border: 1px solid #000; border-radius: 8px; background: white; box-shadow: var(--shadow-sm);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1.2rem; background: #edf2f7; border-bottom: 1px solid #000; cursor: pointer;" onclick="toggleRMCollapse('sub_${sub.id}')">
                         <div style="display: flex; align-items: center; gap: 1rem;">
                             <span style="color: var(--sky-600); font-weight: bold;">${isSubExpanded ? '➖' : '➕'}</span>
                             <div>
@@ -6476,7 +6476,7 @@ function refreshRMInventory() {
                     <div style="${isSubExpanded ? '' : 'display: none;'}">
                         <table class="data-table" style="font-size: 0.9rem; margin: 0; border: none; width: 100%;">
                             <thead>
-                                <tr style="background: #f1f5f9; border-bottom: 2px solid var(--gray-200);">
+                                <tr style="background: #f1f5f9; border-bottom: 2px solid #000;">
                                     <th style="padding: 0.7rem 1.2rem; font-weight: 700; color: var(--gray-700);">Item Name</th>
                                     <th style="font-weight: 700; color: var(--gray-700);">Code</th>
                                     <th style="font-weight: 700; color: var(--gray-700);">Stock</th>
@@ -6502,8 +6502,8 @@ function refreshRMInventory() {
                             <td style="color: var(--gray-500);">${item.threshold}</td>
                             <td style="text-align: center; padding: 0.2rem 0.5rem;">
                                 <div style="display: flex; justify-content: center; gap: 0.4rem;">
-                                    <button class="btn-icon" style="padding: 4px; background: #f8fafc; border: 1px solid var(--gray-200);" onclick="editRMItem(${item.id})">✏️</button>
-                                    <button class="btn-icon text-error" style="padding: 4px; background: #f8fafc; border: 1px solid var(--gray-200);" onclick="deleteRMItem(${item.id})">🗑️</button>
+                                    <button class="btn-icon" style="padding: 4px; background: #f8fafc; border: 1px solid #000;" onclick="editRMItem(${item.id})">✏️</button>
+                                    <button class="btn-icon text-error" style="padding: 4px; background: #f8fafc; border: 1px solid #000;" onclick="deleteRMItem(${item.id})">🗑️</button>
                                 </div>
                             </td>
                         </tr>`;
@@ -7149,13 +7149,13 @@ function previewFormulaUsage() {
             totalFormulaValue += subtotal;
 
             const row = document.createElement('div');
-            row.style.cssText = 'display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 8px; align-items: center; background: white; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--gray-200); margin-bottom: 2px;';
+            row.style.cssText = 'display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 8px; align-items: center; background: white; padding: 5px 10px; border-radius: 6px; border: 1px solid #000; margin-bottom: 2px;';
             row.innerHTML = `
                 <span style="font-size: 0.85rem; font-weight: 500; color: var(--gray-700);">${name}</span>
                 <input type="number" class="form-control rm-formula-custom-qty" 
                        data-item-id="${fi.rm_item_id}" 
                        value="${fi.quantity}" 
-                       style="padding: 2px 6px; font-size: 0.85rem; height: 28px; text-align: right; border: 1px solid var(--gray-300);"
+                       style="padding: 2px 6px; font-size: 0.85rem; height: 28px; text-align: right; border: 1px solid #000;"
                        oninput="recalculateFormulaTotalValue()">
                 <span style="font-size: 0.8rem; text-align: right; color: var(--gray-500);">${priceVal.toFixed(1)}</span>
                 <span style="font-size: 0.85rem; font-weight: 700; text-align: right; color: var(--gray-700);">Rs. ${subtotal.toLocaleString()}</span>
@@ -7861,7 +7861,7 @@ function showBrandHistoryModal(brandId) {
             <!-- Filters -->
             <div style="padding:1.2rem 2rem;background:#f8fafc;border-bottom:1px solid #e2e8f0;display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
                 <span style="font-weight:700;color:var(--gray-600);font-size:0.9rem;">📅 Filter By:</span>
-                <select id="bhmMonth" onchange="renderBrandHistoryTable(${brandId})" style="padding:0.5rem 1rem;border:1px solid #cbd5e1;border-radius:10px;font-size:0.9rem;background:white;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+                <select id="bhmMonth" onchange="renderBrandHistoryTable(${brandId})" style="padding:0.5rem 1rem;border:1px solid #000;border-radius:10px;font-size:0.9rem;background:white;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
                     <option value="">All Months</option>
                     <option value="1" ${curMonth===1?'selected':''}>January</option>
                     <option value="2" ${curMonth===2?'selected':''}>February</option>
@@ -7876,7 +7876,7 @@ function showBrandHistoryModal(brandId) {
                     <option value="11" ${curMonth===11?'selected':''}>November</option>
                     <option value="12" ${curMonth===12?'selected':''}>December</option>
                 </select>
-                <select id="bhmYear" onchange="renderBrandHistoryTable(${brandId})" style="padding:0.5rem 1rem;border:1px solid #cbd5e1;border-radius:10px;font-size:0.9rem;background:white;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+                <select id="bhmYear" onchange="renderBrandHistoryTable(${brandId})" style="padding:0.5rem 1rem;border:1px solid #000;border-radius:10px;font-size:0.9rem;background:white;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.05);">
                     <option value="">All Years</option>
                     ${yearOpts}
                 </select>
@@ -8082,7 +8082,7 @@ function refreshRMConsumptionHistory() {
                 <td style="padding: 0.2rem 0.5rem;"></td>
             </tr>
             <!-- Monthly Adjustments Row -->
-            <tr style="background: #f8fafc; border-bottom: 2px solid var(--gray-200);">
+            <tr style="background: #f8fafc; border-bottom: 2px solid #000;">
                 <td style="padding: 0.2rem 0.5rem; font-weight: bold; color: black;">
                     MONTHLY ADJUSTMENTS ${!(monthF && yearF) ? '<br><span style="font-size: 0.75rem; color: #ef4444;">(Please select Month & Year above to edit)</span>' : ''}
                 </td>
@@ -8094,7 +8094,7 @@ function refreshRMConsumptionHistory() {
                         <input type="number" step="1" value="${monthlyOther}" 
                             onchange="updateMonthlyRMConsumptionData(${yearF}, ${monthF}, 'other', this.value)"
                             ${!(monthF && yearF) ? 'disabled title="Select month and year to edit"' : ''}
-                            style="width: 100px; padding: 0.1rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: black;">
+                            style="width: 100px; padding: 0.1rem 0.4rem; border: 1px solid #000; border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: black;">
                     </div>
                 </td>
                 <td style="padding: 0.2rem 0.5rem;">
@@ -8103,7 +8103,7 @@ function refreshRMConsumptionHistory() {
                         <input type="number" step="0.1" value="${monthlyInProc}" 
                             onchange="updateMonthlyRMConsumptionData(${yearF}, ${monthF}, 'inProcess', this.value)"
                             ${!(monthF && yearF) ? 'disabled title="Select month and year to edit"' : ''}
-                            style="width: 100px; padding: 0.1rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: black;">
+                            style="width: 100px; padding: 0.1rem 0.4rem; border: 1px solid #000; border-radius: 6px; font-weight: bold; font-size: 0.9rem; background: white; color: black;">
                         <span style="font-size: 0.8rem; font-weight: bold; color: black;">KG</span>
                     </div>
                 </td>
@@ -8786,7 +8786,7 @@ function refreshRMInventoryBalance() {
         row.innerHTML = `
             <td style="padding: 0.2rem 0.5rem;">
                 <div style="font-weight: 700; color: var(--gray-800); font-size: 1.05rem;">${item.name}</div>
-                <div style="font-size: 0.75rem; color: var(--gray-500); font-family: monospace; background: #f1f5f9; display: inline-block; padding: 2px 8px; border-radius: 4px; margin-top: 5px; border: 1px solid var(--gray-200);">${item.code}</div>
+                <div style="font-size: 0.75rem; color: var(--gray-500); font-family: monospace; background: #f1f5f9; display: inline-block; padding: 2px 8px; border-radius: 4px; margin-top: 5px; border: 1px solid #000;">${item.code}</div>
             </td>
             <td style="text-align: right; padding-right: 1.5rem; vertical-align: middle;">
                 <div style="font-weight: 800; font-size: 1.1rem; color: var(--primary);">
@@ -8889,7 +8889,7 @@ function refreshRMAudit() {
             <td style="text-align: center; font-weight: 600; color: var(--gray-600);">${sysStock.toFixed(2)} ${item.unit}</td>
             <td style="text-align: center;">
                 <input type="number" step="0.01" value="${physStock}" 
-                    style="width: 100px; padding: 0.4rem; border: 2px solid var(--gray-200); border-radius: 6px; text-align: center; font-weight: 700;"
+                    style="width: 100px; padding: 0.4rem; border: 2px solid #000; border-radius: 6px; text-align: center; font-weight: 700;"
                     oninput="calculateRMAuditDifference(${item.id}, this.value)">
             </td>
             <td id="rmAuditDiff_${item.id}" style="text-align: center; font-weight: 700; color: ${statusColor};">
@@ -9084,7 +9084,7 @@ function refreshRMAudit() {
             <td style="text-align: center; font-weight: 600; color: var(--gray-600);">${sysStock.toFixed(2)} ${item.unit}</td>
             <td style="text-align: center;">
                 <input type="number" step="0.01" value="${physStock}" 
-                    style="width: 100px; padding: 0.4rem; border: 2px solid var(--gray-200); border-radius: 6px; text-align: center; font-weight: 700;"
+                    style="width: 100px; padding: 0.4rem; border: 2px solid #000; border-radius: 6px; text-align: center; font-weight: 700;"
                     oninput="calculateRMAuditDifference(${item.id}, this.value)">
             </td>
             <td id="rmAuditDiff_${item.id}" style="text-align: center; font-weight: 700; color: ${statusColor};">
@@ -10993,4 +10993,6 @@ async function restoreDemoData() {
         alert("A critical error occurred while attempting to restore demo data.");
     }
 }
+
+
 

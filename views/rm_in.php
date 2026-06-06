@@ -4,7 +4,7 @@
     <div class="form-card" style="margin-bottom: 2rem; background: transparent; box-shadow: none; border: none; padding: 0;">
         <div class="form-group" style="margin-bottom: 1rem;">
             <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Purchase Date</label>
-            <input type="date" id="rmInDate" class="form-control" style="height: 40px; border-radius: 8px; border: 2px solid #cbd5e1; width: 250px; background: white;">
+            <input type="date" id="rmInDate" class="form-control" style="height: 40px; border-radius: 8px; border: 2px solid #000; width: 250px; background: white;">
         </div>
 
         <div id="rmInRowsHeader" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr 40px; gap: 1rem; margin-bottom: 0.5rem; padding: 0 1rem; color: var(--gray-600); font-size: 0.85rem; font-weight: 700;">
@@ -70,4 +70,5 @@
         </table>
     </div>
 </div>
+
 
