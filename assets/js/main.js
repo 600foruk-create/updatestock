@@ -200,6 +200,9 @@ async function initApp() {
             
             const _rmMSel = document.getElementById('rmInMonthFilter');
             if (_rmMSel && !_rmMSel.value) _rmMSel.value = _now.getMonth() + 1;
+            
+            const _rmOutMSel = document.getElementById('rmOutMonthFilter');
+            if (_rmOutMSel && !_rmOutMSel.value) _rmOutMSel.value = _now.getMonth() + 1;
         } else {
             console.warn('StockFlow: SQL returned error state:', result.message);
             loadLegacyData();
@@ -3771,6 +3774,41 @@ function populateRMInYearFilter() {
     else if (years.includes(nowYear)) { yearSel.value = nowYear; }
 }
 
+function populateRMOutYearFilter() {
+    const yearSel = document.getElementById('rmOutYearFilter');
+    if (!yearSel) return;
+    const currentVal = yearSel.value;
+    const outTrans = rmTransactions.filter(t => t.type === 'OUT');
+    const years = [...new Set(outTrans.map(t => new Date(t.date).getFullYear()))].filter(y => !isNaN(y)).sort((a,b) => b - a);
+    let html = '<option value="">All Years</option>';
+    years.forEach(y => { html += `<option value="${y}">${y}</option>`; });
+    yearSel.innerHTML = html;
+    const nowYear = new Date().getFullYear();
+    if (currentVal) { yearSel.value = currentVal; }
+    else if (years.includes(nowYear)) { yearSel.value = nowYear; }
+}
+
+window.toggleFormulaGroup = function(groupId) {
+    const rows = document.querySelectorAll('.formula-group-child.' + groupId);
+    const headerRow = document.getElementById('formula-header-' + groupId);
+    let isHidden = true;
+    
+    rows.forEach(r => {
+        if (r.style.display === 'none') {
+            r.style.display = 'table-row';
+            isHidden = false;
+        } else {
+            r.style.display = 'none';
+            isHidden = true;
+        }
+    });
+    
+    if (headerRow) {
+        const toggleIcon = headerRow.querySelector('.toggle-icon');
+        if (toggleIcon) toggleIcon.innerText = isHidden ? '🔽' : '🔼';
+    }
+};
+
 function updateOrderFilterCounts() {
     // Get selected month/year to keep counts in sync with current filter
     const selMonth = document.getElementById('orderMonthFilter')?.value;
@@ -7177,24 +7215,103 @@ function refreshRMOutHistoryTable() {
     const tbody = document.getElementById('rmOutTable');
     if (!tbody) return;
     
-    const consumption = rmTransactions.filter(t => t.type === 'OUT').sort((a,b) => b.id - a.id).slice(0, 50);
+    const selMonth = document.getElementById('rmOutMonthFilter')?.value;
+    const selYear  = document.getElementById('rmOutYearFilter')?.value;
+
+    const consumption = rmTransactions.filter(t => {
+        if (t.type !== 'OUT') return false;
+        const d = new Date(t.date);
+        if (isNaN(d.getTime())) return false;
+        const mMatch = !selMonth || (d.getMonth() + 1) == selMonth;
+        const yMatch = !selYear  || d.getFullYear() == selYear;
+        return mMatch && yMatch;
+    }).sort((a,b) => b.id - a.id);
+    
     tbody.innerHTML = '';
     
+    const groups = {};
+    const rendered = [];
+    
     consumption.forEach(t => {
-        const item = rmItems.find(i => i.id == t.rm_item_id);
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${formatDate(t.date)}</td>
-            <td style="font-weight: 600;">${item ? item.name : 'Unknown'}</td>
-            <td><span class="badge" style="background: #fff5f5; color: var(--error); border: 1px solid #feb2b2;">CONSUMPTION</span></td>
-            <td style="font-weight: bold;">${t.quantity} ${item ? item.unit : ''}</td>
-            <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">${t.notes || ''}</td>
-            <td style="text-align: center; display: flex; gap: 4px; justify-content: center;">
-                <button class="btn btn-sm" onclick="revertRMTransaction(${t.id})" style="background:#0ea5e9; color:white; padding: 3px 6px; font-size: 0.7rem;" title="Remove & Revert RM Stock">🔄 Remove</button>
-                <button class="btn btn-icon text-error" onclick="deleteRMTransaction(${t.id})" title="Delete record only">🗑️</button>
-            </td>
-        `;
-        tbody.appendChild(row);
+        let isFormula = t.notes && t.notes.startsWith('[Formula:');
+        if (isFormula) {
+            const key = t.date + '|' + t.notes;
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(t);
+        } else {
+            rendered.push(t);
+        }
+    });
+    
+    Object.keys(groups).forEach(key => {
+        rendered.push({
+            isGroup: true,
+            groupId: 'g_' + key.replace(/[^a-zA-Z0-9]/g, '_'),
+            date: groups[key][0].date,
+            notes: groups[key][0].notes,
+            items: groups[key],
+            id: groups[key][0].id
+        });
+    });
+    
+    rendered.sort((a,b) => b.id - a.id);
+    
+    rendered.forEach(t => {
+        if (t.isGroup) {
+            const headerRow = document.createElement('tr');
+            headerRow.id = 'formula-header-' + t.groupId;
+            headerRow.style.cursor = 'pointer';
+            headerRow.style.background = '#f1f5f9';
+            headerRow.style.borderLeft = '4px solid var(--sky-500)';
+            headerRow.onclick = () => toggleFormulaGroup(t.groupId);
+            
+            const formulaNameMatch = t.notes.match(/\[Formula:\s*(.*?)\]/);
+            const formulaName = formulaNameMatch ? formulaNameMatch[1] : 'Formula';
+            const extraNotes = t.notes.replace(/\[Formula:.*?\]\s*/, '').trim();
+            
+            headerRow.innerHTML = `
+                <td>${formatDate(t.date)}</td>
+                <td colspan="3" style="font-weight: 700; color: var(--sky-700);">📦 ${formulaName} <span style="font-weight: 400; color: var(--gray-600); font-size: 0.85rem; margin-left: 10px;">(${t.items.length} items consumed)</span></td>
+                <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">${extraNotes}</td>
+                <td style="text-align: center;"><span class="toggle-icon badge" style="background: white; border: 1px solid #ccc; color: #333;">🔽</span></td>
+            `;
+            tbody.appendChild(headerRow);
+            
+            t.items.forEach(child => {
+                const item = rmItems.find(i => i.id == child.rm_item_id);
+                const row = document.createElement('tr');
+                row.className = 'formula-group-child ' + t.groupId;
+                row.style.display = 'none';
+                row.style.background = '#fafafa';
+                row.innerHTML = `
+                    <td style="padding-left: 1.5rem; color: #aaa;">↳</td>
+                    <td style="font-weight: 600;">${item ? item.name : 'Unknown'}</td>
+                    <td><span class="badge" style="background: #fff5f5; color: var(--error); border: 1px solid #feb2b2;">CONSUMPTION</span></td>
+                    <td style="font-weight: bold;">${child.quantity} ${item ? item.unit : ''}</td>
+                    <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">Part of ${formulaName}</td>
+                    <td style="text-align: center; display: flex; gap: 4px; justify-content: center;">
+                        <button class="btn btn-sm" onclick="revertRMTransaction(${child.id})" style="background:#0ea5e9; color:white; padding: 3px 6px; font-size: 0.7rem;" title="Remove & Revert RM Stock">🔄 Remove</button>
+                        <button class="btn btn-icon text-error" onclick="deleteRMTransaction(${child.id})" title="Delete record only">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        } else {
+            const item = rmItems.find(i => i.id == t.rm_item_id);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${formatDate(t.date)}</td>
+                <td style="font-weight: 600;">${item ? item.name : 'Unknown'}</td>
+                <td><span class="badge" style="background: #fff5f5; color: var(--error); border: 1px solid #feb2b2;">CONSUMPTION</span></td>
+                <td style="font-weight: bold;">${t.quantity} ${item ? item.unit : ''}</td>
+                <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">${t.notes || ''}</td>
+                <td style="text-align: center; display: flex; gap: 4px; justify-content: center;">
+                    <button class="btn btn-sm" onclick="revertRMTransaction(${t.id})" style="background:#0ea5e9; color:white; padding: 3px 6px; font-size: 0.7rem;" title="Remove & Revert RM Stock">🔄 Remove</button>
+                    <button class="btn btn-icon text-error" onclick="deleteRMTransaction(${t.id})" title="Delete record only">🗑️</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        }
     });
 }
 

@@ -81,9 +81,27 @@
     </div>
 
     <div class="table-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
             <h3 style="margin: 0; color: var(--gray-800);">Recent Consumption History</h3>
-            <div style="display: flex; gap: 0.8rem;">
+            <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
+                <select id="rmOutMonthFilter" onchange="refreshRMOutHistoryTable()" style="padding: 0.5rem; border: 1px solid var(--gray-300); border-radius: 8px; min-width: 120px; font-size: 0.85rem;">
+                    <option value="">All Months</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <select id="rmOutYearFilter" onchange="refreshRMOutHistoryTable()" style="padding: 0.5rem; border: 1px solid var(--gray-300); border-radius: 8px; min-width: 90px; font-size: 0.85rem;">
+                    <option value="">All Years</option>
+                </select>
                 <button class="btn" style="background: #27ae60; color: white; display: flex; align-items: center; gap: 5px;" onclick="exportRMOutToExcel()">
                     <span>📊 Export Excel</span>
                 </button>
