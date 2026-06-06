@@ -1,5 +1,5 @@
 <div id="stockList" class="tab-content">
-                    <div class="search-filter-bar no-print" style="flex-wrap: wrap; gap: 1rem;">
+                    <div class="search-filter-bar no-print" style="flex-wrap: wrap; gap: 0.5rem;">
                         <div class="form-group" style="flex: 1; min-width: 120px;">
                             <label style="font-size: 0.85rem; margin-bottom: 2px;">Search Item</label>
                             <input type="text" id="stockSearch" class="form-control" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" placeholder="Search..." oninput="refreshStockList()">
@@ -33,20 +33,17 @@
                             </select>
                         </div>
                         
-                        <!-- Keep date filters but maybe push them to a new line if needed -->
-                        <div style="flex-basis: 100%; height: 0;"></div> <!-- Line break for flex -->
-                        
-                        <div class="form-group">
-                            <label>From Date</label>
-                            <input type="date" id="stockDateFrom" class="form-control" onchange="refreshStockList()">
+                        <div class="form-group" style="flex: 1; min-width: 120px;">
+                            <label style="font-size: 0.85rem; margin-bottom: 2px;">From Date</label>
+                            <input type="date" id="stockDateFrom" class="form-control" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" onchange="refreshStockList()">
                         </div>
-                        <div class="form-group">
-                            <label>To Date</label>
-                            <input type="date" id="stockDateTo" class="form-control" onchange="refreshStockList()">
+                        <div class="form-group" style="flex: 1; min-width: 120px;">
+                            <label style="font-size: 0.85rem; margin-bottom: 2px;">To Date</label>
+                            <input type="date" id="stockDateTo" class="form-control" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" onchange="refreshStockList()">
                         </div>
-                        <div class="btn-group" style="margin-top: 22px;">
-                            <button class="btn btn-print" onclick="printStockList()">🖨️ Print</button>
-                            <button class="btn btn-secondary" onclick="clearStockFilters()">🧹 Clear</button>
+                        <div class="btn-group" style="margin-top: 18px; flex: 1; min-width: 150px;">
+                            <button class="btn btn-print" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" onclick="printStockList()">🖨️ Print</button>
+                            <button class="btn btn-secondary" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" onclick="clearStockFilters()">🧹 Clear</button>
                         </div>
                     </div>
                     
