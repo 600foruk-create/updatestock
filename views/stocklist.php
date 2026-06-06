@@ -1,30 +1,30 @@
 <div id="stockList" class="tab-content">
-                    <div class="search-filter-bar no-print" style="flex-wrap: wrap; gap: 0.5rem; align-items: flex-end; margin-bottom: 0.5rem;">
-                        <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
+                    <div class="search-filter-bar no-print" style="flex-wrap: nowrap; overflow-x: auto; gap: 0.5rem; align-items: flex-end; margin-bottom: 0.5rem; padding-bottom: 0.2rem;">
+                        <div class="form-group" style="flex: 1; min-width: 80px; margin-bottom: 0;">
                             <label style="font-size: 0.85rem; margin-bottom: 2px;">Search Item</label>
                             <input type="text" id="stockSearch" class="form-control" style="padding: 0.1rem 0.4rem; font-size: 0.85rem; height: 28px;" placeholder="Search..." oninput="refreshStockList()">
                         </div>
-                        <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
+                        <div class="form-group" style="flex: 1; min-width: 80px; margin-bottom: 0;">
                             <label style="font-size: 0.85rem; margin-bottom: 2px;">Group Filter</label>
                             <select id="stockGroupFilter" class="form-control" style="padding: 0.1rem 0.4rem; font-size: 0.85rem; height: 28px;" onchange="refreshStockList()">
                                 <option value="">All Groups</option>
                                 <!-- Auto-filled -->
                             </select>
                         </div>
-                        <div class="form-group" style="flex: 1; min-width: 100px; margin-bottom: 0;">
+                        <div class="form-group" style="flex: 1; min-width: 80px; margin-bottom: 0;">
                             <label style="font-size: 0.85rem; margin-bottom: 2px;">Length (ft/m)</label>
                             <select id="stockLengthFilter" class="form-control" style="padding: 0.1rem 0.4rem; font-size: 0.85rem; height: 28px;" onchange="refreshStockList()">
                                 <option value="">All Lengths</option>
                             </select>
                         </div>
-                        <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
+                        <div class="form-group" style="flex: 1; min-width: 80px; margin-bottom: 0;">
                             <label style="font-size: 0.85rem; margin-bottom: 2px;">Order Status</label>
                             <select id="stockOrderFilter" class="form-control" style="padding: 0.1rem 0.4rem; font-size: 0.85rem; height: 28px;" onchange="refreshStockList()">
                                 <option value="">All Items</option>
                                 <option value="with_orders">Active Orders</option>
                             </select>
                         </div>
-                        <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
+                        <div class="form-group" style="flex: 1; min-width: 80px; margin-bottom: 0;">
                             <label style="font-size: 0.85rem; margin-bottom: 2px;">Zero Stock</label>
                             <select id="stockZeroFilter" class="form-control" style="padding: 0.1rem 0.4rem; font-size: 0.85rem; height: 28px;" onchange="refreshStockList()">
                                 <option value="all">Show All</option>
@@ -33,11 +33,11 @@
                             </select>
                         </div>
                         
-                        <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
+                        <div class="form-group" style="flex: 1; min-width: 80px; margin-bottom: 0;">
                             <label style="font-size: 0.85rem; margin-bottom: 2px;">From Date</label>
                             <input type="date" id="stockDateFrom" class="form-control" style="padding: 0.1rem 0.4rem; font-size: 0.85rem; height: 28px;" onchange="refreshStockList()">
                         </div>
-                        <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
+                        <div class="form-group" style="flex: 1; min-width: 80px; margin-bottom: 0;">
                             <label style="font-size: 0.85rem; margin-bottom: 2px;">To Date</label>
                             <input type="date" id="stockDateTo" class="form-control" style="padding: 0.1rem 0.4rem; font-size: 0.85rem; height: 28px;" onchange="refreshStockList()">
                         </div>
