@@ -116,7 +116,7 @@
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 0.8rem 1.2rem;
-            border: 2px solid #000;
+            border: 2px solid var(--gray-300);
             border-radius: 50px;
             font-size: 1rem;
             transition: all 0.2s;
@@ -434,7 +434,7 @@
         .stat-card .stat-expand {
             margin-top: 1rem;
             padding-top: 1rem;
-            border-top: 1px solid #000;
+            border-top: 1px solid var(--gray-300);
             display: none;
         }
 
@@ -843,7 +843,7 @@
         .searchable-input {
             width: 100%;
             padding: 0.5rem;
-            border: 1px solid #000;
+            border: 1px solid var(--gray-300);
             border-radius: 50px;
         }
 
@@ -855,7 +855,7 @@
             width: max-content;
             max-width: 90vw;
             background: white;
-            border: 1px solid #000;
+            border: 1px solid var(--gray-300);
             border-radius: 0.5rem;
             max-height: 250px;
             overflow-y: auto;
@@ -900,7 +900,7 @@
             background: white;
             border-radius: 1rem;
             margin-bottom: 1.5rem;
-            border: 1px solid #000;
+            border: 1px solid var(--gray-200);
             overflow: hidden;
         }
 
@@ -910,7 +910,7 @@
             align-items: center;
             padding: 0.5rem 1.5rem;
             background: var(--gray-100);
-            border-bottom: 2px solid #000;
+            border-bottom: 2px solid var(--gray-200);
             cursor: pointer;
         }
 
@@ -954,7 +954,7 @@
 
         .btn-icon {
             background: white;
-            border: 1px solid #000;
+            border: 1px solid var(--gray-200);
             border-radius: 50%;
             width: 34px;
             height: 34px;
@@ -1027,7 +1027,7 @@
             background: white;
             border-radius: 0.8rem;
             margin-bottom: 1rem;
-            border: 1px solid #000;
+            border: 1px solid var(--gray-200);
             overflow: hidden;
         }
 
@@ -1037,7 +1037,7 @@
             align-items: center;
             padding: 0.4rem 1.2rem;
             background: var(--gray-50);
-            border-bottom: 1px solid #000;
+            border-bottom: 1px solid var(--gray-200);
             cursor: pointer;
         }
 
@@ -1079,7 +1079,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 0.3rem 0;
-            border-bottom: 1px dashed #000;
+            border-bottom: 1px dashed var(--gray-200);
         }
 
         .item-row:last-child {
@@ -1223,7 +1223,7 @@
         .brand-lowstock-input input {
             width: 60px;
             padding: 0.2rem;
-            border: 1px solid #000;
+            border: 1px solid var(--gray-300);
             border-radius: 5px;
         }
 
@@ -1277,7 +1277,7 @@
         .input-group span {
             background: var(--gray-100);
             padding: 0.5rem 1rem;
-            border: 2px solid #000;
+            border: 2px solid var(--gray-300);
             border-left: none;
             border-radius: 0 50px 50px 0;
             color: var(--gray-700);
@@ -1325,7 +1325,7 @@
 
         .invoice-table td {
             padding: 0.6rem 0.8rem;
-            border-bottom: 1px solid #000;
+            border-bottom: 1px solid var(--gray-200);
         }
 
         .invoice-total {
@@ -1383,7 +1383,7 @@
         .search-filter-bar .form-control {
             height: 40px !important;
             border-radius: 8px !important;
-            border: 1.5px solid #000 !important;
+            border: 1.5px solid var(--gray-200) !important;
             padding: 0 1rem !important;
             font-size: 0.9rem !important;
             width: 100%;
@@ -1425,7 +1425,7 @@
         .search-filter-bar .btn-secondary {
             background: var(--gray-100);
             color: var(--gray-700);
-            border: 1px solid #000;
+            border: 1px solid var(--gray-200);
         }
         .search-filter-bar .btn:hover {
             transform: translateY(-1px);
@@ -1592,7 +1592,7 @@
     background: var(--gray-50);
     padding: 1.5rem;
     border-radius: 1rem;
-    border: 1px solid #000;
+    border: 1px solid var(--gray-200);
 }
 
 .dashboard-section h3 {
@@ -1712,7 +1712,7 @@
     color: var(--gray-500);
     margin: 1.2rem 0 0.6rem 0;
     padding: 0.2rem 0.5rem;
-    border-bottom: 2.5px solid #000;
+    border-bottom: 2.5px solid var(--gray-200);
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -1744,13 +1744,13 @@
     background: var(--gray-100);
     color: var(--gray-700);
     padding: 10px;
-    border: 1px solid #000;
+    border: 1px solid var(--gray-300);
     text-align: center;
     font-weight: 600;
 }
 .audit-table td {
     padding: 8px;
-    border: 1px solid #000;
+    border: 1px solid var(--gray-200);
     text-align: center;
 }
 .audit-brand-header {
@@ -1787,7 +1787,7 @@
     background: var(--gray-50);
     padding: 1.5rem;
     border-radius: 1rem;
-    border: 1px solid #000;
+    border: 1px solid var(--gray-200);
 }
 
 .dashboard-section h3 {
@@ -1907,7 +1907,7 @@
     color: var(--gray-500);
     margin: 1.2rem 0 0.6rem 0;
     padding: 0.2rem 0.5rem;
-    border-bottom: 2.5px solid #000;
+    border-bottom: 2.5px solid var(--gray-200);
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -1939,13 +1939,13 @@
     background: var(--gray-100);
     color: var(--gray-700);
     padding: 10px;
-    border: 1px solid #000;
+    border: 1px solid var(--gray-300);
     text-align: center;
     font-weight: 600;
 }
 .audit-table td {
     padding: 8px;
-    border: 1px solid #000;
+    border: 1px solid var(--gray-200);
     text-align: center;
 }
 .audit-brand-header {
@@ -2190,4 +2190,3 @@
 .rm-qty-group:focus-within { border-color: var(--sky-500); box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1); }
 .rm-qty-group input { border: none !important; flex: 1; height: 40px !important; padding: 0 12px !important; font-weight: 700 !important; color: var(--sky-700) !important; }
 .rm-qty-group select { border: none !important; width: 80px !important; background: #f8fafc !important; font-weight: 700 !important; color: var(--gray-600) !important; border-left: 1px solid #e2e8f0 !important; cursor: pointer; }
-
