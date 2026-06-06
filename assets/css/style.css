@@ -2145,7 +2145,8 @@
 
 /* Fix for Print Truncation */
 @media print {
-    #printableAudit, #auditListContainer, .audit-group, .audit-table {
+    #printableAudit, #auditListContainer, .audit-group, .audit-table,
+    #printableStock, #stockListCards, .stock-list-grid, .brand-card, .brand-body {
         display: block !important;
         overflow: visible !important;
         height: auto !important;
