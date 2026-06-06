@@ -2023,27 +2023,26 @@ function refreshStockList() {
                         let ioColor = inOrder === 0 ? 'var(--gray-500)' : '#dc2626';
                         let displaySizeHeader = isFitting ? (item.fitting_size || 'Fitting') : `${sizeName}"`;
 
-                        let isLastItemInGroup = (idx === visibleItems.length - 1);
-                        let borderBottom = isLastItemInGroup ? '2px solid #94a3b8' : '1px solid #cbd5e1';
-                        let groupBorderBottom = '2px solid #94a3b8';
+                        let borderBottom = '1px solid #000';
+                        let groupBorderBottom = '1px solid #000';
 
                         let groupColHtml = idx === 0 
-                            ? `<td rowspan="${visibleItems.length}" style="padding: 0.2rem 0.5rem; border-bottom: ${groupBorderBottom}; border-right: 1px solid #cbd5e1; background: var(--sky-50); vertical-align: middle; font-weight: 800; color: var(--sky-900); text-align: center; width: 140px;">${sub.name}</td>` 
+                            ? `<td rowspan="${visibleItems.length}" style="padding: 0.2rem 0.5rem; border-bottom: ${groupBorderBottom}; border-right: 1px solid #000; background: var(--sky-50); vertical-align: middle; font-weight: 800; color: #000; text-align: center; width: 140px;">${sub.name}</td>` 
                             : '';
 
                         let packingColHtml = isFitting 
-                            ? `<td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; font-weight:600; color: var(--gray-700); border-right: 1px solid #f1f5f9;">${packingStr}</td>`
+                            ? `<td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; font-weight:600; color: #000; border-right: 1px solid #000;">${packingStr}</td>`
                             : '';
 
                         itemsHtml += `
                                     <tr style="background: white;">
                                         ${groupColHtml}
-                                        <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; border-right: 1px solid #f1f5f9;"><strong>${displaySizeHeader}</strong></td>
-                                        <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; color: var(--gray-700); border-right: 1px solid #f1f5f9;">${desc}</td>
+                                        <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; border-right: 1px solid #000;"><strong>${displaySizeHeader}</strong></td>
+                                        <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; color: #000; border-right: 1px solid #000;">${desc}</td>
                                         ${packingColHtml}
-                                        <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; border-right: 1px solid #f1f5f9; color: var(--gray-700);">${displayLengthOrWeight}</td>
-                                        <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; font-weight:700; color:var(--orange-600); border-right: 1px solid #f1f5f9;">${available}</td>
-                                        <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; font-weight:700; color:${ioColor}; border-right: 1px solid #f1f5f9;">${inOrder}</td>
+                                        <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; border-right: 1px solid #000; color: #000;">${displayLengthOrWeight}</td>
+                                        <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; font-weight:700; color:var(--orange-600); border-right: 1px solid #000;">${available}</td>
+                                        <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; font-weight:700; color:${ioColor}; border-right: 1px solid #000;">${inOrder}</td>
                                         <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; font-weight:800; color:${resColor};">${result}</td>
                                     </tr>
                                 `;
