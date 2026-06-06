@@ -7235,7 +7235,7 @@ function refreshRMOutHistoryTable() {
     consumption.forEach(t => {
         let isFormula = t.notes && t.notes.startsWith('[Formula:');
         if (isFormula) {
-            const key = t.date + '|' + t.notes;
+            const key = t.date.substring(0, 16) + '|' + t.notes;
             if (!groups[key]) groups[key] = [];
             groups[key].push(t);
         } else {
@@ -7269,11 +7269,16 @@ function refreshRMOutHistoryTable() {
             const formulaName = formulaNameMatch ? formulaNameMatch[1] : 'Formula';
             const extraNotes = t.notes.replace(/\[Formula:.*?\]\s*/, '').trim();
             
+            const idsList = JSON.stringify(t.items.map(child => child.id));
+            
             headerRow.innerHTML = `
                 <td>${formatDate(t.date)}</td>
                 <td colspan="3" style="font-weight: 700; color: var(--sky-700);">📦 ${formulaName} <span style="font-weight: 400; color: var(--gray-600); font-size: 0.85rem; margin-left: 10px;">(${t.items.length} items consumed)</span></td>
                 <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">${extraNotes}</td>
-                <td style="text-align: center;"><span class="toggle-icon badge" style="background: white; border: 1px solid #ccc; color: #333;">🔽</span></td>
+                <td style="text-align: center; display: flex; gap: 4px; justify-content: center;">
+                    <button class="btn btn-sm" onclick="event.stopPropagation(); revertFormulaGroup(${idsList.replace(/"/g, '&quot;')})" style="background:#0ea5e9; color:white; padding: 3px 6px; font-size: 0.7rem;" title="Remove & Revert All Stock">🔄 Remove</button>
+                    <button class="btn btn-icon text-error" onclick="event.stopPropagation(); deleteFormulaGroup(${idsList.replace(/"/g, '&quot;')})" title="Delete entire formula history">🗑️</button>
+                </td>
             `;
             tbody.appendChild(headerRow);
             
@@ -7289,10 +7294,7 @@ function refreshRMOutHistoryTable() {
                     <td><span class="badge" style="background: #fff5f5; color: var(--error); border: 1px solid #feb2b2;">CONSUMPTION</span></td>
                     <td style="font-weight: bold;">${child.quantity} ${item ? item.unit : ''}</td>
                     <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">Part of ${formulaName}</td>
-                    <td style="text-align: center; display: flex; gap: 4px; justify-content: center;">
-                        <button class="btn btn-sm" onclick="revertRMTransaction(${child.id})" style="background:#0ea5e9; color:white; padding: 3px 6px; font-size: 0.7rem;" title="Remove & Revert RM Stock">🔄 Remove</button>
-                        <button class="btn btn-icon text-error" onclick="deleteRMTransaction(${child.id})" title="Delete record only">🗑️</button>
-                    </td>
+                    <td style="text-align: center; color: var(--gray-400); font-size: 0.8rem;">---</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -7326,6 +7328,48 @@ async function deleteRMTransaction(id) {
         initApp();
     }
 }
+
+window.revertFormulaGroup = async function(ids) {
+    if (!confirm('Are you sure you want to remove this ENTIRE formula and REVERT ' + ids.length + ' materials back to stock?')) return;
+    
+    let successCount = 0;
+    for (const id of ids) {
+        try {
+            const res = await fetch('api/sync.php?action=revert_rm_transaction', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+            const data = await res.json();
+            if (data.status === 'success') successCount++;
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    alert(`Successfully reverted ${successCount} out of ${ids.length} items.`);
+    initApp();
+};
+
+window.deleteFormulaGroup = async function(ids) {
+    if (!confirm('Are you sure you want to DELETE this ENTIRE formula history? (Stock will NOT be affected)')) return;
+    
+    let successCount = 0;
+    for (const id of ids) {
+        try {
+            const res = await fetch('api/sync.php?action=delete_rm_transaction', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+            const data = await res.json();
+            if (data.status === 'success') successCount++;
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    alert(`Successfully deleted ${successCount} out of ${ids.length} history records.`);
+    initApp();
+};
 
 async function deleteAllRMOutHistory() {
     if (!confirm('🛑 WARNING: This will permanently delete ALL Consumption (OUT) history. Current stock levels will NOT be changed. Do you want to proceed?')) return;
