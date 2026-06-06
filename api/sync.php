@@ -58,6 +58,9 @@ try {
                 if (!in_array('packing_qty', $itemCols)) {
                     $conn->exec("ALTER TABLE items ADD COLUMN packing_qty DECIMAL(10,2) DEFAULT '0.00'");
                 }
+                if (!in_array('packing_unit', $itemCols)) {
+                    $conn->exec("ALTER TABLE items ADD COLUMN packing_unit VARCHAR(50) DEFAULT 'KG'");
+                }
                 try {
                     $conn->exec("ALTER TABLE items MODIFY weight DECIMAL(10,3) DEFAULT 0.000");
                 } catch(Exception $e) {}
@@ -195,7 +198,7 @@ try {
                 'users' => $conn->query("SELECT id, name, username, password, role, permissions FROM users")->fetchAll(PDO::FETCH_ASSOC),
                 'mainCategories' => $conn->query("SELECT id, name, code, color, low_stock_limit AS lowStockLimit, type FROM main_categories")->fetchAll(PDO::FETCH_ASSOC),
                 'subCategories' => $conn->query("SELECT id, main_id AS mainId, name FROM sub_categories")->fetchAll(PDO::FETCH_ASSOC),
-                'items' => $conn->query("SELECT id, main_id AS mainId, sub_id AS subId, name, length, weight, stock, low_stock_limit AS lowStockLimit, fitting_size, packing_qty FROM items")->fetchAll(PDO::FETCH_ASSOC),
+                'items' => $conn->query("SELECT id, main_id AS mainId, sub_id AS subId, name, length, weight, stock, low_stock_limit AS lowStockLimit, fitting_size, packing_qty, packing_unit FROM items")->fetchAll(PDO::FETCH_ASSOC),
                 'customers' => $conn->query("SELECT id, unique_id AS uniqueId, name, address, mobile, main_id AS mainId, sub_id AS subId FROM customers")->fetchAll(PDO::FETCH_ASSOC),
                 'customerProvinces' => $conn->query("SELECT id, name FROM customer_main_categories")->fetchAll(PDO::FETCH_ASSOC),
                 'customerDistricts' => $conn->query("SELECT id, main_id AS mainId, name FROM customer_sub_categories")->fetchAll(PDO::FETCH_ASSOC),
@@ -251,11 +254,11 @@ try {
         elseif ($action === 'save_item') {
             $item = $input['item'];
             if (isset($item['id']) && !empty($item['id'])) {
-                $stmt = $conn->prepare("UPDATE items SET main_id = ?, sub_id = ?, name = ?, length = ?, weight = ?, stock = ?, low_stock_limit = ?, fitting_size = ?, packing_qty = ? WHERE id = ?");
-                $stmt->execute([$item['mainId'], $item['subId'], $item['name'] ?? '', $item['length'] ?? 13, $item['weight'] ?? 0, $item['stock'] ?? 0, $item['lowStockLimit'] ?? null, $item['fitting_size'] ?? '', $item['packing_qty'] ?? 0, $item['id']]);
+                $stmt = $conn->prepare("UPDATE items SET main_id = ?, sub_id = ?, name = ?, length = ?, weight = ?, stock = ?, low_stock_limit = ?, fitting_size = ?, packing_qty = ?, packing_unit = ? WHERE id = ?");
+                $stmt->execute([$item['mainId'], $item['subId'], $item['name'] ?? '', $item['length'] ?? 13, $item['weight'] ?? 0, $item['stock'] ?? 0, $item['lowStockLimit'] ?? null, $item['fitting_size'] ?? '', $item['packing_qty'] ?? 0, $item['packing_unit'] ?? 'KG', $item['id']]);
             } else {
-                $stmt = $conn->prepare("INSERT INTO items (main_id, sub_id, name, length, weight, stock, low_stock_limit, fitting_size, packing_qty) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$item['mainId'], $item['subId'], $item['name'] ?? '', $item['length'] ?? 13, $item['weight'] ?? 0, $item['stock'] ?? 0, $item['lowStockLimit'] ?? null, $item['fitting_size'] ?? '', $item['packing_qty'] ?? 0]);
+                $stmt = $conn->prepare("INSERT INTO items (main_id, sub_id, name, length, weight, stock, low_stock_limit, fitting_size, packing_qty, packing_unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$item['mainId'], $item['subId'], $item['name'] ?? '', $item['length'] ?? 13, $item['weight'] ?? 0, $item['stock'] ?? 0, $item['lowStockLimit'] ?? null, $item['fitting_size'] ?? '', $item['packing_qty'] ?? 0, $item['packing_unit'] ?? 'KG']);
                 $item['id'] = $conn->lastInsertId();
             }
             echo json_encode(['status' => 'success', 'id' => $item['id']]);

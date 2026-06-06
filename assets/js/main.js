@@ -506,7 +506,7 @@ function getProductCode(item, main, sub) {
     if (!item || !main || !sub) return 'N/A';
     if (main.type === 'Fitting') {
         let sizeDesc = item.fitting_size ? `${item.fitting_size}` : sub.name;
-        let packing = item.packing_qty ? ` - Packing: ${item.packing_qty} KG` : '';
+        let packing = item.packing_qty ? ` - Packing: ${item.packing_qty} ${item.packing_unit || 'KG'}` : '';
         return `${sizeDesc} ${main.name} (${item.weight}KG)${packing}`;
     }
     let size = sub.name.replace(/[^0-9.]/g, '') || '0';
@@ -1550,6 +1550,7 @@ async function saveQuickItem() {
         weight,
         fitting_size: isFitting ? document.getElementById('quickItemFittingSize').value : '',
         packing_qty: isFitting ? parseFloat(document.getElementById('quickItemPackingQty').value) || 0 : 0,
+        packing_unit: isFitting ? document.getElementById('quickItemPackingUnit').value : 'KG',
         stock: 0,
         lowStockLimit: parseInt(document.getElementById('quickItemLowStock').value) || null
     };
@@ -1921,7 +1922,7 @@ function refreshStockList() {
             let weightVal = parseFloat(item.weight) || 0;
             let weightUnit = isFitting && weightVal < 1 ? 'gram' : 'Kg';
             let displayWeight = isFitting && weightVal < 1 ? (weightVal * 1000).toFixed(0) : weightVal.toFixed(3);
-            let packing = item.packing_qty ? ` | Packing: ${item.packing_qty}` : '';
+            let packing = item.packing_qty ? ` | Packing: ${item.packing_qty} ${item.packing_unit || 'KG'}` : '';
             
             let desc = isFitting 
                 ? `${item.fitting_size || ''} ${displayWeight} ${weightUnit} ${main.name} ${sub?.name || ''}${packing}`.trim()
@@ -3171,6 +3172,7 @@ function updateItemDropdown(row, brandId, sizeId, type) {
                 length: i.length,
                 weight: i.weight,
                 packing_qty: parseFloat(i.packing_qty) || 0,
+                packing_unit: i.packing_unit || 'KG',
                 item: i
             };
         });
@@ -3181,6 +3183,7 @@ function updateItemDropdown(row, brandId, sizeId, type) {
         row.dataset.itemWeight = opt.item.weight;
         row.dataset.itemLength = opt.item.length;
         row.dataset.packingQty = opt.packing_qty;
+        row.dataset.packingUnit = opt.packing_unit;
         
         let len = parseFloat(opt.item.length);
         if (!isFitting && !companySettings.availableLengths.includes(len)) {
@@ -4489,7 +4492,7 @@ function refreshCategoriesView() {
                                     <div class="item-specs" style="margin: 0; display: flex; gap: 0.5rem; align-items: center; flex-wrap: nowrap;">
                                         ${main.type === 'Fitting' 
                                             ? `<span class="item-spec" style="padding: 0.1rem 0.5rem;">${item.fitting_size || '-'}</span>
-                                               ${item.packing_qty ? `<span class="item-spec" style="padding: 0.1rem 0.5rem;">Pack: ${item.packing_qty}KG</span>` : ''}
+                                               ${item.packing_qty ? `<span class="item-spec" style="padding: 0.1rem 0.5rem;">Pack: ${item.packing_qty} ${item.packing_unit || 'KG'}</span>` : ''}
                                                <span class="item-spec" style="padding: 0.1rem 0.5rem;">${item.weight} KG</span>`
                                             : `<span class="item-spec" style="padding: 0.1rem 0.5rem;">${item.length} ft</span>
                                                <span class="item-spec" style="padding: 0.1rem 0.5rem;">${item.weight} KG</span>`
@@ -4890,6 +4893,7 @@ function editItem(id) {
         
         document.getElementById('itemFittingSize').value = item.fitting_size || '';
         document.getElementById('itemPackingQty').value = item.packing_qty || '';
+        document.getElementById('itemPackingUnit').value = item.packing_unit || 'KG';
         
         // Ensure length exists in dropdown before selecting
         let len = parseFloat(item.length) || (isFitting ? 0 : 13);
@@ -4960,8 +4964,9 @@ async function saveItem() {
 
     let fitting_size = isFitting ? document.getElementById('itemFittingSize').value : '';
     let packing_qty = isFitting ? parseFloat(document.getElementById('itemPackingQty').value) || 0 : 0;
+    let packing_unit = isFitting ? document.getElementById('itemPackingUnit').value : 'KG';
 
-    let itemData = { id, mainId, subId, length, weight, fitting_size, packing_qty, stock, lowStockLimit };
+    let itemData = { id, mainId, subId, length, weight, fitting_size, packing_qty, packing_unit, stock, lowStockLimit };
 
     try {
         const response = await fetch('api/sync.php?action=save_item', {
@@ -4975,12 +4980,12 @@ async function saveItem() {
                 let item = items.find(i => i.id == id);
                 if (item) {
                     item.mainId = mainId; item.subId = subId; item.length = length;
-                    item.weight = weight; item.fitting_size = fitting_size; item.packing_qty = packing_qty; 
+                    item.weight = weight; item.fitting_size = fitting_size; item.packing_qty = packing_qty; item.packing_unit = packing_unit; 
                     item.stock = stock; item.lowStockLimit = lowStockLimit;
                 }
             } else {
                 let newId = result.id;
-                items.push({ id: newId, code: '', mainId, subId, name: '', length, weight, fitting_size, packing_qty, stock, lowStockLimit });
+                items.push({ id: newId, code: '', mainId, subId, name: '', length, weight, fitting_size, packing_qty, packing_unit, stock, lowStockLimit });
             }
             resequenceCodes();
             saveData();

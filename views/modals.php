@@ -123,8 +123,14 @@
                 </div>
             </div>
             <div class="form-group" id="itemPackingGroup" style="display: none;">
-                <label>Carton / Packing (KG)</label>
-                <input type="number" id="itemPackingQty" step="0.01" class="form-control" placeholder="e.g., 25">
+                <label>Carton / Packing</label>
+                <div class="input-group" style="display: flex; gap: 0.5rem;">
+                    <input type="number" id="itemPackingQty" step="0.01" class="form-control" placeholder="e.g., 25" style="flex: 2;">
+                    <select id="itemPackingUnit" class="form-control" style="flex: 1;">
+                        <option value="KG">KG</option>
+                        <option value="PCS">PCS</option>
+                    </select>
+                </div>
             </div>
             <div class="form-group" style="display: none;">
                 <label>Opening Stock</label>
@@ -320,8 +326,14 @@
                 </div>
             </div>
             <div class="form-group" id="quickItemPackingGroup" style="display: none;">
-                <label>Carton / Packing (KG)</label>
-                <input type="number" id="quickItemPackingQty" step="0.01" class="form-control" placeholder="e.g., 25">
+                <label>Carton / Packing</label>
+                <div class="input-group" style="display: flex; gap: 0.5rem;">
+                    <input type="number" id="quickItemPackingQty" step="0.01" class="form-control" placeholder="e.g., 25" style="flex: 2;">
+                    <select id="quickItemPackingUnit" class="form-control" style="flex: 1;">
+                        <option value="KG">KG</option>
+                        <option value="PCS">PCS</option>
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label>Low Stock Limit</label>
