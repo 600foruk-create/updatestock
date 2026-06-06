@@ -1973,6 +1973,11 @@ function refreshStockList() {
                 
                 if (visibleItems.length > 0) {
                     hasVisibleItems = true;
+                    
+                    let subTotalAvailable = 0;
+                    let subTotalInOrder = 0;
+                    let subTotalResult = 0;
+
                     visibleItems.forEach((v, idx) => {
                         let {item, sizeName, available, inOrder} = v;
                         let weightVal = parseFloat(item.weight) || 0;
@@ -2003,6 +2008,10 @@ function refreshStockList() {
                             
                         let displayLengthOrWeight = isFitting ? `${displayWeight} ${weightUnit}` : `${item.length} ft`;
                         let result = available - inOrder;
+                        
+                        subTotalAvailable += available;
+                        subTotalInOrder += inOrder;
+                        subTotalResult += result;
 
                         totalBrandStock += available;
                         totalKg += available * (item.weight || 0);
@@ -2033,6 +2042,19 @@ function refreshStockList() {
                                     </tr>
                                 `;
                     });
+                    
+                    let subResColor = subTotalResult === 0 ? 'var(--gray-500)' : (subTotalResult < 0 ? '#ef4444' : 'var(--green-600)');
+                    let subIoColor = subTotalInOrder === 0 ? 'var(--gray-500)' : '#dc2626';
+                    let colspan = isFitting ? 5 : 4;
+                    
+                    itemsHtml += `
+                        <tr style="background: #f8fafc; border-top: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1;">
+                            <td colspan="${colspan}" style="text-align: right; padding: 0.5rem; font-weight: 800; color: var(--sky-900); font-size: 0.95rem; letter-spacing: 0.5px;">TOTAL FOR ${sub.name.toUpperCase()}:</td>
+                            <td style="text-align: center; padding: 0.5rem; font-weight: 900; color: var(--orange-600); font-size: 1.05rem;">${subTotalAvailable}</td>
+                            <td style="text-align: center; padding: 0.5rem; font-weight: 900; color: ${subIoColor}; font-size: 1.05rem;">${subTotalInOrder}</td>
+                            <td style="text-align: center; padding: 0.5rem; font-weight: 900; color: ${subResColor}; font-size: 1.05rem;">${subTotalResult}</td>
+                        </tr>
+                    `;
                 }
             }
         });
