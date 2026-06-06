@@ -189,9 +189,17 @@ async function initApp() {
             updateOrderFilterCounts();
             // Populate year dropdown and default to current month/year
             populateOrderYearFilter();
+            populateTransYearFilter();
+            populateRMInYearFilter();
             const _now = new Date();
             const _mSel = document.getElementById('orderMonthFilter');
             if (_mSel && !_mSel.value) _mSel.value = _now.getMonth() + 1;
+            
+            const _tMSel = document.getElementById('transMonthFilter');
+            if (_tMSel && !_tMSel.value) _tMSel.value = _now.getMonth() + 1;
+            
+            const _rmMSel = document.getElementById('rmInMonthFilter');
+            if (_rmMSel && !_rmMSel.value) _rmMSel.value = _now.getMonth() + 1;
         } else {
             console.warn('StockFlow: SQL returned error state:', result.message);
             loadLegacyData();
@@ -3736,6 +3744,33 @@ function populateOrderYearFilter() {
     else if (years.includes(nowYear)) { yearSel.value = nowYear; }
 }
 
+function populateTransYearFilter() {
+    const yearSel = document.getElementById('transYearFilter');
+    if (!yearSel) return;
+    const currentVal = yearSel.value;
+    const years = [...new Set(transactions.map(t => new Date(t.date).getFullYear()))].filter(y => !isNaN(y)).sort((a,b) => b - a);
+    let html = '<option value="">All Years</option>';
+    years.forEach(y => { html += `<option value="${y}">${y}</option>`; });
+    yearSel.innerHTML = html;
+    const nowYear = new Date().getFullYear();
+    if (currentVal) { yearSel.value = currentVal; }
+    else if (years.includes(nowYear)) { yearSel.value = nowYear; }
+}
+
+function populateRMInYearFilter() {
+    const yearSel = document.getElementById('rmInYearFilter');
+    if (!yearSel) return;
+    const currentVal = yearSel.value;
+    const inTrans = rmTransactions.filter(t => t.type === 'IN');
+    const years = [...new Set(inTrans.map(t => new Date(t.date).getFullYear()))].filter(y => !isNaN(y)).sort((a,b) => b - a);
+    let html = '<option value="">All Years</option>';
+    years.forEach(y => { html += `<option value="${y}">${y}</option>`; });
+    yearSel.innerHTML = html;
+    const nowYear = new Date().getFullYear();
+    if (currentVal) { yearSel.value = currentVal; }
+    else if (years.includes(nowYear)) { yearSel.value = nowYear; }
+}
+
 function updateOrderFilterCounts() {
     // Get selected month/year to keep counts in sync with current filter
     const selMonth = document.getElementById('orderMonthFilter')?.value;
@@ -5381,10 +5416,18 @@ function refreshTransactions() {
             (t.itemName || '').toLowerCase().includes(search) ||
             (t.customer || '').toLowerCase().includes(search);
         
-        const tDate = new Date(t.date).setHours(0,0,0,0);
+        const tDateObj = new Date(t.date);
+        const tDate = tDateObj.setHours(0,0,0,0);
         const from = fromDate ? new Date(fromDate).setHours(0,0,0,0) : null;
         const to = toDate ? new Date(toDate).setHours(0,0,0,0) : null;
-        const dateMatch = (!from || tDate >= from) && (!to || tDate <= to);
+        
+        const selMonth = document.getElementById('transMonthFilter')?.value;
+        const selYear  = document.getElementById('transYearFilter')?.value;
+        
+        const mMatch = !selMonth || (tDateObj.getMonth() + 1) == selMonth;
+        const yMatch = !selYear  || tDateObj.getFullYear() == selYear;
+
+        const dateMatch = (!from || tDate >= from) && (!to || tDate <= to) && mMatch && yMatch;
 
         return searchMatch && dateMatch;
     });
@@ -5395,7 +5438,7 @@ function refreshTransactions() {
     if (filtered.length === 0) {
         rows = '<tr><td colspan="7" style="text-align:center; padding: 0.2rem 0.5rem;">No transactions found matching your filters</td></tr>';
     } else {
-        const displayList = (search || fromDate || toDate) ? filtered : filtered.slice(0, 100);
+        const displayList = filtered;
         displayList.forEach(t => {
             rows += `<tr>
                         <td style="padding: 0.2rem 0.5rem; border-bottom:1px solid #eee;">${formatDate(t.date)}</td>
@@ -8264,7 +8307,18 @@ function refreshRMInHistoryTable() {
     const tbody = document.getElementById('rmInTable');
     if (!tbody) return;
     
-    const purchases = rmTransactions.filter(t => t.type === 'IN').sort((a,b) => b.id - a.id).slice(0, 50);
+    const selMonth = document.getElementById('rmInMonthFilter')?.value;
+    const selYear  = document.getElementById('rmInYearFilter')?.value;
+    
+    const purchases = rmTransactions.filter(t => {
+        if (t.type !== 'IN') return false;
+        const d = new Date(t.date);
+        if (isNaN(d.getTime())) return false;
+        const mMatch = !selMonth || (d.getMonth() + 1) == selMonth;
+        const yMatch = !selYear  || d.getFullYear() == selYear;
+        return mMatch && yMatch;
+    }).sort((a,b) => b.id - a.id);
+    
     tbody.innerHTML = '';
     
     purchases.forEach(t => {

@@ -70,6 +70,24 @@
                     <div class="filter-bar" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; background: var(--gray-50); padding: 1rem; border-radius: 12px; border: 1px solid var(--gray-200); align-items: center;">
                         <div style="display: flex; gap: 0.5rem; flex: 2; min-width: 300px; flex-wrap: wrap;">
                             <input type="text" id="transSearch" placeholder="Search Brand/Product..." onkeyup="refreshTransactions()" style="flex: 1; min-width: 150px; padding: 0.5rem; border: 1px solid var(--gray-300); border-radius: 8px; font-size: 0.9rem;">
+                            <select id="transMonthFilter" onchange="refreshTransactions()" style="padding: 0.5rem; border: 1px solid var(--gray-300); border-radius: 8px; min-width: 120px; font-size: 0.85rem;">
+                                <option value="">All Months</option>
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                            <select id="transYearFilter" onchange="refreshTransactions()" style="padding: 0.5rem; border: 1px solid var(--gray-300); border-radius: 8px; min-width: 90px; font-size: 0.85rem;">
+                                <option value="">All Years</option>
+                            </select>
                             <div style="display: flex; align-items: center; gap: 0.3rem; min-width: 220px;">
                                 <input type="date" id="transDateFrom" onchange="refreshTransactions()" style="padding: 0.5rem; border: 1px solid var(--gray-300); border-radius: 8px; flex: 1; font-size: 0.85rem;">
                                 <span style="color: var(--gray-500); font-size: 0.8rem;">to</span>
