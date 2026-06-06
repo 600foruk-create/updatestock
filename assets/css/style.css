@@ -678,14 +678,13 @@
             padding: 0.8rem;
             text-align: left;
             font-weight: 600;
-            color: #000;
-            border: 1px solid #000;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
         }
 
         .data-table td {
             padding: 0.6rem 0.8rem;
-            border: 1px solid #000;
-            color: #000;
+            border: 1px solid var(--gray-200);
         }
 
         .data-table tbody tr:nth-child(odd), 
@@ -717,13 +716,12 @@
             margin: 1rem 0;
             background: white;
             font-size: 0.9rem;
-            border: 1px solid #000;
+            border: 1px solid var(--gray-200);
         }
 
         .stock-grid-table th, .stock-grid-table td {
-            border: 1px solid #000;
+            border: 1px solid var(--gray-200);
             padding: 0.5rem;
-            color: #000;
         }
 
         .stock-grid-table th {
