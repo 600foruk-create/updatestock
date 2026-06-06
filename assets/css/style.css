@@ -673,18 +673,18 @@
             margin: 1rem 0;
         }
 
-        .data-table th, .audit-table th {
+        .data-table th {
             background: var(--gray-100);
             padding: 0.8rem;
             text-align: left;
             font-weight: 600;
             color: #000;
-            border: 1px solid #000 !important;
+            border: 1px solid #000;
         }
 
-        .data-table td, .audit-table td {
+        .data-table td {
             padding: 0.6rem 0.8rem;
-            border: 1px solid #000 !important;
+            border: 1px solid #000;
             color: #000;
         }
 
@@ -717,11 +717,11 @@
             margin: 1rem 0;
             background: white;
             font-size: 0.9rem;
-            border: 1px solid #000 !important;
+            border: 1px solid #000;
         }
 
         .stock-grid-table th, .stock-grid-table td {
-            border: 1px solid #000 !important;
+            border: 1px solid #000;
             padding: 0.5rem;
             color: #000;
         }
@@ -1535,7 +1535,7 @@
             }
 
             .audit-table th, .audit-table td, 
-            .data-table th, .data-table td, .audit-table td {
+            .data-table th, .data-table td {
                 border: 1px solid #000 !important;
                 padding: 4px !important;
             }
@@ -2192,5 +2192,4 @@
 .rm-qty-group:focus-within { border-color: var(--sky-500); box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1); }
 .rm-qty-group input { border: none !important; flex: 1; height: 40px !important; padding: 0 12px !important; font-weight: 700 !important; color: var(--sky-700) !important; }
 .rm-qty-group select { border: none !important; width: 80px !important; background: #f8fafc !important; font-weight: 700 !important; color: var(--gray-600) !important; border-left: 1px solid #e2e8f0 !important; cursor: pointer; }
-
 
