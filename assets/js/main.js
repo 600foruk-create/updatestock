@@ -2043,26 +2043,28 @@ function refreshStockList() {
                                 `;
                     });
                     
-                    let subResColor = subTotalResult === 0 ? 'var(--gray-500)' : (subTotalResult < 0 ? '#ef4444' : 'var(--green-600)');
-                    let subIoColor = subTotalInOrder === 0 ? 'var(--gray-500)' : '#dc2626';
-                    let colspan = isFitting ? 5 : 4;
-                    
-                    itemsHtml += `
-                        <tr style="background: #f8fafc; border-top: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1;">
-                            <td colspan="${colspan}" style="text-align: right; padding: 0.5rem; font-weight: 800; color: var(--sky-900); font-size: 0.95rem; letter-spacing: 0.5px;">TOTAL FOR ${sub.name.toUpperCase()}:</td>
-                            <td style="text-align: center; padding: 0.5rem; font-weight: 900; color: var(--orange-600); font-size: 1.05rem;">${subTotalAvailable}</td>
-                            <td style="text-align: center; padding: 0.5rem; font-weight: 900; color: ${subIoColor}; font-size: 1.05rem;">${subTotalInOrder}</td>
-                            <td style="text-align: center; padding: 0.5rem; font-weight: 900; color: ${subResColor}; font-size: 1.05rem;">${subTotalResult}</td>
-                        </tr>
-                    `;
                 }
             }
         });
 
-        itemsHtml += '</tbody></table>';
-
         if (hasVisibleItems) {
             let totalResult = totalBrandStock - totalInOrder;
+            
+            let brandResColor = totalResult === 0 ? 'var(--gray-500)' : (totalResult < 0 ? '#ef4444' : 'var(--green-600)');
+            let brandIoColor = totalInOrder === 0 ? 'var(--gray-500)' : '#dc2626';
+            let colspan = isFitting ? 5 : 4;
+            
+            itemsHtml += `
+                <tr style="background: var(--sky-100); border-top: 3px solid var(--sky-300); border-bottom: 3px solid var(--sky-300);">
+                    <td colspan="${colspan}" style="text-align: right; padding: 0.6rem 0.5rem; font-weight: 800; color: var(--sky-900); font-size: 1.05rem; text-transform: uppercase;">TOTAL FOR ${main.name}:</td>
+                    <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: var(--orange-600); font-size: 1.15rem;">${totalBrandStock}</td>
+                    <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: ${brandIoColor}; font-size: 1.15rem;">${totalInOrder}</td>
+                    <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: ${brandResColor}; font-size: 1.15rem;">${totalResult}</td>
+                </tr>
+            `;
+            
+            itemsHtml += '</tbody></table>';
+
             brandCardsHtml += `
                         <div class="brand-card expanded" id="stockCard_${main.id}">
                             <div class="brand-header" style="background: ${main.color};" onclick="toggleBrandCard(document.getElementById('stockCard_${main.id}'))">
