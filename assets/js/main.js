@@ -5449,6 +5449,7 @@ function refreshTransactions() {
     }
 
     let filtered = transactions.filter(t => {
+        if (t.is_hidden == 1) return false;
         const searchMatch = !search || 
             (t.mainName || '').toLowerCase().includes(search) || 
             (t.itemName || '').toLowerCase().includes(search) ||
@@ -5516,6 +5517,7 @@ function exportTransactions(format) {
     const toDate = document.getElementById('transDateTo')?.value;
 
     let filtered = transactions.filter(t => {
+        if (t.is_hidden == 1) return false;
         const searchMatch = !search || 
             (t.mainName || '').toLowerCase().includes(search) || 
             (t.itemName || '').toLowerCase().includes(search) ||
@@ -7219,7 +7221,7 @@ function refreshRMOutHistoryTable() {
     const selYear  = document.getElementById('rmOutYearFilter')?.value;
 
     const consumption = rmTransactions.filter(t => {
-        if (t.type !== 'OUT') return false;
+        if (t.type !== 'OUT' || t.is_hidden == 1) return false;
         const d = new Date(t.date);
         if (isNaN(d.getTime())) return false;
         const mMatch = !selMonth || (d.getMonth() + 1) == selMonth;
@@ -7385,7 +7387,7 @@ async function deleteAllRMOutHistory() {
 }
 
 function exportRMOutToExcel() {
-    const consumption = rmTransactions.filter(t => t.type === 'OUT').sort((a,b) => b.id - a.id);
+    const consumption = rmTransactions.filter(t => t.type === 'OUT' && t.is_hidden != 1).sort((a,b) => b.id - a.id);
     if (consumption.length === 0) { alert('No consumption history to export.'); return; }
 
     let csv = 'Date,Material,Type,Quantity,Unit,Notes\n';
@@ -8472,7 +8474,7 @@ function refreshRMInHistoryTable() {
     const selYear  = document.getElementById('rmInYearFilter')?.value;
     
     const purchases = rmTransactions.filter(t => {
-        if (t.type !== 'IN') return false;
+        if (t.type !== 'IN' || t.is_hidden == 1) return false;
         const d = new Date(t.date);
         if (isNaN(d.getTime())) return false;
         const mMatch = !selMonth || (d.getMonth() + 1) == selMonth;
@@ -8557,7 +8559,7 @@ async function recordSingleRMTransaction(itemId, qty, type, notes, price = 0, br
 }
 
 function exportRMInToExcel() {
-    const purchases = rmTransactions.filter(t => t.type === 'IN').sort((a,b) => b.id - a.id);
+    const purchases = rmTransactions.filter(t => t.type === 'IN' && t.is_hidden != 1).sort((a,b) => b.id - a.id);
     if (purchases.length === 0) { alert('No purchase history to export.'); return; }
 
     let csv = 'Date,Material,Type,QuantityReceived,Unit,Notes\n';

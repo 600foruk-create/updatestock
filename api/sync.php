@@ -166,6 +166,10 @@ try {
                     $rtCols = $conn->query("SHOW COLUMNS FROM rm_transactions")->fetchAll(PDO::FETCH_COLUMN);
                     if (!in_array('price', $rtCols)) $conn->exec("ALTER TABLE rm_transactions ADD COLUMN price DECIMAL(15,3) DEFAULT 0 AFTER quantity");
                     if (!in_array('brand_id', $rtCols)) $conn->exec("ALTER TABLE rm_transactions ADD COLUMN brand_id INT DEFAULT NULL");
+                    if (!in_array('is_hidden', $rtCols)) $conn->exec("ALTER TABLE rm_transactions ADD COLUMN is_hidden TINYINT(1) DEFAULT 0");
+                    
+                    $tCols = $conn->query("SHOW COLUMNS FROM transactions")->fetchAll(PDO::FETCH_COLUMN);
+                    if (!in_array('is_hidden', $tCols)) $conn->exec("ALTER TABLE transactions ADD COLUMN is_hidden TINYINT(1) DEFAULT 0");
                 } catch(Exception $e) {}
 
                 // AUTO-REPAIR: Users Table for Permissions
@@ -1036,7 +1040,7 @@ try {
         elseif ($action === 'delete_rm_transaction') {
             $id = $input['id'] ?? $_GET['id'] ?? null;
             if ($id) {
-                $stmt = $conn->prepare("DELETE FROM rm_transactions WHERE id = ?");
+                $stmt = $conn->prepare("UPDATE rm_transactions SET is_hidden = 1 WHERE id = ?");
                 $stmt->execute([$id]);
                 echo json_encode(['status' => 'success']);
             } else { echo json_encode(['status' => 'error', 'message' => 'No ID provided']); }
@@ -1046,7 +1050,7 @@ try {
             $id = $input['id'] ?? $_GET['id'] ?? null;
             if ($id) {
                 // Delete transaction record only (per user request: "delet sy stok per asr na pary")
-                $stmt = $conn->prepare("DELETE FROM transactions WHERE id = ?");
+                $stmt = $conn->prepare("UPDATE transactions SET is_hidden = 1 WHERE id = ?");
                 $stmt->execute([$id]);
                 echo json_encode(['status' => 'success']);
             } else { echo json_encode(['status' => 'error', 'message' => 'No ID provided']); }
