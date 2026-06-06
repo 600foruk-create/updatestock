@@ -1939,7 +1939,7 @@ function refreshStockList() {
             return filtered;
         };
 
-        let subsForMain = subCategories.filter(s => s.mainId == main.id);
+        let subsForMain = sortSubCategories(subCategories.filter(s => s.mainId == main.id));
         subsForMain.forEach(sub => {
             let subItems = brandItems.filter(i => i.subId == sub.id);
             if (subItems.length > 0) {
