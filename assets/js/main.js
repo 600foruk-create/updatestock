@@ -523,9 +523,21 @@ function sortMainCategories(cats) {
 
 function sortSubCategories(subs) {
     return [...subs].sort((a, b) => {
-        let numA = parseFloat(a.name.replace(/[^0-9.]/g, '')) || 0;
-        let numB = parseFloat(b.name.replace(/[^0-9.]/g, '')) || 0;
-        return numA - numB;
+        let mainA = mainCategories.find(m => m.id == a.mainId);
+        let mainB = mainCategories.find(m => m.id == b.mainId);
+        let isFitA = mainA && mainA.type === 'Fitting';
+        let isFitB = mainB && mainB.type === 'Fitting';
+
+        if (isFitA && isFitB) {
+            return parseInt(a.id) - parseInt(b.id);
+        } else if (!isFitA && !isFitB) {
+            let numA = parseFloat(a.name.replace(/[^0-9.]/g, '')) || 0;
+            let numB = parseFloat(b.name.replace(/[^0-9.]/g, '')) || 0;
+            if (numA !== numB) return numA - numB;
+            return parseInt(a.id) - parseInt(b.id);
+        } else {
+            return isFitA ? 1 : -1;
+        }
     });
 }
 
