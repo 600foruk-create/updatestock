@@ -1,29 +1,35 @@
 <div id="stockList" class="tab-content">
                     <div class="search-filter-bar no-print" style="flex-wrap: wrap; gap: 1rem;">
-                        <div class="form-group" style="flex: 1; min-width: 200px;">
-                            <label>Brand / Size</label>
-                            <input type="text" id="stockSearch" class="form-control" placeholder="Search Brand / Size..." oninput="refreshStockList()">
+                        <div class="form-group" style="flex: 1; min-width: 120px;">
+                            <label style="font-size: 0.85rem; margin-bottom: 2px;">Search Item</label>
+                            <input type="text" id="stockSearch" class="form-control" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" placeholder="Search..." oninput="refreshStockList()">
                         </div>
                         <div class="form-group" style="flex: 1; min-width: 120px;">
-                            <label>Length (ft/m)</label>
-                            <select id="stockLengthFilter" class="form-control" onchange="refreshStockList()">
+                            <label style="font-size: 0.85rem; margin-bottom: 2px;">Group Filter</label>
+                            <select id="stockGroupFilter" class="form-control" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" onchange="refreshStockList()">
+                                <option value="">All Groups</option>
+                                <!-- Auto-filled -->
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1; min-width: 100px;">
+                            <label style="font-size: 0.85rem; margin-bottom: 2px;">Length (ft/m)</label>
+                            <select id="stockLengthFilter" class="form-control" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" onchange="refreshStockList()">
                                 <option value="">All Lengths</option>
-                                <!-- Dynamic options inserted by JS -->
                             </select>
                         </div>
                         <div class="form-group" style="flex: 1; min-width: 120px;">
-                            <label>In Order Status</label>
-                            <select id="stockOrderFilter" class="form-control" onchange="refreshStockList()">
+                            <label style="font-size: 0.85rem; margin-bottom: 2px;">Order Status</label>
+                            <select id="stockOrderFilter" class="form-control" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" onchange="refreshStockList()">
                                 <option value="">All Items</option>
-                                <option value="with_orders">Only With Active Orders</option>
+                                <option value="with_orders">Active Orders</option>
                             </select>
                         </div>
-                        <div class="form-group" style="flex: 1; min-width: 150px;">
-                            <label>Zero Stock View</label>
-                            <select id="stockZeroFilter" class="form-control" onchange="refreshStockList()">
-                                <option value="all">Show All Items</option>
+                        <div class="form-group" style="flex: 1; min-width: 120px;">
+                            <label style="font-size: 0.85rem; margin-bottom: 2px;">Zero Stock</label>
+                            <select id="stockZeroFilter" class="form-control" style="padding: 0.3rem 0.5rem; font-size: 0.9rem; height: auto;" onchange="refreshStockList()">
+                                <option value="all">Show All</option>
                                 <option value="hide_zero">Hide 0 Stock</option>
-                                <option value="only_zero">Show Only 0 Stock</option>
+                                <option value="only_zero">Only 0 Stock</option>
                             </select>
                         </div>
                         

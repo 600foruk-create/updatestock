@@ -1878,6 +1878,8 @@ function refreshStockList() {
     const search = (document.getElementById('stockSearch')?.value || '').toLowerCase();
     const lengthSelect = document.getElementById('stockLengthFilter');
     const lengthFilter = lengthSelect?.value || '';
+    const groupSelect = document.getElementById('stockGroupFilter');
+    const groupFilter = groupSelect?.value || '';
     const orderFilter = document.getElementById('stockOrderFilter')?.value || '';
     const zeroFilter = document.getElementById('stockZeroFilter')?.value || 'all';
     
@@ -1895,6 +1897,27 @@ function refreshStockList() {
             });
             lengthSelect.value = currentVal; // Restore selection
             lengthSelect.dataset.populated = items.length.toString();
+        }
+    }
+
+    // Dynamically populate Group dropdown
+    if (groupSelect && subCategories.length > 0) {
+        if (groupSelect.options.length <= 1 || groupSelect.dataset.populated !== subCategories.length.toString()) {
+            const currentVal = groupSelect.value;
+            groupSelect.innerHTML = '<option value="">All Groups</option>';
+            
+            let fittingMainIds = mainCategories.filter(m => m.type === 'Fitting').map(m => m.id);
+            let fittingSubs = subCategories.filter(s => fittingMainIds.includes(s.mainId)).sort((a,b) => a.name.localeCompare(b.name));
+            
+            // To ensure uniqueness of names (as multiple brands might have 'Elbow 90' etc.)
+            let uniqueSubNames = [...new Set(fittingSubs.map(s => s.name))];
+            
+            uniqueSubNames.forEach(subName => {
+                groupSelect.innerHTML += `<option value="${subName}">${subName}</option>`;
+            });
+            
+            groupSelect.value = currentVal;
+            groupSelect.dataset.populated = subCategories.length.toString();
         }
     }
 
@@ -1956,6 +1979,7 @@ function refreshStockList() {
                 let inOrder = orderedQtys[item.id] || 0;
 
                 // Apply Advanced Filters
+                if (groupFilter !== '' && sub.name !== groupFilter) return;
                 if (lengthFilter !== '' && parseFloat(item.length) != parseFloat(lengthFilter)) return;
                 if (orderFilter === 'with_orders' && inOrder <= 0) return;
                 if (zeroFilter === 'hide_zero' && available === 0) return;
@@ -2104,6 +2128,7 @@ function refreshStockList() {
 
 function clearStockFilters() {
     if(document.getElementById('stockSearch')) document.getElementById('stockSearch').value = '';
+    if(document.getElementById('stockGroupFilter')) document.getElementById('stockGroupFilter').value = '';
     if(document.getElementById('stockLengthFilter')) document.getElementById('stockLengthFilter').value = '';
     if(document.getElementById('stockOrderFilter')) document.getElementById('stockOrderFilter').value = '';
     if(document.getElementById('stockZeroFilter')) document.getElementById('stockZeroFilter').value = 'all';
