@@ -1888,45 +1888,14 @@ function refreshStockList() {
         });
     });
 
-    let groupsToProcess = [];
-    sortMainCategories(mainCategories).forEach(main => {
-        if (main.type === 'Fitting') {
-            let subs = subCategories.filter(s => s.mainId == main.id);
-            subs.forEach(sub => {
-                groupsToProcess.push({
-                    isFitting: true,
-                    main: main,
-                    sub: sub,
-                    id: `fit_${main.id}_${sub.id}`,
-                    name: `${main.name} - ${sub.name}`,
-                    color: main.color
-                });
-            });
-        } else {
-            groupsToProcess.push({
-                isFitting: false,
-                main: main,
-                id: `pipe_${main.id}`,
-                name: main.name,
-                color: main.color
-            });
-        }
-    });
-
     let brandCardsHtml = '';
-    groupsToProcess.forEach(group => {
-        let main = group.main;
-        let isFitting = group.isFitting;
-        const brandMatches = group.name.toLowerCase().includes(search);
-        
+    sortMainCategories(mainCategories).forEach(main => {
+        const brandMatches = main.name.toLowerCase().includes(search);
         let brandItems = items.filter(i => i.mainId == main.id);
-        if (isFitting) {
-            brandItems = brandItems.filter(i => i.subId == group.sub.id);
-        }
-
         let totalBrandStock = 0;
         let totalKg = 0;
         let totalInOrder = 0;
+        let isFitting = main.type === 'Fitting';
 
         let itemsHtml = '<table class="data-table" style="margin: 0; width: 100%; border-collapse: collapse; font-size: 0.95rem;">';
         itemsHtml += '<thead><tr>';
@@ -1942,8 +1911,8 @@ function refreshStockList() {
         itemsHtml += '</tr></thead><tbody>';
 
         let hasVisibleItems = false;
-        sortItems(brandItems).forEach(item => {
-            let sub = isFitting ? group.sub : subCategories.find(s => s.id == item.subId);
+        
+        let renderItem = (item, sub) => {
             let sizeName = sub ? (isFitting ? sub.name : sub.name.replace(/[^0-9.]/g, '')) : '?';
             
             // Smart Search logic
@@ -1971,19 +1940,16 @@ function refreshStockList() {
             // Apply Advanced Filters
             if (lengthFilter !== '' && parseFloat(item.length) != parseFloat(lengthFilter)) return;
             if (orderFilter === 'with_orders' && inOrder <= 0) return;
-            
             if (zeroFilter === 'hide_zero' && available === 0) return;
             if (zeroFilter === 'only_zero' && available !== 0) return;
 
             hasVisibleItems = true;
-
             totalBrandStock += available;
             totalKg += available * (item.weight || 0);
             totalInOrder += inOrder;
 
             let resColor = result === 0 ? 'var(--gray-500)' : (result < 0 ? '#ef4444' : 'var(--green-600)');
             let ioColor = inOrder === 0 ? 'var(--gray-500)' : '#dc2626';
-            
             let displaySizeHeader = isFitting ? (item.fitting_size || 'Fitting') : `${sizeName}"`;
 
             itemsHtml += `
@@ -1996,16 +1962,45 @@ function refreshStockList() {
                             <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:700; color:${resColor};">${result}</td>
                         </tr>
                     `;
-        });
+        };
+
+        if (isFitting) {
+            let subsForMain = subCategories.filter(s => s.mainId == main.id);
+            subsForMain.forEach(sub => {
+                let subItems = brandItems.filter(i => i.subId == sub.id);
+                if (subItems.length > 0) {
+                    // Check if any items match the filters before rendering the header
+                    let tempHtml = itemsHtml;
+                    itemsHtml = ''; // Capture rendered rows temporarily
+                    
+                    sortItems(subItems).forEach(item => {
+                        renderItem(item, sub);
+                    });
+                    
+                    let renderedRows = itemsHtml;
+                    itemsHtml = tempHtml;
+                    
+                    if (renderedRows !== '') {
+                        itemsHtml += `<tr style="background: var(--sky-50);"><td colspan="6" style="padding: 0.6rem 0.8rem; font-weight: bold; color: var(--sky-800); border-bottom: 1px solid var(--sky-200);">${sub.name}</td></tr>`;
+                        itemsHtml += renderedRows;
+                    }
+                }
+            });
+        } else {
+            sortItems(brandItems).forEach(item => {
+                let sub = subCategories.find(s => s.id == item.subId);
+                renderItem(item, sub);
+            });
+        }
 
         itemsHtml += '</tbody></table>';
 
         if (hasVisibleItems) {
             let totalResult = totalBrandStock - totalInOrder;
             brandCardsHtml += `
-                        <div class="brand-card expanded" id="stockCard_${group.id}">
-                            <div class="brand-header" style="background: ${group.color};" onclick="toggleBrandCard(document.getElementById('stockCard_${group.id}'))">
-                                <h4>${group.name}</h4>
+                        <div class="brand-card expanded" id="stockCard_${main.id}">
+                            <div class="brand-header" style="background: ${main.color};" onclick="toggleBrandCard(document.getElementById('stockCard_${main.id}'))">
+                                <h4>${main.name}</h4>
                                 <span class="brand-total">Total: ${totalBrandStock} | Order: ${totalInOrder} | Res: ${totalResult}</span>
                             </div>
                             <div class="brand-body" style="padding:0;">
