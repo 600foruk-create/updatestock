@@ -1978,10 +1978,27 @@ function refreshStockList() {
                         let weightVal = parseFloat(item.weight) || 0;
                         let weightUnit = isFitting && weightVal < 1 ? 'gram' : 'Kg';
                         let displayWeight = isFitting && weightVal < 1 ? (weightVal * 1000).toFixed(0) : weightVal.toFixed(3);
-                        let packing = item.packing_qty ? `${item.packing_qty} ${item.packing_unit || 'KG'}` : '-';
+                        let packing_qty = parseFloat(item.packing_qty) || 0;
+                        let packingUnit = item.packing_unit || 'PCS';
+                        let packingStr = '-';
+                        let packDescSuffix = '';
+                        
+                        if (packing_qty > 0) {
+                            packDescSuffix = ` | 1 Pack = ${packing_qty} ${packingUnit}`;
+                            let packs = Math.floor(available / packing_qty);
+                            let remainder = available % packing_qty;
+                            
+                            if (packs > 0 && remainder > 0) {
+                                packingStr = `${packs} Pck, ${remainder} ${packingUnit}`;
+                            } else if (packs > 0) {
+                                packingStr = `${packs} Pck`;
+                            } else {
+                                packingStr = `${remainder} ${packingUnit}`;
+                            }
+                        }
                         
                         let desc = isFitting 
-                            ? `${main.name} ${sub.name}`.trim()
+                            ? `${main.name} ${sub.name}${packDescSuffix}`.trim()
                             : `${sizeName}"( ${weightVal.toFixed(1)} ) Kg`;
                             
                         let displayLengthOrWeight = isFitting ? `${displayWeight} ${weightUnit}` : `${item.length} ft`;
@@ -2000,7 +2017,7 @@ function refreshStockList() {
                             : '';
 
                         let packingColHtml = isFitting 
-                            ? `<td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color: var(--gray-700);">${packing}</td>`
+                            ? `<td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color: var(--gray-700);">${packingStr}</td>`
                             : '';
 
                         itemsHtml += `
