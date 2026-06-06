@@ -1899,6 +1899,9 @@ function refreshStockList() {
 
         let itemsHtml = '<table class="data-table" style="margin: 0; width: 100%; border-collapse: collapse; font-size: 0.95rem;">';
         itemsHtml += '<thead><tr>';
+        if (isFitting) {
+            itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100); text-align: center;">Group</th>';
+        }
         itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100);">Size</th>';
         itemsHtml += '<th style="padding: 0.8rem; border-bottom: 2px solid var(--gray-300); background: var(--gray-100);">Description</th>';
         
@@ -1912,56 +1915,31 @@ function refreshStockList() {
 
         let hasVisibleItems = false;
         
-        let renderItem = (item, sub) => {
-            let sizeName = sub ? (isFitting ? sub.name : sub.name.replace(/[^0-9.]/g, '')) : '?';
-            
-            // Smart Search logic
-            const itemKey = (sizeName + main.name.charAt(0)).toLowerCase();
-            const fullMatch = (main.name + " " + sizeName).toLowerCase();
-            const isMatch = search === '' || brandMatches || sizeName.toLowerCase().includes(search) || itemKey.includes(search) || fullMatch.includes(search);
-
-            if (!isMatch) return;
-
-            let weightVal = parseFloat(item.weight) || 0;
-            let weightUnit = isFitting && weightVal < 1 ? 'gram' : 'Kg';
-            let displayWeight = isFitting && weightVal < 1 ? (weightVal * 1000).toFixed(0) : weightVal.toFixed(3);
-            let packing = item.packing_qty ? ` | Packing: ${item.packing_qty} ${item.packing_unit || 'KG'}` : '';
-            
-            let desc = isFitting 
-                ? `${main.name} ${sub?.name || ''}${packing}`.trim()
-                : `${sizeName}"( ${weightVal.toFixed(1)} ) Kg`;
+        let getFilteredItems = (itemsList, subFallback) => {
+            let filtered = [];
+            sortItems(itemsList).forEach(item => {
+                let sub = isFitting ? subFallback : subCategories.find(s => s.id == item.subId);
+                let sizeName = sub ? (isFitting ? sub.name : sub.name.replace(/[^0-9.]/g, '')) : '?';
                 
-            let displayLengthOrWeight = isFitting ? `${displayWeight} ${weightUnit}` : `${item.length} ft`;
+                // Smart Search logic
+                const itemKey = (sizeName + main.name.charAt(0)).toLowerCase();
+                const fullMatch = (main.name + " " + sizeName).toLowerCase();
+                const isMatch = search === '' || brandMatches || sizeName.toLowerCase().includes(search) || itemKey.includes(search) || fullMatch.includes(search);
 
-            let available = item.stock || 0;
-            let inOrder = orderedQtys[item.id] || 0;
-            let result = available - inOrder;
+                if (!isMatch) return;
 
-            // Apply Advanced Filters
-            if (lengthFilter !== '' && parseFloat(item.length) != parseFloat(lengthFilter)) return;
-            if (orderFilter === 'with_orders' && inOrder <= 0) return;
-            if (zeroFilter === 'hide_zero' && available === 0) return;
-            if (zeroFilter === 'only_zero' && available !== 0) return;
+                let available = item.stock || 0;
+                let inOrder = orderedQtys[item.id] || 0;
 
-            hasVisibleItems = true;
-            totalBrandStock += available;
-            totalKg += available * (item.weight || 0);
-            totalInOrder += inOrder;
+                // Apply Advanced Filters
+                if (lengthFilter !== '' && parseFloat(item.length) != parseFloat(lengthFilter)) return;
+                if (orderFilter === 'with_orders' && inOrder <= 0) return;
+                if (zeroFilter === 'hide_zero' && available === 0) return;
+                if (zeroFilter === 'only_zero' && available !== 0) return;
 
-            let resColor = result === 0 ? 'var(--gray-500)' : (result < 0 ? '#ef4444' : 'var(--green-600)');
-            let ioColor = inOrder === 0 ? 'var(--gray-500)' : '#dc2626';
-            let displaySizeHeader = isFitting ? (item.fitting_size || 'Fitting') : `${sizeName}"`;
-
-            itemsHtml += `
-                        <tr style="background: white;">
-                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200);"><strong>${displaySizeHeader}</strong></td>
-                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); color: var(--gray-700);">${desc}</td>
-                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center;">${displayLengthOrWeight}</td>
-                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:var(--orange-500);">${available}</td>
-                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:${ioColor};">${inOrder}</td>
-                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:700; color:${resColor};">${result}</td>
-                        </tr>
-                    `;
+                filtered.push({item, sub, sizeName, available, inOrder});
+            });
+            return filtered;
         };
 
         if (isFitting) {
@@ -1969,28 +1947,79 @@ function refreshStockList() {
             subsForMain.forEach(sub => {
                 let subItems = brandItems.filter(i => i.subId == sub.id);
                 if (subItems.length > 0) {
-                    // Check if any items match the filters before rendering the header
-                    let tempHtml = itemsHtml;
-                    itemsHtml = ''; // Capture rendered rows temporarily
+                    let visibleItems = getFilteredItems(subItems, sub);
                     
-                    sortItems(subItems).forEach(item => {
-                        renderItem(item, sub);
-                    });
-                    
-                    let renderedRows = itemsHtml;
-                    itemsHtml = tempHtml;
-                    
-                    if (renderedRows !== '') {
-                        itemsHtml += `<tr style="background: var(--sky-50);"><td colspan="6" style="padding: 0.6rem 0.8rem; font-weight: bold; color: var(--sky-800); border-bottom: 1px solid var(--sky-200);">${sub.name}</td></tr>`;
-                        itemsHtml += renderedRows;
+                    if (visibleItems.length > 0) {
+                        hasVisibleItems = true;
+                        visibleItems.forEach((v, idx) => {
+                            let {item, sizeName, available, inOrder} = v;
+                            let weightVal = parseFloat(item.weight) || 0;
+                            let weightUnit = weightVal < 1 ? 'gram' : 'Kg';
+                            let displayWeight = weightVal < 1 ? (weightVal * 1000).toFixed(0) : weightVal.toFixed(3);
+                            let packing = item.packing_qty ? ` | Packing: ${item.packing_qty} ${item.packing_unit || 'KG'}` : '';
+                            
+                            let desc = `${main.name} ${sub.name}${packing}`.trim();
+                            let displayLengthOrWeight = `${displayWeight} ${weightUnit}`;
+                            let result = available - inOrder;
+
+                            totalBrandStock += available;
+                            totalKg += available * (item.weight || 0);
+                            totalInOrder += inOrder;
+
+                            let resColor = result === 0 ? 'var(--gray-500)' : (result < 0 ? '#ef4444' : 'var(--green-600)');
+                            let ioColor = inOrder === 0 ? 'var(--gray-500)' : '#dc2626';
+                            let displaySizeHeader = item.fitting_size || 'Fitting';
+
+                            let groupColHtml = idx === 0 
+                                ? `<td rowspan="${visibleItems.length}" style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); border-right: 1px solid var(--sky-200); background: var(--sky-50); vertical-align: middle; font-weight: 700; color: var(--sky-800); text-align: center; width: 140px;">${sub.name}</td>` 
+                                : '';
+
+                            itemsHtml += `
+                                        <tr style="background: white;">
+                                            ${groupColHtml}
+                                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200);"><strong>${displaySizeHeader}</strong></td>
+                                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); color: var(--gray-700);">${desc}</td>
+                                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center;">${displayLengthOrWeight}</td>
+                                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:var(--orange-500);">${available}</td>
+                                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:${ioColor};">${inOrder}</td>
+                                            <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:700; color:${resColor};">${result}</td>
+                                        </tr>
+                                    `;
+                        });
                     }
                 }
             });
         } else {
-            sortItems(brandItems).forEach(item => {
-                let sub = subCategories.find(s => s.id == item.subId);
-                renderItem(item, sub);
-            });
+            let visibleItems = getFilteredItems(brandItems, null);
+            if (visibleItems.length > 0) {
+                hasVisibleItems = true;
+                visibleItems.forEach(v => {
+                    let {item, sub, sizeName, available, inOrder} = v;
+                    let weightVal = parseFloat(item.weight) || 0;
+                    let desc = `${sizeName}"( ${weightVal.toFixed(1)} ) Kg`;
+                    let displayLengthOrWeight = `${item.length} ft`;
+                    let result = available - inOrder;
+
+                    totalBrandStock += available;
+                    totalKg += available * (item.weight || 0);
+                    totalInOrder += inOrder;
+
+                    let resColor = result === 0 ? 'var(--gray-500)' : (result < 0 ? '#ef4444' : 'var(--green-600)');
+                    let ioColor = inOrder === 0 ? 'var(--gray-500)' : '#dc2626';
+                    let displaySizeHeader = `${sizeName}"`;
+
+                    itemsHtml += `
+                                <tr style="background: white;">
+                                    <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200);"><strong>${displaySizeHeader}</strong></td>
+                                    <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); color: var(--gray-700);">${desc}</td>
+                                    <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center;">${displayLengthOrWeight}</td>
+                                    <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:var(--orange-500);">${available}</td>
+                                    <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:600; color:${ioColor};">${inOrder}</td>
+                                    <td style="padding: 0.2rem 0.5rem; border-bottom: 1px solid var(--gray-200); text-align:center; font-weight:700; color:${resColor};">${result}</td>
+                                </tr>
+                            `;
+                });
+            }
         }
 
         itemsHtml += '</tbody></table>';
