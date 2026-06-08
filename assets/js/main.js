@@ -8842,30 +8842,30 @@ function refreshRMInventoryBalance() {
         const row = document.createElement('tr');
         row.style.borderBottom = '1px solid var(--gray-100)';
         row.innerHTML = `
-            <td style="padding: 0.2rem 0.5rem; vertical-align: middle;">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <div style="font-weight: 700; color: var(--gray-800); font-size: 0.95rem;">${item.name}</div>
+            <td style="padding: 0.2rem 0.5rem; vertical-align: middle; white-space: nowrap;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: nowrap;">
+                    <div style="font-weight: 700; color: var(--gray-800); font-size: 0.95rem; white-space: nowrap;">${item.name}</div>
                     <div style="font-size: 0.7rem; color: var(--gray-500); font-family: monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--gray-300); white-space: nowrap;">${item.code}</div>
                 </div>
             </td>
-            <td style="text-align: right; padding-right: 1.5rem; vertical-align: middle;">
+            <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; white-space: nowrap;">
                 <div style="font-weight: 800; font-size: 0.95rem; color: var(--primary);">
                     ${bags} <span style="font-size: 0.65rem; color: var(--gray-400); font-weight: 600;">Bags</span>
                 </div>
             </td>
-            <td style="text-align: right; padding-right: 1.5rem; vertical-align: middle;">
+            <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; white-space: nowrap;">
                 <div style="font-weight: 800; font-size: 0.95rem; color: var(--sky-700);">
                     ${currentStock.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} <span style="font-size: 0.65rem; color: var(--gray-400); font-weight: 600;">KG</span>
                 </div>
             </td>
-            <td style="text-align: right; vertical-align: middle; color: var(--gray-600); font-weight: 600; font-size: 0.9rem;">
+            <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; color: var(--gray-600); font-weight: 600; font-size: 0.9rem; white-space: nowrap;">
                 ${avgPrice > 0 ? avgPrice.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}) : '---'}
             </td>
-            <td style="text-align: right; vertical-align: middle; color: var(--gray-600); font-weight: 600; font-size: 0.9rem;">
+            <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; color: var(--gray-600); font-weight: 600; font-size: 0.9rem; white-space: nowrap;">
                 ${maxPrice > 0 ? maxPrice.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}) : '---'}
             </td>
-            <td style="text-align: right; padding-right: 1.5rem; vertical-align: middle;">
-                <div style="display: flex; align-items: center; justify-content: flex-end; gap: 5px;">
+            <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; white-space: nowrap;">
+                <div style="display: flex; align-items: center; justify-content: flex-end; gap: 5px; flex-wrap: nowrap;">
                     <div style="font-weight: 800; font-size: 0.95rem; color: var(--success); white-space: nowrap;">
                         ${totalValue > 0 ? 'Rs. ' + totalValue.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0}) : '---'}
                     </div>
