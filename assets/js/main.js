@@ -7547,10 +7547,16 @@ function refreshRMConsumptionReport() {
     
     const targetDateStr = targetDateObj.toDateString();
 
+    const categoryFilter = document.getElementById('wipCategoryFilter')?.value || 'All';
+
     // 3. Calculate FG Production (Inbound) for Target Date
     let fgTotalKg = 0;
     transactions.forEach(t => {
         if (t.type === 'IN' && new Date(t.date).toDateString() === targetDateStr) {
+            if (categoryFilter !== 'All') {
+                const brand = mainCategories.find(b => b.id == t.mainId);
+                if (!brand || brand.type !== categoryFilter) return;
+            }
             fgTotalKg += (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
         }
     });
@@ -7560,6 +7566,10 @@ function refreshRMConsumptionReport() {
     let rmTotalValue = 0;
     rmTransactions.forEach(t => {
         if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === targetDateStr) {
+            if (categoryFilter !== 'All') {
+                const brand = mainCategories.find(b => b.id == t.brand_id);
+                if (!brand || brand.type !== categoryFilter) return;
+            }
             const item = rmItems.find(i => i.id == t.rm_item_id);
             const qty = (parseFloat(t.quantity) || 0);
             let price = (parseFloat(t.price) || 0);
@@ -7647,6 +7657,7 @@ function refreshRMConsumptionReport() {
 
         let html = '';
         mainCategories.forEach((brand, idx) => {
+            if (categoryFilter !== 'All' && brand.type !== categoryFilter) return;
             const bid    = brand.id;
             const clr    = palette[idx % palette.length];
             const fg     = fgByBrand[bid]  || 0;
@@ -7992,8 +8003,41 @@ function refreshRMConsumptionHistory() {
 
     const monthF = document.getElementById('rmHistoryMonthFilter')?.value;
     const yearF = document.getElementById('rmHistoryYearFilter')?.value;
+    const catFilter = document.getElementById('wipCategoryFilter')?.value || 'All';
 
-    let filteredLogs = rmConsumptionLogs.filter(l => {
+    let baseLogs = [];
+    if (catFilter === 'All') {
+        baseLogs = rmConsumptionLogs;
+    } else {
+        const groupedLogs = {};
+        rmBrandConsumptionLogs.forEach(l => {
+            const brand = mainCategories.find(b => b.id == l.brand_id);
+            if (brand && brand.type === catFilter) {
+                const realDateKey = l.date.substring(0, 10);
+                if (!groupedLogs[realDateKey]) {
+                    groupedLogs[realDateKey] = {
+                        id: 'virtual_' + realDateKey,
+                        date: l.date,
+                        fg_weight: 0,
+                        rm_weight: 0,
+                        rm_value: 0,
+                        other_expenses: 0,
+                        in_process: 0,
+                        gap: 0,
+                        notes: `[Filtered: ${catFilter}]`,
+                        isVirtual: true
+                    };
+                }
+                groupedLogs[realDateKey].fg_weight += parseFloat(l.fg_weight) || 0;
+                groupedLogs[realDateKey].rm_weight += parseFloat(l.rm_weight) || 0;
+                groupedLogs[realDateKey].rm_value  += parseFloat(l.rm_value) || 0;
+                groupedLogs[realDateKey].gap       += parseFloat(l.gap) || 0;
+            }
+        });
+        baseLogs = Object.values(groupedLogs).sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+
+    let filteredLogs = baseLogs.filter(l => {
         const d = new Date(l.date);
         const m = d.getMonth() + 1;
         const y = d.getFullYear();
@@ -8017,8 +8061,9 @@ function refreshRMConsumptionHistory() {
         const val = parseFloat(l.rm_value) || 0;
         const other = parseFloat(l.other_expenses) || 0;
         const grandTotal = val + other;
+        // In virtual mode, gap is pre-calculated from brands
         const inp = parseFloat(l.in_process) || 0;
-        const gap = rm - fg - inp;
+        const gap = l.isVirtual ? (parseFloat(l.gap) || 0) : (rm - fg - inp);
         
         totalFG += fg;
         totalRM += rm;
@@ -8039,7 +8084,7 @@ function refreshRMConsumptionHistory() {
                     ${gap.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} KG
                 </td>
                 <td style="padding: 0.2rem 0.5rem; text-align: center;">
-                    <button class="btn btn-sm btn-danger" onclick="deleteRMConsumptionEntry(${l.id})" title="Delete" style="padding: 3px 6px; font-size: 0.8rem;">🗑️</button>
+                    ${l.isVirtual ? `<span style="font-size:0.75rem; color:var(--gray-400); font-style:italic;">Filtered</span>` : `<button class="btn btn-sm btn-danger" onclick="deleteRMConsumptionEntry(${l.id})" title="Delete" style="padding: 3px 6px; font-size: 0.8rem;">🗑️</button>`}
                 </td>
             </tr>`;
     });
