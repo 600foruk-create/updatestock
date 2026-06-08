@@ -9,36 +9,39 @@
                         <button class="btn btn-sm" id="btn-completed" onclick="filterOrders('completed')" style="display: flex; align-items: center; gap: 0.5rem;">Completed <span id="count-completed" style="background: rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">0</span></button>
                     </div>
 
-                    <div class="filter-bar" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; background: var(--gray-50); padding: 1rem; border-radius: 10px; border: 1px solid var(--gray-200);">
-                        <input type="text" id="orderSearch" placeholder="Search Customer Name..." onkeyup="refreshOrdersList()" style="flex: 2; min-width: 200px; padding: 0.6rem; border: 1px solid var(--gray-300); border-radius: 8px;">
-                        
-                        <!-- Month / Year Filter -->
-                        <select id="orderMonthFilter" onchange="refreshOrdersList()" style="padding: 0.6rem; border: 1px solid var(--gray-300); border-radius: 8px; min-width: 130px;">
-                            <option value="">All Months</option>
-                            <option value="1">January</option>
-                            <option value="2">February</option>
-                            <option value="3">March</option>
-                            <option value="4">April</option>
-                            <option value="5">May</option>
-                            <option value="6">June</option>
-                            <option value="7">July</option>
-                            <option value="8">August</option>
-                            <option value="9">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
-                        </select>
-                        <select id="orderYearFilter" onchange="refreshOrdersList()" style="padding: 0.6rem; border: 1px solid var(--gray-300); border-radius: 8px; min-width: 100px;">
-                            <option value="">All Years</option>
-                        </select>
+                    <div class="filter-bar" style="display: flex; gap: 0.4rem; margin-bottom: 1rem; background: var(--gray-50); padding: 0.5rem; border-radius: 8px; border: 1px solid var(--gray-200); align-items: center; overflow: hidden; width: 100%;">
+                        <div style="display: flex; gap: 0.3rem; flex: 1; align-items: center;">
+                            <input type="text" id="orderSearch" placeholder="Search Customer..." onkeyup="refreshOrdersList()" style="width: 130px; padding: 0.3rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.75rem; outline: none;">
+                            
+                            <select id="orderMonthFilter" onchange="refreshOrdersList()" style="padding: 0.3rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.75rem; width: 90px; outline: none;">
+                                <option value="">Month</option>
+                                <option value="1">Jan</option>
+                                <option value="2">Feb</option>
+                                <option value="3">Mar</option>
+                                <option value="4">Apr</option>
+                                <option value="5">May</option>
+                                <option value="6">Jun</option>
+                                <option value="7">Jul</option>
+                                <option value="8">Aug</option>
+                                <option value="9">Sep</option>
+                                <option value="10">Oct</option>
+                                <option value="11">Nov</option>
+                                <option value="12">Dec</option>
+                            </select>
+                            <select id="orderYearFilter" onchange="refreshOrdersList()" style="padding: 0.3rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.75rem; width: 70px; outline: none;">
+                                <option value="">Year</option>
+                            </select>
 
-                        <div style="display: flex; align-items: center; gap: 0.5rem; flex: 1; min-width: 300px;">
-                            <input type="date" id="orderDateFrom" onchange="refreshOrdersList()" style="padding: 0.6rem; border: 1px solid var(--gray-300); border-radius: 8px; flex: 1;">
-                            <span style="color: var(--gray-500);">to</span>
-                            <input type="date" id="orderDateTo" onchange="refreshOrdersList()" style="padding: 0.6rem; border: 1px solid var(--gray-300); border-radius: 8px; flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 0.2rem;">
+                                <input type="date" id="orderDateFrom" onchange="refreshOrdersList()" style="padding: 0.3rem 0.2rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.75rem; width: 100px; outline: none;">
+                                <span style="color: var(--gray-500); font-size: 0.7rem;">to</span>
+                                <input type="date" id="orderDateTo" onchange="refreshOrdersList()" style="padding: 0.3rem 0.2rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.75rem; width: 100px; outline: none;">
+                            </div>
                         </div>
-                        <button class="btn btn-warning" onclick="clearOrdersView()" style="white-space: nowrap;">🧹 Clear Screen</button>
-                        <button class="btn btn-info" onclick="resetOrderFilters()" style="white-space: nowrap;">🔄 Reset</button>
+                        <div style="display: flex; gap: 0.3rem; align-items: center;">
+                            <button class="btn btn-warning" onclick="clearOrdersView()" style="white-space: nowrap; padding: 0.3rem 0.5rem; font-size: 0.75rem; border-radius: 4px; line-height: 1.2;">Clear Screen</button>
+                            <button class="btn btn-info" onclick="resetOrderFilters()" style="white-space: nowrap; padding: 0.3rem 0.5rem; font-size: 0.75rem; border-radius: 4px; line-height: 1.2;">Reset</button>
+                        </div>
                     </div>
                     
                     <div id="newOrderForm" style="display: none; background: var(--gray-100); padding: 1.5rem; border-radius: 1rem; margin-bottom: 1rem;">
