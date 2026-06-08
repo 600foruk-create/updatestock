@@ -67,38 +67,38 @@
                     </div>
                     
                     <h3 style="margin:1rem 0; color:var(--sky-600);">Recent Transactions</h3>
-                    <div class="filter-bar" style="display: flex; gap: 0.4rem; margin-bottom: 1rem; background: var(--gray-50); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--gray-200); align-items: center; overflow-x: auto; white-space: nowrap;">
-                        <div style="display: flex; gap: 0.4rem; flex: 1; min-width: min-content; align-items: center;">
-                            <input type="text" id="transSearch" placeholder="Search Brand/Product..." onkeyup="refreshTransactions()" style="flex: 1; min-width: 120px; padding: 0.4rem 0.6rem; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 0.8rem;">
-                            <select id="transMonthFilter" onchange="refreshTransactions()" style="padding: 0.4rem 0.6rem; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 0.8rem; width: auto;">
-                                <option value="">All Months</option>
-                                <option value="1">January</option>
-                                <option value="2">February</option>
-                                <option value="3">March</option>
-                                <option value="4">April</option>
+                    <div class="filter-bar" style="display: flex; gap: 0.4rem; margin-bottom: 1rem; background: var(--gray-50); padding: 0.5rem; border-radius: 8px; border: 1px solid var(--gray-200); align-items: center; overflow: hidden; width: 100%;">
+                        <div style="display: flex; gap: 0.3rem; flex: 1; align-items: center;">
+                            <input type="text" id="transSearch" placeholder="Search..." onkeyup="refreshTransactions()" style="width: 120px; padding: 0.3rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.75rem; outline: none;">
+                            <select id="transMonthFilter" onchange="refreshTransactions()" style="padding: 0.3rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.75rem; width: 90px; outline: none;">
+                                <option value="">Month</option>
+                                <option value="1">Jan</option>
+                                <option value="2">Feb</option>
+                                <option value="3">Mar</option>
+                                <option value="4">Apr</option>
                                 <option value="5">May</option>
-                                <option value="6">June</option>
-                                <option value="7">July</option>
-                                <option value="8">August</option>
-                                <option value="9">September</option>
-                                <option value="10">October</option>
-                                <option value="11">November</option>
-                                <option value="12">December</option>
+                                <option value="6">Jun</option>
+                                <option value="7">Jul</option>
+                                <option value="8">Aug</option>
+                                <option value="9">Sep</option>
+                                <option value="10">Oct</option>
+                                <option value="11">Nov</option>
+                                <option value="12">Dec</option>
                             </select>
-                            <select id="transYearFilter" onchange="refreshTransactions()" style="padding: 0.4rem 0.6rem; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 0.8rem; width: auto;">
-                                <option value="">All Years</option>
+                            <select id="transYearFilter" onchange="refreshTransactions()" style="padding: 0.3rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.75rem; width: 70px; outline: none;">
+                                <option value="">Year</option>
                             </select>
                             <div style="display: flex; align-items: center; gap: 0.2rem;">
-                                <input type="date" id="transDateFrom" onchange="refreshTransactions()" style="padding: 0.4rem 0.6rem; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 0.8rem;">
-                                <span style="color: var(--gray-500); font-size: 0.75rem;">to</span>
-                                <input type="date" id="transDateTo" onchange="refreshTransactions()" style="padding: 0.4rem 0.6rem; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 0.8rem;">
+                                <input type="date" id="transDateFrom" onchange="refreshTransactions()" style="padding: 0.3rem 0.2rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.75rem; width: 100px; outline: none;">
+                                <span style="color: var(--gray-500); font-size: 0.7rem;">to</span>
+                                <input type="date" id="transDateTo" onchange="refreshTransactions()" style="padding: 0.3rem 0.2rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.75rem; width: 100px; outline: none;">
                             </div>
                         </div>
                         <div style="display: flex; gap: 0.3rem; align-items: center;">
-                            <button class="btn" onclick="exportTransactions('excel')" style="white-space: nowrap; background: #16a34a; color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; height: 100%;">Excel</button>
-                            <button class="btn" onclick="exportTransactions('pdf')" style="white-space: nowrap; background: #ea580c; color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; height: 100%;">PDF</button>
-                            <button class="btn btn-info" onclick="resetTransactionFilters()" style="white-space: nowrap; padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; height: 100%;">Reset</button>
-                            <button class="btn btn-danger" onclick="clearAllTransactions()" style="white-space: nowrap; padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; height: 100%;">Delete All</button>
+                            <button class="btn" onclick="exportTransactions('excel')" style="white-space: nowrap; background: #16a34a; color: white; padding: 0.3rem 0.5rem; font-size: 0.75rem; border-radius: 4px; line-height: 1.2;">Excel</button>
+                            <button class="btn" onclick="exportTransactions('pdf')" style="white-space: nowrap; background: #ea580c; color: white; padding: 0.3rem 0.5rem; font-size: 0.75rem; border-radius: 4px; line-height: 1.2;">PDF</button>
+                            <button class="btn btn-info" onclick="resetTransactionFilters()" style="white-space: nowrap; padding: 0.3rem 0.5rem; font-size: 0.75rem; border-radius: 4px; line-height: 1.2;">Reset</button>
+                            <button class="btn btn-danger" onclick="clearAllTransactions()" style="white-space: nowrap; padding: 0.3rem 0.5rem; font-size: 0.75rem; border-radius: 4px; line-height: 1.2;">Delete All</button>
                         </div>
                     </div>
                     <div style="max-height: 400px; overflow-y: auto; border: 1px solid var(--gray-200); border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); background: white;">
