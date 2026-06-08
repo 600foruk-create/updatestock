@@ -1,8 +1,22 @@
 <div class="rm-transactions">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;">
-        <h2 style="margin: 0; color: var(--gray-800); display: flex; align-items: center; gap: 10px;">
-            🏗️ Raw Material Issuing
-        </h2>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap;">
+        <!-- Left side controls (Replacing old title) -->
+        <div style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; flex: 1;">
+            <div style="display: flex; background: var(--gray-100); padding: 4px; border-radius: 8px; min-width: 250px; max-width: 300px; border: 1px solid var(--gray-200);">
+                <div class="mode-toggle-btn active" id="modeBtn_SINGLE" onclick="setRMOutMode('SINGLE')" style="flex: 1; text-align:center; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.3s; font-size: 0.9rem;">
+                    Single Item
+                </div>
+                <div class="mode-toggle-btn" id="modeBtn_FORMULA" onclick="setRMOutMode('FORMULA')" style="flex: 1; text-align:center; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.3s; font-size: 0.9rem;">
+                    Use Formula
+                </div>
+                <input type="hidden" id="rmOutMode" value="SINGLE">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+                <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.3rem; font-size: 0.8rem; display: block;">Issue Date</label>
+                <input type="date" id="rmOutDate" class="form-control" style="height: 38px; border-radius: 6px; border: 2px solid #000; width: 180px; background: white; font-size: 0.85rem; padding: 0.4rem 0.6rem;">
+            </div>
+        </div>
         
         <!-- Formula Issuance Tracker -->
         <div id="rmFormulaOutMetric" style="background: white; padding: 0.5rem 1.2rem; border-radius: 12px; border: 2px solid var(--sky-500); display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
@@ -18,22 +32,7 @@
         </div>
     </div>
 
-    
     <div class="form-card" style="margin-bottom: 2rem; background: transparent; box-shadow: none; border: none; padding: 0;">
-        <!-- Segmented Control Style Toggles -->
-        <div style="margin-bottom: 2rem; display: flex; background: var(--gray-100); padding: 5px; border-radius: 12px; max-width: 500px; border: 1px solid var(--gray-200);">
-            <div class="mode-toggle-btn active" id="modeBtn_SINGLE" onclick="setRMOutMode('SINGLE')" style="flex: 1; text-align:center; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 700; transition: 0.3s; font-size: 1rem;">
-                Single Item
-            </div>
-            <div class="mode-toggle-btn" id="modeBtn_FORMULA" onclick="setRMOutMode('FORMULA')" style="flex: 1; text-align:center; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 700; transition: 0.3s; font-size: 0.95rem;">
-                Use Formula
-            </div>
-            <input type="hidden" id="rmOutMode" value="SINGLE">
-        </div>
-                <div class="form-group" style="margin-bottom: 1rem;">
-            <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Issue Date</label>
-            <input type="date" id="rmOutDate" class="form-control" style="height: 40px; border-radius: 8px; border: 2px solid #000; width: 250px; background: white;">
-        </div>
 
         <!-- Single Item Mode Container -->
         <div id="rmOutSingleContainer" style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 1rem;">
