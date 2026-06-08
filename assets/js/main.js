@@ -2220,7 +2220,7 @@ function refreshAuditList() {
                         <td id="auditDiffPcs_${item.id}" class="diff-pcs-val ${diffClass}">${(diffPcs > 0 ? '+' : '') + diffPcs}</td>
                         <td id="auditDiffKg_${item.id}" class="diff-kg-val ${diffClass}">${(diffPcs > 0 ? '+' : '') + diffKg}</td>
                         <td class="no-print">
-                            <button class="btn btn-primary btn-sm" onclick="adjustStockToSystem(${item.id})" title="Adjust system stock to match manual count">Adjust</button>
+                            <button class="btn btn-primary btn-sm" style="padding: 0.1rem 0.4rem; font-size: 0.75rem;" onclick="adjustStockToSystem(${item.id})" title="Adjust system stock to match manual count">Adjust</button>
                         </td>
                     </tr>
                 `;

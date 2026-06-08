@@ -1744,13 +1744,13 @@
 .audit-table th {
     background: var(--gray-100);
     color: #000;
-    padding: 10px;
+    padding: 0.4rem 0.5rem;
     border: 1px solid #000;
     text-align: center;
     font-weight: 600;
 }
 .audit-table td {
-    padding: 8px;
+    padding: 0.2rem 0.5rem;
     border: 1px solid #000;
     text-align: center;
 }
@@ -1769,7 +1769,8 @@
 }
 .godown-input {
     width: 80px;
-    padding: 5px;
+    padding: 2px 5px;
+    height: 24px;
     border: 1px solid var(--sky-200);
     border-radius: 4px;
     text-align: center;
@@ -1943,13 +1944,13 @@
 .audit-table th {
     background: var(--gray-100);
     color: #000;
-    padding: 10px;
+    padding: 0.4rem 0.5rem;
     border: 1px solid #000;
     text-align: center;
     font-weight: 600;
 }
 .audit-table td {
-    padding: 8px;
+    padding: 0.2rem 0.5rem;
     border: 1px solid #000;
     text-align: center;
 }
@@ -1968,7 +1969,8 @@
 }
 .godown-input {
     width: 80px;
-    padding: 5px;
+    padding: 2px 5px;
+    height: 24px;
     border: 1px solid var(--sky-200);
     border-radius: 4px;
     text-align: center;
