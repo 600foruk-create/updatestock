@@ -34,3 +34,13 @@
     </div>
 </div>
 
+<style>
+.rm-balance .data-table {
+    border: 1px solid #000 !important;
+    border-collapse: collapse !important;
+}
+.rm-balance .data-table th,
+.rm-balance .data-table td {
+    border: 1px solid #000 !important;
+}
+</style>
