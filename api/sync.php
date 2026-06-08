@@ -432,6 +432,18 @@ try {
         elseif ($action === 'delete_rm_consumption_log') {
             $id = $input['id'] ?? null;
             if ($id) {
+                // Get the date of the log to delete associated brand logs
+                $logDateStmt = $conn->prepare("SELECT date FROM rm_consumption_logs WHERE id = ?");
+                $logDateStmt->execute([$id]);
+                $logDateRow = $logDateStmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($logDateRow) {
+                    $logDate = date('Y-m-d', strtotime($logDateRow['date']));
+                    // Delete brand logs for the same day
+                    $delBrandsStmt = $conn->prepare("DELETE FROM rm_brand_consumption_logs WHERE DATE(date) = ?");
+                    $delBrandsStmt->execute([$logDate]);
+                }
+
                 $stmt = $conn->prepare("DELETE FROM rm_consumption_logs WHERE id = ?");
                 $stmt->execute([$id]);
                 echo json_encode(['status' => 'success']);
@@ -440,6 +452,7 @@ try {
 
         elseif ($action === 'clear_rm_consumption_history') {
             $conn->exec("DELETE FROM rm_consumption_logs");
+            $conn->exec("DELETE FROM rm_brand_consumption_logs");
             echo json_encode(['status' => 'success']);
         }
 

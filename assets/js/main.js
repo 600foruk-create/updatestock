@@ -8281,6 +8281,12 @@ async function deleteRMConsumptionEntry(id) {
     }
     if (!confirm('Are you sure you want to delete this entry?')) return;
     try {
+        const logToDelete = rmConsumptionLogs.find(l => l.id == id);
+        let dateOnly = null;
+        if (logToDelete) {
+            dateOnly = logToDelete.date.substring(0, 10);
+        }
+
         const response = await fetch('api/sync.php?action=delete_rm_consumption_log', {
             method: 'POST',
             body: JSON.stringify({ id })
@@ -8288,7 +8294,11 @@ async function deleteRMConsumptionEntry(id) {
         const result = await response.json();
         if (result.status === 'success') {
             rmConsumptionLogs = rmConsumptionLogs.filter(l => l.id != id);
+            if (dateOnly) {
+                rmBrandConsumptionLogs = rmBrandConsumptionLogs.filter(l => l.date.substring(0, 10) !== dateOnly);
+            }
             refreshRMConsumptionHistory();
+            refreshRMConsumptionReport(); // Refresh top dashboard if needed
         }
     } catch (e) { console.error('Failed to delete log:', e); }
 }
@@ -8307,7 +8317,9 @@ async function clearRMConsumptionHistory() {
         const result = await response.json();
         if (result.status === 'success') {
             rmConsumptionLogs = [];
+            rmBrandConsumptionLogs = [];
             refreshRMConsumptionHistory();
+            refreshRMConsumptionReport();
         }
     } catch (e) { console.error('Failed to clear history:', e); }
 }
