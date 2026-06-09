@@ -117,7 +117,7 @@
     <div class="store-form-grid">
         <div class="store-field">
             <label>Select Item</label>
-            <select id="storeOutwardItemSelect" class="form-control select2">
+            <select id="storeOutwardItemSelect" class="form-control select2 store-control" style="width: 100%;">
                 <!-- Populated by JS -->
             </select>
         </div>
