@@ -832,12 +832,13 @@
         /* Entry Rows */
         .entry-row {
             background: var(--gray-100);
-            padding: 0.8rem;
-            border-radius: 0.8rem;
-            margin-bottom: 0.5rem;
+            padding: 0.4rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.3rem;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 0.5rem;
+            align-items: center;
         }
 
         .searchable-wrapper {

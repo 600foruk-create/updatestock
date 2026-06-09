@@ -46,15 +46,17 @@
                     
                     <div id="newOrderForm" style="display: none; background: var(--gray-100); padding: 1.5rem; border-radius: 1rem; margin-bottom: 1rem;">
                         <h3 style="color: var(--sky-600);">Create New Order</h3>
-                        <div class="form-group">
-                            <label>Date</label>
-                            <input type="datetime-local" id="orderDate" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Customer</label>
-                            <div style="display:flex; gap:0.5rem; align-items:center;">
-                                <div id="newCustomerWrapper" style="flex:1;"></div>
-                                <button type="button" class="btn btn-success" onclick="showAddCustomerModal()" style="white-space: nowrap;">➕ Add New</button>
+                        <div style="display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 1rem;">
+                            <div class="form-group" style="flex: 0 0 250px; margin-bottom: 0;">
+                                <label>Date</label>
+                                <input type="datetime-local" id="orderDate" class="form-control" style="padding: 0.4rem; font-size: 0.9rem;">
+                            </div>
+                            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                <label>Customer</label>
+                                <div style="display:flex; gap:0.5rem; align-items:center;">
+                                    <div id="newCustomerWrapper" style="flex:1;"></div>
+                                    <button type="button" class="btn btn-success" onclick="showAddCustomerModal()" style="padding: 0.4rem 0.8rem; font-size: 0.9rem; white-space: nowrap;">➕ Add New</button>
+                                </div>
                             </div>
                         </div>
                         <div id="newOrderRows"></div>
