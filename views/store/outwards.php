@@ -4,12 +4,11 @@
         .store-form-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            gap: 15px;
             background: white;
-            padding: 2.5rem;
-            border-radius: 20px;
-            border: 1px solid var(--gray-200);
-            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--sky-200);
             margin-bottom: 2rem;
         }
         .store-field {
@@ -33,19 +32,16 @@
             align-items: center;
         }
         .store-control {
-            height: 48px !important;
-            border-radius: 12px !important;
-            border: 2px solid #f1f5f9 !important;
-            padding: 0 15px !important;
-            font-size: 0.95rem !important;
+            height: 38px !important;
+            border-radius: 6px !important;
+            border: 2px solid #000 !important;
+            padding: 0.4rem 0.6rem !important;
+            font-size: 0.9rem !important;
             width: 100% !important;
-            transition: all 0.2s ease;
-            background: #fdfdfd !important;
+            background: #fff !important;
         }
         .store-control:focus {
-            border-color: #f87171 !important;
-            background: white !important;
-            box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.1) !important;
+            border-color: var(--sky-500) !important;
             outline: none;
         }
         /* Custom Dropdown Styling */
@@ -106,14 +102,15 @@
         }
         /* Select2 override to match heights */
         .select2-container--default .select2-selection--single {
-            height: 48px !important;
-            border: 2px solid #f1f5f9 !important;
-            border-radius: 12px !important;
+            height: 38px !important;
+            border: 2px solid #000 !important;
+            border-radius: 6px !important;
             display: flex !important;
             align-items: center !important;
         }
         .select2-container--default .select2-selection--single .select2-selection__rendered {
-            padding-left: 15px !important;
+            padding-left: 0.6rem !important;
+            font-size: 0.9rem !important;
         }
     </style>
 
@@ -171,8 +168,8 @@
             <input type="text" id="storeIssueNotes" class="store-control" placeholder="Optional notes...">
         </div>
         
-        <div style="grid-column: span 2; display: flex; justify-content: flex-end; margin-top: 1rem; border-top: 1px solid #f1f5f9; padding-top: 2rem;">
-            <button class="btn btn-danger btn-lg" onclick="saveStoreOutward()" style="padding: 0.8rem 5rem; font-weight: 800; border-radius: 12px; box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3); letter-spacing: 0.5px; transition: all 0.3s ease;">
+        <div style="grid-column: span 2; display: flex; justify-content: flex-end; margin-top: 0.5rem; border-top: 1px solid var(--sky-200); padding-top: 1.5rem;">
+            <button class="btn btn-primary" onclick="saveStoreOutward()" style="padding: 0.6rem 2rem; font-weight: 700; border-radius: 8px;">
                 Record Outward Record
             </button>
         </div>

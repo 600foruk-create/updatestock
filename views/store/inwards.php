@@ -1,34 +1,60 @@
 <div class="store-inwards" style="padding: 1rem;">
     <!-- INWARD FORM -->
-    <div class="row" style="background: white; padding: 2.5rem; border-radius: 20px; border: 1px solid var(--gray-200); box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+    <style>
+        .store-control {
+            height: 38px !important;
+            border-radius: 6px !important;
+            border: 2px solid #000 !important;
+            padding: 0.4rem 0.6rem !important;
+            font-size: 0.9rem !important;
+            width: 100% !important;
+            background: #fff !important;
+        }
+        .store-control:focus {
+            border-color: var(--sky-500) !important;
+            outline: none;
+        }
+        .select2-container--default .select2-selection--single {
+            height: 38px !important;
+            border: 2px solid #000 !important;
+            border-radius: 6px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            padding-left: 0.6rem !important;
+            font-size: 0.9rem !important;
+        }
+    </style>
+    <div class="row" style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--sky-200); margin-bottom: 2rem;">
         <div class="col-md-4">
             <div class="form-group">
-                <label style="font-weight: 700; color: var(--gray-700); font-size: 0.9rem;">Select Item</label>
-                <select id="storeInwardItemSelect" class="form-control select2" style="width: 100%;">
+                <label style="font-weight: 700; color: var(--gray-700); font-size: 0.85rem; margin-bottom: 0.3rem;">Select Item</label>
+                <select id="storeInwardItemSelect" class="form-control select2 store-control" style="width: 100%;">
                     <!-- Populated by JS -->
                 </select>
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label style="font-weight: 700; color: var(--gray-700); font-size: 0.9rem;">Quantity</label>
-                <input type="number" id="storeInwardQty" class="form-control" value="1" min="1" step="0.01" style="border-radius: 10px;">
+                <label style="font-weight: 700; color: var(--gray-700); font-size: 0.85rem; margin-bottom: 0.3rem;">Quantity</label>
+                <input type="number" id="storeInwardQty" class="store-control" value="1" min="1" step="0.01">
             </div>
         </div>
         <div class="col-md-5">
             <div class="form-group">
-                <label style="font-weight: 700; color: var(--gray-700); font-size: 0.9rem;">Supplier / Source</label>
-                <input type="text" id="storeInwardSource" class="form-control" placeholder="Vendor name or Department" style="border-radius: 10px;">
+                <label style="font-weight: 700; color: var(--gray-700); font-size: 0.85rem; margin-bottom: 0.3rem;">Supplier / Source</label>
+                <input type="text" id="storeInwardSource" class="store-control" placeholder="Vendor name or Department">
             </div>
         </div>
-        <div class="col-md-12" style="margin-top: 1rem;">
+        <div class="col-md-12" style="margin-top: 0.5rem;">
             <div class="form-group">
-                <label style="font-weight: 700; color: var(--gray-700); font-size: 0.9rem;">Remarks / Notes</label>
-                <textarea id="storeInwardNotes" class="form-control" rows="2" placeholder="Any additional details..." style="border-radius: 10px;"></textarea>
+                <label style="font-weight: 700; color: var(--gray-700); font-size: 0.85rem; margin-bottom: 0.3rem;">Remarks / Notes</label>
+                <input type="text" id="storeInwardNotes" class="store-control" placeholder="Any additional details...">
             </div>
         </div>
-        <div class="col-12" style="margin-top: 2rem; display: flex; justify-content: flex-end;">
-            <button class="btn btn-primary btn-lg" onclick="saveStoreInward()" style="padding: 0.8rem 3rem; font-weight: 800; border-radius: 12px; box-shadow: 0 4px 15px rgba(12, 166, 242, 0.3); letter-spacing: 0.5px;">
+        <div class="col-12" style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+            <button class="btn btn-primary" onclick="saveStoreInward()" style="padding: 0.6rem 2rem; font-weight: 700; border-radius: 8px;">
                 Save Inward Record
             </button>
         </div>
