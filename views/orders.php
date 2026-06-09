@@ -51,7 +51,7 @@
                                 <label>Date</label>
                                 <input type="datetime-local" id="orderDate" class="form-control" style="padding: 0.4rem; font-size: 0.9rem;">
                             </div>
-                            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                            <div class="form-group" style="flex: 0 0 250px; margin-bottom: 0;">
                                 <label>Customer</label>
                                 <div style="display:flex; gap:0.5rem; align-items:center;">
                                     <div id="newCustomerWrapper" style="flex:1;"></div>
