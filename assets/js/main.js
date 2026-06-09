@@ -876,7 +876,7 @@ function refreshCustomersList() {
             distCustomers.forEach(c => {
                 customerRows += `
                     <div class="item-row" style="background:white; margin-bottom:0.5rem; border-radius:0.5rem; padding:0.8rem;">
-                        <div class="item-info" style="display: flex; align-items: center; gap: 1rem; flex-wrap: nowrap; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <div class="item-info" style="display: flex; flex-direction: row !important; align-items: center; gap: 1rem; flex-wrap: nowrap; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             <span class="item-name-badge" style="background:var(--orange-500); margin: 0;">${c.uniqueId}</span>
                             <span style="font-weight:700; font-size:1rem;">${c.name}</span>
                             <span style="font-size:0.85rem; color:var(--gray-500);">
