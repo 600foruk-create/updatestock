@@ -4334,10 +4334,10 @@ function showInvoice(orderId) {
             const qty = parseInt(item.quantity || 0);
             itemsHtml += `<tr>
                         <td>${item.productCode || 'N/A'}</td>
-                        <td>${item.length || 13} ft</td>
-                        <td>${weight.toFixed(2)} KG</td>
-                        <td>${qty}</td>
-                        <td>${(weight * qty).toFixed(2)} KG</td>
+                        <td style="white-space: nowrap;">${item.length || 13} ft</td>
+                        <td style="white-space: nowrap;">${weight.toFixed(2)} KG</td>
+                        <td style="white-space: nowrap;">${qty}</td>
+                        <td style="white-space: nowrap;">${(weight * qty).toFixed(2)} KG</td>
                     </tr>`;
         });
 

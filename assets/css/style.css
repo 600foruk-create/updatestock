@@ -801,6 +801,10 @@
             border-bottom: 1px solid #000;
             font-size: 0.9rem;
         }
+        
+        .order-item-row:last-child {
+            border-bottom: none;
+        }
 
         .product-code {
             font-weight: 600;
