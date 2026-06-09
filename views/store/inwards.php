@@ -27,28 +27,28 @@
         }
     </style>
     <div class="row" style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--sky-200); margin-bottom: 2rem;">
-        <div class="col-md-4">
-            <div class="form-group">
+        <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 0.5rem;">
                 <label style="font-weight: 700; color: var(--gray-700); font-size: 0.85rem; margin-bottom: 0.3rem;">Select Item</label>
                 <select id="storeInwardItemSelect" class="form-control select2 store-control" style="width: 100%;">
                     <!-- Populated by JS -->
                 </select>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="form-group">
+        <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 0.5rem;">
                 <label style="font-weight: 700; color: var(--gray-700); font-size: 0.85rem; margin-bottom: 0.3rem;">Quantity</label>
                 <input type="number" id="storeInwardQty" class="store-control" value="1" min="1" step="0.01">
             </div>
         </div>
-        <div class="col-md-5">
-            <div class="form-group">
+        <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 0.5rem;">
                 <label style="font-weight: 700; color: var(--gray-700); font-size: 0.85rem; margin-bottom: 0.3rem;">Supplier / Source</label>
                 <input type="text" id="storeInwardSource" class="store-control" placeholder="Vendor name or Department">
             </div>
         </div>
-        <div class="col-md-12" style="margin-top: 0.5rem;">
-            <div class="form-group">
+        <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 0.5rem;">
                 <label style="font-weight: 700; color: var(--gray-700); font-size: 0.85rem; margin-bottom: 0.3rem;">Remarks / Notes</label>
                 <input type="text" id="storeInwardNotes" class="store-control" placeholder="Any additional details...">
             </div>
@@ -95,16 +95,34 @@
             </div>
         </div>
 
+        <style>
+            #storeInwardHistoryTable {
+                border: 1px solid #000 !important;
+                border-collapse: collapse !important;
+            }
+            #storeInwardHistoryTable th,
+            #storeInwardHistoryTable td {
+                border: 1px solid #000 !important;
+            }
+            #storeInwardHistoryTable th {
+                padding: 0.4rem 0.5rem !important;
+                font-size: 0.85rem !important;
+            }
+            #storeInwardHistoryTable td {
+                padding: 0.3rem 0.5rem !important;
+                font-size: 0.85rem !important;
+            }
+        </style>
         <div id="storeInwardHistoryTableContainer" style="overflow-x: auto;">
-            <table class="table" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
-                <thead style="background: #f8fafc;">
-                    <tr style="color: var(--gray-500); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px;">
-                        <th style="padding: 15px; border-radius: 10px 0 0 10px;">Date & Time</th>
-                        <th style="padding: 15px;">Item Code</th>
-                        <th style="padding: 15px;">Item Name</th>
-                        <th style="padding: 15px; text-align: center;">Qty</th>
-                        <th style="padding: 15px;">Supplier/Source</th>
-                        <th style="padding: 15px; text-align: right; border-radius: 0 10px 10px 0;">Actions</th>
+            <table class="table" id="storeInwardHistoryTable" style="width: 100%; margin-bottom: 0;">
+                <thead style="background: #f1f5f9;">
+                    <tr style="color: var(--gray-700); font-weight: 700;">
+                        <th>Date & Time</th>
+                        <th>Item Code</th>
+                        <th>Item Name</th>
+                        <th style="text-align: center;">Qty</th>
+                        <th>Supplier/Source</th>
+                        <th style="text-align: center; width: 100px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="storeInwardHistoryBody">

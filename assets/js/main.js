@@ -9806,17 +9806,16 @@ function refreshStoreInwardHistory() {
     }
 
     tbody.innerHTML = filtered.map(t => `
-        <tr style="background: white; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
-            <td style="padding: 15px; border-radius: 10px 0 0 10px;">
+        <tr style="border-bottom: 1px solid #000;">
+            <td style="border: 1px solid #000; padding: 0.3rem 0.5rem;">
                 <div style="font-weight: 700; color: #1e293b;">${formatDate(t.date)}</div>
-
             </td>
-            <td style="padding: 15px; font-family: monospace; font-weight: 700; color: #0ea5e9;">${t.itemCode}</td>
-            <td style="padding: 15px; font-weight: 600;">${t.itemName}</td>
-            <td style="padding: 15px; text-align: center;"><span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-weight: 800;">+${t.quantity}</span></td>
-            <td style="padding: 15px; color: #475569; max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${t.source_or_person || '-'}</td>
-            <td style="padding: 15px; text-align: right; border-radius: 0 10px 10px 0;">
-                <button class="btn btn-sm" onclick="deleteStoreTransaction(${t.id}, 'INWARD')" style="background: #fee2e2; color: #ef4444; border: none; padding: 5px 12px; border-radius: 6px; font-weight: 700;">Delete</button>
+            <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; font-family: monospace; font-weight: 700; color: #0ea5e9;">${t.itemCode}</td>
+            <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; font-weight: 600;">${t.itemName}</td>
+            <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; text-align: center;"><span style="background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-weight: 800; font-size: 0.8rem;">+${t.quantity}</span></td>
+            <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; color: #475569; max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${t.source_or_person || '-'}</td>
+            <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; text-align: center;">
+                <button class="btn btn-sm btn-danger" onclick="deleteStoreTransaction(${t.id}, 'INWARD')" style="padding: 0.2rem 0.4rem; font-size: 0.75rem;">Delete</button>
             </td>
         </tr>
     `).join('');
