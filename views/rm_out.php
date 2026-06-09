@@ -52,11 +52,11 @@
             <div style="display: grid; grid-template-columns: 1.5fr 1fr 1.5fr; gap: 1.5rem; align-items: flex-end;">
                 <div class="form-group" style="margin-bottom: 0;">
                     <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Select Production Formula</label>
-                    <select id="rmOutFormulaSelect" class="form-control" onchange="previewFormulaUsage()" style="height: 48px; padding: 0.6rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid var(--sky-500); width: 100%; background: white;"></select>
+                    <select id="rmOutFormulaSelect" class="form-control" onchange="previewFormulaUsage()" style="height: 38px; padding: 0.4rem 0.6rem; font-size: 0.9rem; border-radius: 6px; border: 2px solid var(--sky-500); width: 100%; background: white;"></select>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                     <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Batch Multiplier</label>
-                    <input type="number" id="rmOutFormulaQty" class="form-control" style="height: 48px; padding: 0.6rem 1rem; font-size: 1rem; border-radius: 8px; border: 2px solid #000; background: white; width: 100%;" value="1" step="0.1" oninput="recalculateFormulaTotalValue()">
+                    <input type="number" id="rmOutFormulaQty" class="form-control" style="height: 38px; padding: 0.4rem 0.6rem; font-size: 0.9rem; border-radius: 6px; border: 2px solid #000; background: white; width: 100%;" value="1" step="0.1" onfocus="this.select()" oninput="recalculateFormulaTotalValue()">
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                     <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.5rem; font-size: 0.9rem; display: block;">Formula Reference Notes</label>

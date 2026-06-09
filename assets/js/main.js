@@ -7126,12 +7126,17 @@ function previewFormulaUsage() {
     
     if (list) {
         list.innerHTML = `
-            <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 8px; font-size: 0.75rem; font-weight: 800; color: var(--gray-400); text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid var(--gray-100); padding-bottom: 5px;">
-                <span>Material</span>
-                <span style="text-align: right;">Qty (KG)</span>
-                <span style="text-align: right;">Price</span>
-                <span style="text-align: right;">Subtotal</span>
-            </div>
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-size: 0.85rem; margin-bottom: 0;">
+                <thead style="background: var(--sky-50);">
+                    <tr>
+                        <th style="border: 1px solid #000; padding: 0.4rem; text-align: left;">Material</th>
+                        <th style="border: 1px solid #000; padding: 0.4rem; text-align: right; width: 100px;">Qty (KG)</th>
+                        <th style="border: 1px solid #000; padding: 0.4rem; text-align: right; width: 100px;">Price</th>
+                        <th style="border: 1px solid #000; padding: 0.4rem; text-align: right; width: 120px;">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody id="rmFormulaIngredientsTbody"></tbody>
+            </table>
         `;
     }
     
@@ -7149,19 +7154,22 @@ function previewFormulaUsage() {
             const subtotal = fi.quantity * priceVal;
             totalFormulaValue += subtotal;
 
-            const row = document.createElement('div');
-            row.style.cssText = 'display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 8px; align-items: center; background: white; padding: 5px 10px; border-radius: 6px; border: 1px solid #000; margin-bottom: 2px;';
+            const tbody = list.querySelector('#rmFormulaIngredientsTbody');
+            const row = document.createElement('tr');
             row.innerHTML = `
-                <span style="font-size: 0.85rem; font-weight: 500; color: var(--gray-700);">${name}</span>
-                <input type="number" class="form-control rm-formula-custom-qty" 
-                       data-item-id="${fi.rm_item_id}" 
-                       value="${fi.quantity}" 
-                       style="padding: 2px 6px; font-size: 0.85rem; height: 28px; text-align: right; border: 1px solid #000;"
-                       oninput="recalculateFormulaTotalValue()">
-                <span style="font-size: 0.8rem; text-align: right; color: var(--gray-500);">${priceVal.toFixed(1)}</span>
-                <span style="font-size: 0.85rem; font-weight: 700; text-align: right; color: var(--gray-700);">Rs. ${subtotal.toLocaleString()}</span>
+                <td style="border: 1px solid #000; padding: 0.3rem 0.4rem; font-weight: 500; color: var(--gray-700);">${name}</td>
+                <td style="border: 1px solid #000; padding: 0.2rem 0.4rem;">
+                    <input type="number" class="form-control rm-formula-custom-qty" 
+                           data-item-id="${fi.rm_item_id}" 
+                           value="${fi.quantity}" 
+                           style="width: 100%; padding: 0.2rem; font-size: 0.85rem; text-align: right; border: 1px solid #000; border-radius: 4px;"
+                           onfocus="this.select()"
+                           oninput="recalculateFormulaTotalValue()">
+                </td>
+                <td class="rm-item-price-val" data-price="${priceVal}" style="border: 1px solid #000; padding: 0.3rem 0.4rem; text-align: right; color: var(--gray-600);">${priceVal.toFixed(1)}</td>
+                <td class="rm-item-subtotal-val" style="border: 1px solid #000; padding: 0.3rem 0.4rem; text-align: right; font-weight: bold; color: var(--gray-700);">Rs. ${subtotal.toLocaleString()}</td>
             `;
-            list.appendChild(row);
+            tbody.appendChild(row);
         }
     });
 
