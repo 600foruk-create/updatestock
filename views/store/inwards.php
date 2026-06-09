@@ -1,6 +1,31 @@
 <div class="store-inwards" style="padding: 1rem;">
     <!-- INWARD FORM -->
     <style>
+        .store-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--sky-200);
+            margin-bottom: 2rem;
+        }
+        .store-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+        .store-field label {
+            font-weight: 700;
+            color: var(--gray-700);
+            font-size: 0.85rem;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
         .store-control {
             height: 38px !important;
             border-radius: 6px !important;
@@ -26,34 +51,30 @@
             font-size: 0.9rem !important;
         }
     </style>
-    <div class="row" style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid var(--sky-200); margin-bottom: 2rem;">
-        <div class="col-md-6">
-            <div class="form-group" style="margin-bottom: 0.5rem;">
-                <label style="font-weight: 700; color: var(--gray-700); font-size: 0.85rem; margin-bottom: 0.3rem;">Select Item</label>
-                <select id="storeInwardItemSelect" class="form-control select2 store-control" style="width: 100%;">
-                    <!-- Populated by JS -->
-                </select>
-            </div>
+    <div class="store-form-grid">
+        <div class="store-field">
+            <label>Select Item</label>
+            <select id="storeInwardItemSelect" class="form-control select2 store-control" style="width: 100%;">
+                <!-- Populated by JS -->
+            </select>
         </div>
-        <div class="col-md-6">
-            <div class="form-group" style="margin-bottom: 0.5rem;">
-                <label style="font-weight: 700; color: var(--gray-700); font-size: 0.85rem; margin-bottom: 0.3rem;">Quantity</label>
-                <input type="number" id="storeInwardQty" class="store-control" value="1" min="1" step="0.01">
-            </div>
+        
+        <div class="store-field">
+            <label>Quantity</label>
+            <input type="number" id="storeInwardQty" class="store-control" value="1" min="1" step="0.01">
         </div>
-        <div class="col-md-6">
-            <div class="form-group" style="margin-bottom: 0.5rem;">
-                <label style="font-weight: 700; color: var(--gray-700); font-size: 0.85rem; margin-bottom: 0.3rem;">Supplier / Source</label>
-                <input type="text" id="storeInwardSource" class="store-control" placeholder="Vendor name or Department">
-            </div>
+
+        <div class="store-field">
+            <label>Supplier / Source</label>
+            <input type="text" id="storeInwardSource" class="store-control" placeholder="Vendor name or Department">
         </div>
-        <div class="col-md-6">
-            <div class="form-group" style="margin-bottom: 0.5rem;">
-                <label style="font-weight: 700; color: var(--gray-700); font-size: 0.85rem; margin-bottom: 0.3rem;">Remarks / Notes</label>
-                <input type="text" id="storeInwardNotes" class="store-control" placeholder="Any additional details...">
-            </div>
+
+        <div class="store-field">
+            <label>Remarks / Notes</label>
+            <input type="text" id="storeInwardNotes" class="store-control" placeholder="Any additional details...">
         </div>
-        <div class="col-12" style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+
+        <div style="grid-column: span 2; display: flex; justify-content: flex-end; margin-top: 0.5rem; border-top: 1px solid var(--sky-200); padding-top: 1.5rem;">
             <button class="btn btn-primary" onclick="saveStoreInward()" style="padding: 0.6rem 2rem; font-weight: 700; border-radius: 8px;">
                 Save Inward Record
             </button>
