@@ -213,16 +213,34 @@
             </div>
         </div>
 
+        <style>
+            #storeOutwardHistoryTable {
+                border: 1px solid #000 !important;
+                border-collapse: collapse !important;
+            }
+            #storeOutwardHistoryTable th,
+            #storeOutwardHistoryTable td {
+                border: 1px solid #000 !important;
+            }
+            #storeOutwardHistoryTable th {
+                padding: 0.4rem 0.5rem !important;
+                font-size: 0.85rem !important;
+            }
+            #storeOutwardHistoryTable td {
+                padding: 0.3rem 0.5rem !important;
+                font-size: 0.85rem !important;
+            }
+        </style>
         <div id="storeOutwardHistoryTableContainer" style="overflow-x: auto;">
-            <table class="table" style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+            <table class="table" id="storeOutwardHistoryTable" style="width: 100%; margin-bottom: 0;">
                 <thead style="background: #fff5f5;">
-                    <tr style="color: #9b2c2c; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px;">
-                        <th style="padding: 15px; border-radius: 10px 0 0 10px;">Date & Time</th>
-                        <th style="padding: 15px;">Item Code</th>
-                        <th style="padding: 15px;">Item Name</th>
-                        <th style="padding: 15px; text-align: center;">Qty</th>
-                        <th style="padding: 15px;">Issued To / By</th>
-                        <th style="padding: 15px; text-align: right; border-radius: 0 10px 10px 0;">Actions</th>
+                    <tr style="color: #9b2c2c; font-weight: 700;">
+                        <th>Date & Time</th>
+                        <th>Item Code</th>
+                        <th>Item Name</th>
+                        <th style="text-align: center;">Qty</th>
+                        <th>Issued To / By</th>
+                        <th style="text-align: center; width: 100px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="storeOutwardHistoryBody">

@@ -9840,20 +9840,19 @@ function refreshStoreOutwardHistory() {
     }
 
     tbody.innerHTML = filtered.map(t => `
-        <tr style="background: white; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
-            <td style="padding: 15px; border-radius: 10px 0 0 10px;">
+        <tr style="border-bottom: 1px solid #000;">
+            <td style="border: 1px solid #000; padding: 0.3rem 0.5rem;">
                 <div style="font-weight: 700; color: #1e293b;">${formatDate(t.date)}</div>
-
             </td>
-            <td style="padding: 15px; font-family: monospace; font-weight: 700; color: #f43f5e;">${t.itemCode}</td>
-            <td style="padding: 15px; font-weight: 600;">${t.itemName}</td>
-            <td style="padding: 15px; text-align: center;"><span style="background: #fff1f2; color: #be123c; padding: 4px 10px; border-radius: 6px; font-weight: 800;">-${t.quantity}</span></td>
-            <td style="padding: 15px; color: #475569;">
-                <div style="font-weight: 700;">To: ${t.issued_to || '-'}</div>
-                <div style="font-size: 0.7rem;">By: ${t.issued_by || '-'}</div>
+            <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; font-family: monospace; font-weight: 700; color: #f43f5e;">${t.itemCode}</td>
+            <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; font-weight: 600;">${t.itemName}</td>
+            <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; text-align: center;"><span style="background: #fff1f2; color: #be123c; padding: 2px 6px; border-radius: 4px; font-weight: 800; font-size: 0.8rem;">-${t.quantity}</span></td>
+            <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; color: #475569;">
+                <div style="font-weight: 700; font-size: 0.85rem;">To: ${t.issued_to || '-'}</div>
+                <div style="font-size: 0.75rem;">By: ${t.issued_by || '-'}</div>
             </td>
-            <td style="padding: 15px; text-align: right; border-radius: 0 10px 10px 0;">
-                <button class="btn btn-sm" onclick="deleteStoreTransaction(${t.id}, 'OUTWARD')" style="background: #fee2e2; color: #ef4444; border: none; padding: 5px 12px; border-radius: 6px; font-weight: 700;">Delete</button>
+            <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; text-align: center;">
+                <button class="btn btn-sm btn-danger" onclick="deleteStoreTransaction(${t.id}, 'OUTWARD')" style="padding: 0.2rem 0.4rem; font-size: 0.75rem;">Delete</button>
             </td>
         </tr>
     `).join('');
@@ -9932,14 +9931,14 @@ function refreshStoreInventory() {
         const isCollapsed = !storeExpandedIds.has('cat_' + cat.id);
         const card = document.createElement('div');
         card.className = 'store-cat-card';
-        card.style.marginBottom = '2rem';
+        card.style.marginBottom = '1rem';
         card.style.border = '1px solid var(--sky-200)';
-        card.style.borderRadius = '20px';
+        card.style.borderRadius = '4px';
         card.style.overflow = 'hidden';
-        card.style.boxShadow = '0 10px 25px -5px rgba(0,0,0,0.05)';
+        card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
         
         const header = document.createElement('div');
-        header.style.padding = '1.2rem 2rem';
+        header.style.padding = '0.5rem 1rem';
         header.style.background = 'linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 100%)';
         header.style.display = 'flex';
         header.style.justifyContent = 'space-between';
@@ -9948,8 +9947,8 @@ function refreshStoreInventory() {
         header.style.borderLeft = '6px solid var(--sky-600)';
         
         header.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 1.5rem;">
-                <div style="background: white; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; align-items: center; gap: 0.8rem;">
+                <div style="background: white; width: 35px; height: 35px; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);">
                     <i class="fas ${isCollapsed ? 'fa-box' : 'fa-box-open'}" style="color: var(--sky-600); font-size: 1.4rem;"></i>
                 </div>
                 <div>
@@ -10005,13 +10004,13 @@ function refreshStoreInventory() {
             subs.forEach(sub => {
                 const subIsCollapsed = !storeExpandedIds.has('sub_' + sub.id);
                 const subDiv = document.createElement('div');
-                subDiv.style.marginBottom = '1.5rem';
+                subDiv.style.marginBottom = '0.6rem';
                 subDiv.style.border = '1px solid #dcfce7';
-                subDiv.style.borderRadius = '16px';
+                subDiv.style.borderRadius = '4px';
                 subDiv.style.overflow = 'hidden';
                 
                 const subHeader = document.createElement('div');
-                subHeader.style.padding = '1rem 1.5rem';
+                subHeader.style.padding = '0.4rem 0.8rem';
                 subHeader.style.background = '#f0fdf4';
                 subHeader.style.display = 'flex';
                 subHeader.style.justifyContent = 'space-between';
@@ -10020,7 +10019,7 @@ function refreshStoreInventory() {
                 subHeader.style.borderLeft = '5px solid #22c55e';
                 
                 subHeader.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <i class="fas ${subIsCollapsed ? 'fa-plus-circle' : 'fa-minus-circle'}" style="color: #22c55e; font-size: 1.2rem;"></i>
                         <div>
                             <span style="font-weight: 800; color: #14532d; font-size: 1.05rem;">${sub.name}</span>
@@ -10082,12 +10081,12 @@ function refreshStoreInventory() {
                     const itms = storeItems.filter(i => i.sub_id == sub.id);
                     if (itms.length > 0) {
                         let tableHtml = `
-                            <table class="table" style="width: 100%; border-collapse: separate; border-spacing: 0 8px;">
-                                <thead style="color: var(--gray-500); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">
+                            <table class="data-table" style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-size: 0.85rem; margin-bottom: 0;">
+                                <thead style="background: #f1f5f9;">
                                     <tr>
-                                        <th style="padding: 10px;">Item Details</th>
-                                        <th style="padding: 10px; text-align: center;">Stock Status</th>
-                                        <th style="padding: 10px; text-align: right;">Actions</th>
+                                        <th style="padding: 0.3rem 0.5rem; border: 1px solid #000; font-weight: 700; color: var(--gray-700);">Item Details</th>
+                                        <th style="padding: 0.3rem 0.5rem; border: 1px solid #000; text-align: center; font-weight: 700; color: var(--gray-700);">Stock Status</th>
+                                        <th style="padding: 0.3rem 0.5rem; border: 1px solid #000; text-align: center; width: 110px; font-weight: 700; color: var(--gray-700);">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -10095,24 +10094,22 @@ function refreshStoreInventory() {
                         itms.forEach(itm => {
                             const isLow = parseFloat(itm.stock) <= parseFloat(itm.low_stock_threshold);
                             tableHtml += `
-                                <tr style="background: #f8fafc; transition: all 0.2s;">
-                                    <td style="padding: 12px 15px; border-radius: 12px 0 0 12px;">
+                                <tr>
+                                    <td style="padding: 0.2rem 0.4rem; border: 1px solid #000;">
                                         <div style="font-weight: 700; color: #1e293b;">${itm.name}</div>
-                                        <div style="font-size: 0.7rem; color: var(--sky-600); font-weight: 600;">CODE: ${itm.code}</div>
+                                        <div style="font-size: 0.75rem; color: var(--gray-500); font-family: monospace;">CODE: ${itm.code}</div>
                                     </td>
-                                    <td style="padding: 12px 15px; text-align: center;">
-                                        <div style="display: inline-flex; align-items: center; gap: 0.8rem;">
-                                            <div style="font-size: 1.1rem; font-weight: 900; color: ${isLow ? '#ef4444' : '#0f172a'};">${itm.stock}</div>
-                                            <div style="font-size: 0.7rem; color: var(--gray-400); background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">Limit: ${itm.low_stock_threshold}</div>
+                                    <td style="padding: 0.2rem 0.4rem; border: 1px solid #000; text-align: center;">
+                                        <div style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                                            <div style="font-size: 0.9rem; font-weight: bold; color: ${isLow ? '#ef4444' : '#0f172a'};">${itm.stock}</div>
+                                            <div style="font-size: 0.7rem; color: var(--gray-400); background: #f1f5f9; padding: 1px 4px; border-radius: 4px;">Limit: ${itm.low_stock_threshold}</div>
                                         </div>
                                     </td>
-                                    <td style="padding: 12px 15px; text-align: right; border-radius: 0 12px 12px 0;">
-                                        <button class="btn btn-sm" onclick="editStoreItem(${itm.id})" style="background: #0ea5e9; color: white; border: none; padding: 6px 15px; border-radius: 8px; font-weight: 700;">
-                                            Edit
-                                        </button>
-                                        <button class="btn btn-sm" onclick="deleteStoreItem(${itm.id})" style="background: #ef4444; color: white; border: none; padding: 6px 15px; border-radius: 8px; margin-left: 5px; font-weight: 700;">
-                                            Delete
-                                        </button>
+                                    <td style="padding: 0.2rem 0.4rem; border: 1px solid #000; text-align: center;">
+                                        <div style="display: flex; justify-content: center; gap: 0.4rem;">
+                                            <button class="btn btn-sm btn-primary" onclick="editStoreItem(${itm.id})" style="padding: 0.2rem 0.4rem; font-size: 0.75rem;">Edit</button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteStoreItem(${itm.id})" style="padding: 0.2rem 0.4rem; font-size: 0.75rem;">Delete</button>
+                                        </div>
                                     </td>
                                 </tr>
                             `;
