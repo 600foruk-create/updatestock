@@ -7369,9 +7369,11 @@ function refreshRMOutHistoryTable() {
                 <td>${formatDate(t.date)}</td>
                 <td colspan="3" style="font-weight: 700; color: var(--sky-700);">📦 ${formulaName} <span style="font-weight: 400; color: var(--gray-600); font-size: 0.85rem; margin-left: 10px;">(${t.items.length} items consumed)</span></td>
                 <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">${extraNotes}</td>
-                <td style="text-align: center; display: flex; gap: 4px; justify-content: center;">
-                    <button class="btn btn-sm" onclick="event.stopPropagation(); revertFormulaGroup(${idsList.replace(/"/g, '&quot;')})" style="background:#0ea5e9; color:white; padding: 3px 6px; font-size: 0.7rem;" title="Remove & Revert All Stock">🔄 Remove</button>
-                    <button class="btn btn-icon text-error" onclick="event.stopPropagation(); deleteFormulaGroup(${idsList.replace(/"/g, '&quot;')})" title="Delete entire formula history">🗑️</button>
+                <td style="text-align: center;">
+                    <div style="display: flex; gap: 4px; justify-content: center;">
+                        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); revertFormulaGroup(${idsList.replace(/"/g, '&quot;')})" style="padding: 0.2rem 0.4rem; font-size: 0.75rem;" title="Remove & Revert All Stock">Revert</button>
+                        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteFormulaGroup(${idsList.replace(/"/g, '&quot;')})" style="padding: 0.2rem 0.4rem; font-size: 0.75rem;" title="Delete entire formula history">Delete</button>
+                    </div>
                 </td>
             `;
             tbody.appendChild(headerRow);
@@ -7401,9 +7403,11 @@ function refreshRMOutHistoryTable() {
                 <td><span class="badge" style="background: #fff5f5; color: var(--error); border: 1px solid #feb2b2;">CONSUMPTION</span></td>
                 <td style="font-weight: bold;">${t.quantity} ${item ? item.unit : ''}</td>
                 <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">${t.notes || ''}</td>
-                <td style="text-align: center; display: flex; gap: 4px; justify-content: center;">
-                    <button class="btn btn-sm" onclick="revertRMTransaction(${t.id})" style="background:#0ea5e9; color:white; padding: 3px 6px; font-size: 0.7rem;" title="Remove & Revert RM Stock">🔄 Remove</button>
-                    <button class="btn btn-icon text-error" onclick="deleteRMTransaction(${t.id})" title="Delete record only">🗑️</button>
+                <td style="text-align: center;">
+                    <div style="display: flex; gap: 4px; justify-content: center;">
+                        <button class="btn btn-primary btn-sm" onclick="revertRMTransaction(${t.id})" style="padding: 0.2rem 0.4rem; font-size: 0.75rem;" title="Remove & Revert RM Stock">Revert</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteRMTransaction(${t.id})" style="padding: 0.2rem 0.4rem; font-size: 0.75rem;" title="Delete record only">Delete</button>
+                    </div>
                 </td>
             `;
             tbody.appendChild(row);

@@ -79,8 +79,8 @@
         </div>
     </div>
 
-    <div class="table-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div style="background: white; overflow-x: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 1rem;">
             <h3 style="margin: 0; color: var(--gray-800);">Recent Consumption History</h3>
             <div style="display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap;">
                 <select id="rmOutMonthFilter" onchange="refreshRMOutHistoryTable()" style="padding: 0.5rem; border: 1px solid var(--gray-300); border-radius: 8px; min-width: 120px; font-size: 0.85rem;">
@@ -109,7 +109,25 @@
                 </button>
             </div>
         </div>
-        <table class="data-table">
+        <style>
+            #rmOutHistoryTable {
+                border: 1px solid #000 !important;
+                border-collapse: collapse !important;
+            }
+            #rmOutHistoryTable th,
+            #rmOutHistoryTable td {
+                border: 1px solid #000 !important;
+            }
+            #rmOutHistoryTable th {
+                padding: 0.4rem 0.5rem !important;
+                font-size: 0.85rem !important;
+            }
+            #rmOutHistoryTable td {
+                padding: 0.3rem 0.5rem !important;
+                font-size: 0.85rem !important;
+            }
+        </style>
+        <table class="data-table" id="rmOutHistoryTable" style="margin-bottom: 0;">
             <thead>
                 <tr>
                     <th>Date</th>
