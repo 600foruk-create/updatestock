@@ -132,10 +132,8 @@
                 <tr>
                     <th>Date</th>
                     <th>Material / Formula</th>
-                    <th>Type</th>
-                    <th>Qty / Multiplier</th>
                     <th>Notes</th>
-                    <th style="width: 80px; text-align: center;">Action</th>
+                    <th style="width: 120px; text-align: center;">Action</th>
                 </tr>
             </thead>
             <tbody id="rmOutTable"></tbody>

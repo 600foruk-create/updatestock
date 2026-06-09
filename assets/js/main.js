@@ -7367,7 +7367,7 @@ function refreshRMOutHistoryTable() {
             
             headerRow.innerHTML = `
                 <td>${formatDate(t.date)}</td>
-                <td colspan="3" style="font-weight: 700; color: var(--sky-700);">📦 ${formulaName} <span style="font-weight: 400; color: var(--gray-600); font-size: 0.85rem; margin-left: 10px;">(${t.items.length} items consumed)</span></td>
+                <td style="font-weight: 700; color: var(--sky-700);">📦 ${formulaName} <span style="font-weight: 400; color: var(--gray-600); font-size: 0.85rem; margin-left: 10px;">(${t.items.length} items consumed)</span></td>
                 <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">${extraNotes}</td>
                 <td style="text-align: center;">
                     <div style="display: flex; gap: 4px; justify-content: center;">
@@ -7378,30 +7378,45 @@ function refreshRMOutHistoryTable() {
             `;
             tbody.appendChild(headerRow);
             
+            const nestedRow = document.createElement('tr');
+            nestedRow.className = 'formula-group-child ' + t.groupId;
+            nestedRow.style.display = 'none';
+            
+            let nestedHTML = `<td colspan="4" style="padding: 0; background: #fafafa;">
+                <table style="width: 100%; border-collapse: collapse; margin: 0; border: 2px solid var(--sky-200);">
+                    <thead style="background: var(--sky-50);">
+                        <tr>
+                            <th style="padding: 0.2rem 0.5rem; border: 1px solid var(--sky-200); font-size: 0.75rem;">Material</th>
+                            <th style="padding: 0.2rem 0.5rem; border: 1px solid var(--sky-200); font-size: 0.75rem;">Type</th>
+                            <th style="padding: 0.2rem 0.5rem; border: 1px solid var(--sky-200); font-size: 0.75rem;">Qty</th>
+                            <th style="padding: 0.2rem 0.5rem; border: 1px solid var(--sky-200); font-size: 0.75rem;">Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
             t.items.forEach(child => {
                 const item = rmItems.find(i => i.id == child.rm_item_id);
-                const row = document.createElement('tr');
-                row.className = 'formula-group-child ' + t.groupId;
-                row.style.display = 'none';
-                row.style.background = '#fafafa';
-                row.innerHTML = `
-                    <td style="padding-left: 1.5rem; color: #aaa;">↳</td>
-                    <td style="font-weight: 600;">${item ? item.name : 'Unknown'}</td>
-                    <td><span class="badge" style="background: #fff5f5; color: var(--error); border: 1px solid #feb2b2;">CONSUMPTION</span></td>
-                    <td style="font-weight: bold;">${child.quantity} ${item ? item.unit : ''}</td>
-                    <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">Part of ${formulaName}</td>
-                    <td style="text-align: center; color: var(--gray-400); font-size: 0.8rem;">---</td>
+                nestedHTML += `
+                        <tr>
+                            <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--sky-200); font-weight: 600;">↳ ${item ? item.name : 'Unknown'}</td>
+                            <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--sky-200);"><span class="badge" style="background: #fff5f5; color: var(--error); border: 1px solid #feb2b2; padding: 2px 5px; font-size: 0.65rem;">CONSUMPTION</span></td>
+                            <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--sky-200); font-weight: bold; color: var(--error);">-${child.quantity} ${item ? item.unit : ''}</td>
+                            <td style="padding: 0.2rem 0.5rem; border: 1px solid var(--sky-200); color: var(--gray-500); font-style: italic; font-size: 0.8rem;">Part of ${formulaName}</td>
+                        </tr>
                 `;
-                tbody.appendChild(row);
             });
+            
+            nestedHTML += `</tbody></table></td>`;
+            nestedRow.innerHTML = nestedHTML;
+            tbody.appendChild(nestedRow);
+            
         } else {
             const item = rmItems.find(i => i.id == t.rm_item_id);
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${formatDate(t.date)}</td>
-                <td style="font-weight: 600;">${item ? item.name : 'Unknown'}</td>
-                <td><span class="badge" style="background: #fff5f5; color: var(--error); border: 1px solid #feb2b2;">CONSUMPTION</span></td>
-                <td style="font-weight: bold;">${t.quantity} ${item ? item.unit : ''}</td>
+                <td style="font-weight: 600;">${item ? item.name : 'Unknown'} <span style="color: var(--error); margin-left: 10px; font-weight: bold;">(-${t.quantity} ${item ? item.unit : ''})</span></td>
                 <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">${t.notes || ''}</td>
                 <td style="text-align: center;">
                     <div style="display: flex; gap: 4px; justify-content: center;">
