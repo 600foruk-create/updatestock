@@ -4,13 +4,31 @@
         <p style="color: var(--gray-500); margin-top: 0.2rem;">Access and manage your saved historical audit reports.</p>
     </div>
 
-    <div style="background: white; border-radius: 12px; border: 1px solid var(--gray-200); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow: hidden;">
-        <table class="data-table" style="margin-bottom: 0;">
+    <div style="background: white; overflow-x: auto;">
+        <style>
+            #reportsArchiveTable {
+                border: 1px solid #000 !important;
+                border-collapse: collapse !important;
+            }
+            #reportsArchiveTable th,
+            #reportsArchiveTable td {
+                border: 1px solid #000 !important;
+            }
+            #reportsArchiveTable th {
+                padding: 0.4rem 0.5rem !important;
+                font-size: 0.85rem !important;
+            }
+            #reportsArchiveTable td {
+                padding: 0.3rem 0.5rem !important;
+                font-size: 0.85rem !important;
+            }
+        </style>
+        <table class="data-table" id="reportsArchiveTable" style="margin-bottom: 0;">
             <thead style="background: var(--gray-50);">
                 <tr>
-                    <th style="padding: 1.2rem; text-align: left;">Report Title</th>
-                    <th style="padding: 1.2rem; text-align: left;">Date Saved</th>
-                    <th style="padding: 1.2rem; text-align: center;">Actions</th>
+                    <th style="text-align: left;">Report Title</th>
+                    <th style="text-align: left;">Date Saved</th>
+                    <th style="text-align: center;">Actions</th>
                 </tr>
             </thead>
             <tbody id="archivedReportsBody">
