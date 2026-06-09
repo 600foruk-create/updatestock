@@ -8651,9 +8651,11 @@ function refreshRMInHistoryTable() {
             <td style="text-align: right;">${pricePerKg.toLocaleString(undefined, {minimumFractionDigits: 1})} / KG</td>
             <td style="text-align: right; font-weight: bold; color: var(--sky-600);">Rs. ${totalAmount.toLocaleString(undefined, {minimumFractionDigits: 1})}</td>
             <td style="color: var(--gray-500); font-style: italic; font-size: 0.9rem;">${t.notes || ''}</td>
-            <td style="text-align: center; display: flex; gap: 4px; justify-content: center;">
-                <button class="btn btn-sm" onclick="revertRMTransaction(${t.id})" style="background:#0ea5e9; color:white; padding: 3px 6px; font-size: 0.7rem;" title="Remove & Revert RM Stock">🔄 Remove</button>
-                <button class="btn btn-icon text-error" onclick="deleteRMTransaction(${t.id})" title="Delete record only">🗑️</button>
+            <td style="text-align: center;">
+                <div style="display: flex; gap: 4px; justify-content: center;">
+                    <button class="btn btn-primary btn-sm" onclick="revertRMTransaction(${t.id})" style="padding: 0.2rem 0.4rem; font-size: 0.75rem;" title="Remove & Revert RM Stock">Revert</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteRMTransaction(${t.id})" style="padding: 0.2rem 0.4rem; font-size: 0.75rem;" title="Delete record only">Delete</button>
+                </div>
             </td>
         `;
         tbody.appendChild(row);
