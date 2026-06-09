@@ -875,7 +875,7 @@ function refreshCustomersList() {
             let customerRows = '';
             distCustomers.forEach(c => {
                 customerRows += `
-                    <div class="item-row" style="background:white; margin-bottom:0.5rem; border-radius:0.5rem; padding:0.8rem;">
+                    <div class="item-row" style="padding: 0.3rem 0.5rem;">
                         <div class="item-info" style="display: flex; flex-direction: row !important; align-items: center; gap: 1rem; flex-wrap: nowrap; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             <span class="item-name-badge" style="background:var(--orange-500); margin: 0;">${c.uniqueId}</span>
                             <span style="font-weight:700; font-size:1rem;">${c.name}</span>
@@ -883,9 +883,9 @@ function refreshCustomersList() {
                                 📍 ${c.address || 'No address'} | 📞 ${c.mobile || 'No mobile'}
                             </span>
                         </div>
-                        <div class="item-actions">
-                            <button class="btn-icon btn-icon-sm" onclick="editCustomer(${c.id})" title="Edit">✏️</button>
-                            <button class="btn-icon btn-icon-sm" onclick="deleteCustomer(${c.id})" title="Delete">🗑️</button>
+                        <div class="item-actions" style="display: flex; gap: 0.3rem;">
+                            <button class="btn btn-primary btn-sm" style="padding: 0.2rem 0.6rem; font-size: 0.75rem;" onclick="editCustomer(${c.id})">Edit</button>
+                            <button class="btn btn-danger btn-sm" style="padding: 0.2rem 0.6rem; font-size: 0.75rem;" onclick="deleteCustomer(${c.id})">Delete</button>
                         </div>
                     </div>
                 `;
