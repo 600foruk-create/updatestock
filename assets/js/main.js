@@ -6435,9 +6435,9 @@ function refreshRMInventory() {
     rmMainCategories.sort((a,b) => a.code.localeCompare(b.code)).forEach(main => {
         const isExpanded = rmExpandedIds.has(`main_${main.id}`);
         html += `
-        <div class="brand-group" style="margin-bottom: 2rem; border: 1px solid var(--sky-200); border-radius: 10px; overflow: hidden; background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-            <div class="brand-header" style="background: var(--sky-600); color: white; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleRMCollapse('main_${main.id}')">
-                <div style="display: flex; align-items: center; gap: 1.2rem;">
+        <div class="brand-group" style="margin-bottom: 1rem; border: 1px solid var(--sky-200); border-radius: 4px; overflow: hidden; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <div class="brand-header" style="background: var(--sky-600); color: white; padding: 0.5rem 1rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleRMCollapse('main_${main.id}')">
+                <div style="display: flex; align-items: center; gap: 0.8rem;">
                     <span style="font-size: 1.4rem;">${isExpanded ? '📂' : '📁'}</span>
                     <div>
                         <div style="font-weight: 800; font-size: 1.2rem; letter-spacing: 0.5px;">${main.name}</div>
@@ -6450,7 +6450,7 @@ function refreshRMInventory() {
                     <button class="btn btn-sm" style="background: rgba(255,100,100,0.3); color: white; border: 1px solid rgba(255,255,255,0.4);" onclick="deleteRMMain(${main.id})" title="Delete Category">🗑️</button>
                 </div>
             </div>
-            <div class="sub-categories-list" style="padding: 1.2rem; background: #f8fafc; ${isExpanded ? '' : 'display: none;'}">`;
+            <div class="sub-categories-list" style="padding: 0.8rem; background: #f8fafc; ${isExpanded ? '' : 'display: none;'}">`;
 
         const subs = rmSubCategories.filter(s => s.mainId == main.id).sort((a,b) => a.code.localeCompare(b.code));
         if (subs.length === 0) {
@@ -6459,9 +6459,9 @@ function refreshRMInventory() {
             subs.forEach(sub => {
                 const isSubExpanded = rmExpandedIds.has(`sub_${sub.id}`);
                 html += `
-                <div class="sub-category-item" style="margin-bottom: 1.2rem; border: 1px solid #000; border-radius: 8px; background: white; box-shadow: var(--shadow-sm);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1.2rem; background: #edf2f7; border-bottom: 1px solid #000; cursor: pointer;" onclick="toggleRMCollapse('sub_${sub.id}')">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="sub-category-item" style="margin-bottom: 0.6rem; border: 1px solid #000; border-radius: 4px; background: white; box-shadow: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.8rem; background: #edf2f7; border-bottom: 1px solid #000; cursor: pointer;" onclick="toggleRMCollapse('sub_${sub.id}')">
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
                             <span style="color: var(--sky-600); font-weight: bold;">${isSubExpanded ? '➖' : '➕'}</span>
                             <div>
                                 <span style="font-weight: 700; color: var(--gray-800); font-size: 1.05rem;">${sub.name}</span>
@@ -6475,15 +6475,15 @@ function refreshRMInventory() {
                         </div>
                     </div>
                     <div style="${isSubExpanded ? '' : 'display: none;'}">
-                        <table class="data-table" style="font-size: 0.9rem; margin: 0; border: none; width: 100%;">
+                        <table class="data-table" style="font-size: 0.85rem; margin: 0; width: 100%; border-collapse: collapse; border: 1px solid #000;">
                             <thead>
-                                <tr style="background: #f1f5f9; border-bottom: 2px solid #000;">
-                                    <th style="padding: 0.7rem 1.2rem; font-weight: 700; color: var(--gray-700);">Item Name</th>
-                                    <th style="font-weight: 700; color: var(--gray-700);">Code</th>
-                                    <th style="font-weight: 700; color: var(--gray-700);">Stock</th>
-                                    <th style="font-weight: 700; color: var(--gray-700);">Unit</th>
-                                    <th style="font-weight: 700; color: var(--gray-700);">Threshold</th>
-                                    <th style="width: 110px; text-align: center; font-weight: 700; color: var(--gray-700);">Actions</th>
+                                <tr style="background: #f1f5f9;">
+                                    <th style="padding: 0.3rem 0.5rem; border: 1px solid #000; font-weight: 700; color: var(--gray-700);">Item Name</th>
+                                    <th style="padding: 0.3rem 0.5rem; border: 1px solid #000; font-weight: 700; color: var(--gray-700);">Code</th>
+                                    <th style="padding: 0.3rem 0.5rem; border: 1px solid #000; font-weight: 700; color: var(--gray-700);">Stock</th>
+                                    <th style="padding: 0.3rem 0.5rem; border: 1px solid #000; font-weight: 700; color: var(--gray-700);">Unit</th>
+                                    <th style="padding: 0.3rem 0.5rem; border: 1px solid #000; font-weight: 700; color: var(--gray-700);">Threshold</th>
+                                    <th style="padding: 0.3rem 0.5rem; border: 1px solid #000; width: 110px; text-align: center; font-weight: 700; color: var(--gray-700);">Actions</th>
                                 </tr>
                             </thead>
                             <tbody style="background: white;">`;
@@ -6495,13 +6495,13 @@ function refreshRMInventory() {
                     itemsList.forEach(item => {
                         const isLow = parseFloat(item.stock) <= parseFloat(item.threshold);
                         html += `
-                        <tr style="border-bottom: 1px solid var(--gray-100);">
-                            <td style="font-weight: 600; padding: 0.2rem 0.5rem; color: var(--gray-800);">${item.name}</td>
-                            <td style="font-family: monospace; color: var(--gray-600); font-weight: 500;">${item.code}</td>
-                            <td><span class="badge ${isLow ? 'badge-error' : 'badge-success'}" style="font-size: 0.85rem; padding: 4px 10px; font-weight: bold;">${item.stock}</span></td>
-                            <td style="font-weight: 500; color: var(--gray-600);">${item.unit}</td>
-                            <td style="color: var(--gray-500);">${item.threshold}</td>
-                            <td style="text-align: center; padding: 0.2rem 0.5rem;">
+                        <tr style="border-bottom: 1px solid #000;">
+                            <td style="border: 1px solid #000; font-weight: 600; padding: 0.2rem 0.4rem; color: var(--gray-800);">${item.name}</td>
+                            <td style="border: 1px solid #000; font-family: monospace; padding: 0.2rem 0.4rem; color: var(--gray-600); font-weight: 500;">${item.code}</td>
+                            <td style="border: 1px solid #000; padding: 0.2rem 0.4rem;"><span class="badge ${isLow ? 'badge-error' : 'badge-success'}" style="font-size: 0.8rem; padding: 2px 6px; font-weight: bold;">${item.stock}</span></td>
+                            <td style="border: 1px solid #000; font-weight: 500; padding: 0.2rem 0.4rem; color: var(--gray-600);">${item.unit}</td>
+                            <td style="border: 1px solid #000; color: var(--gray-500); padding: 0.2rem 0.4rem;">${item.threshold}</td>
+                            <td style="border: 1px solid #000; text-align: center; padding: 0.2rem 0.4rem;">
                                 <div style="display: flex; justify-content: center; gap: 0.4rem;">
                                     <button class="btn-icon" style="padding: 4px; background: #f8fafc; border: 1px solid #000;" onclick="editRMItem(${item.id})">✏️</button>
                                     <button class="btn-icon text-error" style="padding: 4px; background: #f8fafc; border: 1px solid #000;" onclick="deleteRMItem(${item.id})">🗑️</button>
