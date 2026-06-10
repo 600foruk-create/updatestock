@@ -10206,10 +10206,34 @@ function toggleStoreForm(id) {
     }
 }
 
+function populateStoreItemsSubCatFilter() {
+    const mainCatId = document.getElementById('storeItemsMainCatFilter').value;
+    const subCatFilter = document.getElementById('storeItemsSubCatFilter');
+    if (!subCatFilter) return;
+    
+    subCatFilter.innerHTML = '<option value="">All Sub Categories</option>';
+    if (mainCatId) {
+        storeSubCategories.filter(s => s.main_id == mainCatId).forEach(sub => {
+            subCatFilter.innerHTML += `<option value="${sub.id}">${sub.name} (${sub.code})</option>`;
+        });
+    }
+}
+
 function refreshStoreItems() {
     const container = document.getElementById('storeItemRecordsContainer');
     if (!container) return;
-    const filter = document.getElementById('storeItemsSearch').value.toLowerCase();
+
+    // Populate Main Categories filter if empty
+    const mainCatFilter = document.getElementById('storeItemsMainCatFilter');
+    if (mainCatFilter && mainCatFilter.options.length <= 1) {
+        storeMainCategories.forEach(main => {
+            mainCatFilter.innerHTML += `<option value="${main.id}">${main.name} (${main.code})</option>`;
+        });
+    }
+
+    const textFilter = document.getElementById('storeItemsSearch').value.toLowerCase();
+    const mainFilter = mainCatFilter ? mainCatFilter.value : '';
+    const subFilter = document.getElementById('storeItemsSubCatFilter') ? document.getElementById('storeItemsSubCatFilter').value : '';
     
     let html = `
         <table class="data-table">
@@ -10224,10 +10248,12 @@ function refreshStoreItems() {
             <tbody>
     `;
     
-    const filteredItems = storeItems.filter(i => 
-        i.name.toLowerCase().includes(filter) || 
-        i.code.toLowerCase().includes(filter)
-    );
+    const filteredItems = storeItems.filter(i => {
+        let matchesText = i.name.toLowerCase().includes(textFilter) || i.code.toLowerCase().includes(textFilter);
+        let matchesMain = mainFilter === '' || i.mainId == mainFilter;
+        let matchesSub = subFilter === '' || i.sub_id == subFilter;
+        return matchesText && matchesMain && matchesSub;
+    });
     
     if (filteredItems.length === 0) {
         html += '<tr><td colspan="5" style="text-align:center; padding: 0.2rem 0.5rem; color: var(--gray-400);">No matching items found.</td></tr>';
