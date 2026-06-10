@@ -1,15 +1,15 @@
 <div class="rm-dashboard">
     <!-- Top Stats Grid: 2 Columns -->
     <div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-        <div class="stat-card" style="background: #bfdbfe; padding: 1rem; border-radius: 6px; border: 1px solid #000;">
+        <div class="stat-card" style="background: #dbeafe; padding: 1rem; border-radius: 6px; border: 1px solid #000;">
             <div class="stat-label" style="color: var(--gray-700); font-weight: 800; font-size: 0.8rem; text-transform: uppercase;">Total RM Types</div>
             <div class="stat-value" id="rmTotalItems" style="font-size: 2rem; font-weight: 800; color: #1e3a8a; margin-top: 0.3rem;">0</div>
         </div>
-        <div class="stat-card" style="background: #bbf7d0; padding: 1rem; border-radius: 6px; border: 1px solid #000;">
+        <div class="stat-card" style="background: #dcfce7; padding: 1rem; border-radius: 6px; border: 1px solid #000;">
             <div class="stat-label" style="color: var(--gray-700); font-weight: 800; font-size: 0.8rem; text-transform: uppercase;">Total Weight (KG)</div>
             <div class="stat-value" id="rmTotalWeightKg" style="font-size: 2rem; font-weight: 800; color: #14532d; margin-top: 0.3rem;">0</div>
         </div>
-        <div class="stat-card" style="background: #fecaca; padding: 1rem; border-radius: 6px; border: 1px solid #000;">
+        <div class="stat-card" style="background: #fee2e2; padding: 1rem; border-radius: 6px; border: 1px solid #000;">
             <div class="stat-label" style="color: var(--gray-700); font-weight: 800; font-size: 0.8rem; text-transform: uppercase;">Low Stock Alarms</div>
             <div class="stat-value" id="rmLowStockCount" style="font-size: 2rem; font-weight: 800; color: #7f1d1d; margin-top: 0.3rem;">0</div>
         </div>
