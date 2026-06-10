@@ -74,8 +74,8 @@
             <input type="text" id="storeInwardNotes" class="store-control" placeholder="Any additional details...">
         </div>
 
-        <div style="grid-column: span 2; display: flex; justify-content: flex-end; margin-top: 0.5rem; border-top: 1px solid var(--sky-200); padding-top: 1.5rem;">
-            <button class="btn btn-primary" onclick="saveStoreInward()" style="padding: 0.6rem 2rem; font-weight: 700; border-radius: 8px;">
+        <div style="grid-column: span 2; display: flex; justify-content: flex-end; margin-top: 0.5rem;">
+            <button class="btn btn-primary btn-sm" onclick="saveStoreInward()" style="padding: 6px 16px; font-weight: 700; border-radius: 4px; font-size: 0.8rem; border: 1px solid #000; box-shadow: none;">
                 Save Inward Record
             </button>
         </div>
