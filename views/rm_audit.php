@@ -12,19 +12,32 @@
         </div>
     </div>
 
-    <div class="table-container" id="printableRMAudit">
+    <style>
+        #rmMonthlyAuditTable {
+            border: 1px solid #000 !important;
+            border-collapse: collapse !important;
+            width: 100%;
+        }
+        #rmMonthlyAuditTable th,
+        #rmMonthlyAuditTable td {
+            border: 1px solid #000 !important;
+            padding: 0.3rem 0.5rem !important;
+            font-size: 0.85rem !important;
+        }
+    </style>
+    <div class="table-container" id="printableRMAudit" style="overflow-x: auto;">
         <div class="print-only" style="text-align:center; margin-bottom:2rem;">
             <h2 style="font-size: 2rem; color: var(--gray-800); margin-bottom: 0.5rem;">Monthly Raw Material Audit Report</h2>
         </div>
-        <table class="data-table">
-            <thead>
+        <table class="table" id="rmMonthlyAuditTable" style="margin-bottom: 0;">
+            <thead style="background: #f1f5f9;">
                 <tr>
-                    <th style="padding-left:1.5rem;">Material Name / Code</th>
+                    <th>Material Name / Code</th>
                     <th style="text-align:center;">System Stock</th>
-                    <th style="text-align:center; width:150px;">Physical Stock</th>
+                    <th style="text-align:center; width:120px;">Physical Stock</th>
                     <th style="text-align:center;">Difference</th>
                     <th style="text-align:center;">Status</th>
-                    <th style="padding-right:1.5rem; text-align:center;">Action</th>
+                    <th style="text-align:center; width: 100px;">Action</th>
                 </tr>
             </thead>
             <tbody id="rmAuditTable">
