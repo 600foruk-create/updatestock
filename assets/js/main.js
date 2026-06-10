@@ -6428,7 +6428,8 @@ function refreshRMDashboard() {
         
         let catData = {};
         rmItems.forEach(item => {
-            const mainCat = rmMainCategories.find(m => m.id === item.mainId);
+            const subCat = rmSubCategories.find(s => s.id === item.subId);
+            const mainCat = subCat ? rmMainCategories.find(m => m.id === subCat.mainId) : null;
             const catName = mainCat ? mainCat.name : 'Uncategorized';
             if(!catData[catName]) catData[catName] = 0;
             catData[catName] += parseFloat(item.stock) || 0;
