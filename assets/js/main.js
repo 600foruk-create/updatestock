@@ -8979,7 +8979,7 @@ function refreshRMAudit() {
             <td style="text-align: center; font-weight: 600; color: var(--gray-600);">${sysStock.toFixed(2)} ${item.unit}</td>
             <td style="text-align: center;">
                 <input type="number" step="0.01" value="${physStock}" 
-                    style="width: 80px; height: 24px; padding: 0 0.2rem; border: 1px solid #000; border-radius: 4px; text-align: center; font-weight: 700; font-size: 0.8rem;"
+                    style="width: 80px; height: 20px; line-height: 1; padding: 0 0.2rem; border: 1px solid #000; border-radius: 2px; text-align: center; font-weight: 700; font-size: 0.8rem; margin: 0;"
                     onfocus="this.select()"
                     oninput="calculateRMAuditDifference(${item.id}, this.value)">
             </td>
@@ -8987,12 +8987,12 @@ function refreshRMAudit() {
                 ${diff > 0 ? '+' : ''}${diff.toFixed(2)}
             </td>
             <td style="text-align: center;">
-                <span id="rmAuditStatus_${item.id}" class="badge" style="background: ${statusColor}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 800;">
+                <span id="rmAuditStatus_${item.id}" class="badge" style="background: ${statusColor}; color: white; padding: 2px 4px; border-radius: 2px; font-size: 0.7rem; font-weight: 800; line-height: 1;">
                     ${status}
                 </span>
             </td>
             <td style="text-align: center;">
-                <button class="btn btn-sm btn-primary" onclick="adjustSingleRMItem(${item.id})" style="padding: 0.2rem 0.6rem; font-size: 0.75rem;">Adjust</button>
+                <button class="btn btn-sm btn-primary" onclick="adjustSingleRMItem(${item.id})" style="padding: 0 0.4rem; height: 20px; line-height: 1; font-size: 0.7rem; border-radius: 2px; margin: 0;">Adjust</button>
             </td>
         `;
         tbody.appendChild(row);

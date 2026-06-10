@@ -23,6 +23,9 @@
             border: 1px solid #000 !important;
             padding: 0.1rem 0.3rem !important;
             font-size: 0.85rem !important;
+            line-height: 1 !important;
+            vertical-align: middle !important;
+            height: 26px !important;
         }
     </style>
     <div class="table-container" id="printableRMAudit" style="overflow-x: auto;">
