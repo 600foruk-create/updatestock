@@ -6382,7 +6382,7 @@ function refreshRMDashboard() {
             </div>` : '';
         
         summaryHtml += `
-            <div style="background: white; border: 1px solid var(--gray-100); padding: 12px 18px; border-radius: 12px; margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03); transition: 0.2s; border-left: 5px solid var(--sky-400);">
+            <div style="background: white; border: 1px solid #000; padding: 8px 12px; border-radius: 6px; margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <div style="font-weight: 700; color: var(--gray-800); font-size: 1.05rem;">${item.name}</div>
                     <div style="font-size: 0.8rem; color: var(--gray-500); margin-top: 3px; font-family: monospace;">${item.code}</div>
@@ -6400,7 +6400,7 @@ function refreshRMDashboard() {
         if (isLow) {
             lowStockCount++;
             alertsHtml += `
-                <div style="background: #fff5f5; border: 1px solid #feb2b2; padding: 10px 15px; border-radius: 10px; margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
+                <div style="background: white; border: 1px solid #000; padding: 8px 12px; border-radius: 6px; margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <div style="font-weight: 700; color: #c53030; font-size: 0.95rem;">${item.name}</div>
                         <div style="font-size: 0.8rem; color: #9b2c2c; opacity: 0.8;">Current: ${stock} / Min: ${threshold} ${thresholdUnit}</div>
