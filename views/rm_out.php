@@ -68,14 +68,14 @@
         <div id="formulaPreview" style="display: none; margin-top: 1rem; padding: 0.8rem; background: var(--sky-50); border-radius: 8px; font-size: 0.85rem; color: var(--sky-800); border-left: 4px solid var(--sky-400); border: 1.5px solid var(--sky-200);"></div>
 
         <!-- NEW: Formula Editor moved OUTSIDE the grid to prevent layout shifts -->
-        <div id="rmFormulaIngredientsEditor" style="display: none; margin-top: 1.5rem; padding: 1.2rem; background: #fffbff; border: 1px dashed var(--error); border-radius: 12px; box-shadow: var(--shadow-sm);">
+        <div id="rmFormulaIngredientsEditor" style="display: none; margin-top: 0.5rem; padding: 1rem; background: #fffbff; border: 1px dashed var(--error); border-radius: 8px;">
             <h4 style="font-size: 0.85rem; color: var(--error); margin-bottom: 0.8rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; border-bottom: 2px solid var(--error); display: inline-block; padding-bottom: 2px;">Edit Quantities for this Batch:</h4>
             <div id="rmFormulaIngredientsList" style="display: flex; flex-direction: column; gap: 0.8rem;"></div>
         </div>
         
-        <div style="margin-top: 2rem; padding-bottom: 10px; display: flex; gap: 1rem; align-items: center;">
-            <button id="rmOutSaveBtn" class="btn btn-primary" style="background: var(--sky-600); color: white !important; display: inline-block; width: auto; padding: 0.7rem 3rem; font-size: 1.1rem; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 0 var(--sky-800); border: none; cursor: pointer; transition: 0.2s;" onclick="saveRMTransaction('OUT')">Save</button>
-            <button id="rmOutFormulaCancelBtn" class="btn btn-danger" style="display: none; background: #ef4444; color: white !important; padding: 0.7rem 2rem; font-size: 1rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; transition: 0.2s;" onclick="clearFormulaSelection()">Cancel Selection</button>
+        <div style="margin-top: 0.5rem; padding-bottom: 0; display: flex; gap: 0.5rem; align-items: center;">
+            <button id="rmOutSaveBtn" class="btn btn-primary btn-sm" style="padding: 6px 16px; font-weight: 700; border-radius: 4px; font-size: 0.8rem; border: 1px solid #000; box-shadow: none; cursor: pointer;" onclick="saveRMTransaction('OUT')">Save</button>
+            <button id="rmOutFormulaCancelBtn" class="btn btn-danger btn-sm" style="display: none; padding: 6px 16px; font-weight: 700; border-radius: 4px; font-size: 0.8rem; border: 1px solid #000; box-shadow: none; cursor: pointer;" onclick="clearFormulaSelection()">Cancel Selection</button>
         </div>
     </div>
 
