@@ -10283,14 +10283,14 @@ function refreshStoreAudit() {
     
     let html = `
         <table class="table table-bordered" style="width: 100%; border-collapse: collapse; margin-bottom: 2rem;">
-            <thead style="background: #f1f5f9;">
-                <tr style="color: #475569; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px;">
-                    <th style="padding: 15px; border: 1px solid #e2e8f0;">Material Name / Code</th>
-                    <th style="padding: 15px; border: 1px solid #e2e8f0; text-align: center;">System Stock</th>
-                    <th style="padding: 15px; border: 1px solid #e2e8f0; width: 150px; text-align: center;">Physical Stock</th>
-                    <th style="padding: 15px; border: 1px solid #e2e8f0; text-align: center;">Difference</th>
-                    <th style="padding: 15px; border: 1px solid #e2e8f0; text-align: center;">Status</th>
-                    <th style="padding: 15px; border: 1px solid #e2e8f0; text-align: right;">Action</th>
+            <thead style="background: var(--gray-100); border: 1px solid #000;">
+                <tr style="color: var(--gray-800); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px;">
+                    <th style="padding: 0.3rem; border: 1px solid #000;">Material Name / Code</th>
+                    <th style="padding: 0.3rem; border: 1px solid #000; text-align: center;">System Stock</th>
+                    <th style="padding: 0.3rem; border: 1px solid #000; width: 120px; text-align: center;">Physical Stock</th>
+                    <th style="padding: 0.3rem; border: 1px solid #000; text-align: center;">Difference</th>
+                    <th style="padding: 0.3rem; border: 1px solid #000; text-align: center;">Status</th>
+                    <th style="padding: 0.3rem; border: 1px solid #000; text-align: right;">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -10304,29 +10304,32 @@ function refreshStoreAudit() {
         const bgColor = sysVal === 0 ? '#ecfdf5' : '#fee2e2';
 
         html += `
-            <tr style="background: white;" id="audit_row_${i.id}">
-                <td style="padding: 15px; border: 1px solid #f1f5f9;">
-                    <div style="font-weight: 800; color: #1e293b;">${i.name}</div>
-                    <div style="font-size: 0.75rem; color: #64748b; font-family: monospace;">${i.code}</div>
+            <tr style="background: white; border: 1px solid #000; line-height: 1; height: 26px;" id="audit_row_${i.id}">
+                <td style="padding: 0.1rem 0.3rem; border: 1px solid #000;">
+                    <div style="display: flex; gap: 0.5rem; align-items: baseline;">
+                        <span style="font-weight: 700; color: #1e293b; font-size: 0.85rem;">${i.name}</span>
+                        <span style="font-size: 0.75rem; color: #64748b; font-family: monospace;">(${i.code})</span>
+                    </div>
                 </td>
-                <td style="padding: 15px; border: 1px solid #f1f5f9; text-align: center;">
-                    <span style="font-weight: 700; color: #1e293b;">${i.stock}</span>
+                <td style="padding: 0.1rem 0.3rem; border: 1px solid #000; text-align: center;">
+                    <span style="font-weight: 700; color: #1e293b; font-size: 0.9rem;">${i.stock}</span>
                 </td>
-                <td style="padding: 15px; border: 1px solid #f1f5f9; text-align: center;">
+                <td style="padding: 0.1rem 0.3rem; border: 1px solid #000; text-align: center;">
                     <input type="number" class="form-control store-audit-input" 
                            data-id="${i.id}" data-systock="${i.stock}" 
                            oninput="updateAuditRow(${i.id}, this.value)"
+                           onfocus="this.select()"
                            value="0" step="0.01" 
-                           style="height: 40px; border-radius: 8px; text-align: center; font-weight: 700; border: 2px solid #e2e8f0;">
+                           style="height: 20px; border-radius: 2px; text-align: center; font-weight: 700; border: 1px solid #000; font-size: 0.85rem; padding: 0;">
                 </td>
-                <td style="padding: 15px; border: 1px solid #f1f5f9; text-align: center;">
-                    <span id="diff_${i.id}" style="font-weight: 800; font-family: monospace; color: ${color};">${diff.toFixed(2)}</span>
+                <td style="padding: 0.1rem 0.3rem; border: 1px solid #000; text-align: center;">
+                    <span id="diff_${i.id}" style="font-weight: 800; font-family: monospace; color: ${color}; font-size: 0.85rem;">${diff.toFixed(2)}</span>
                 </td>
-                <td style="padding: 15px; border: 1px solid #f1f5f9; text-align: center;">
-                    <span id="status_${i.id}" style="padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; background: ${bgColor}; color: ${color};">${statusText}</span>
+                <td style="padding: 0.1rem 0.3rem; border: 1px solid #000; text-align: center;">
+                    <span id="status_${i.id}" style="padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 800; background: ${bgColor}; color: ${color};">${statusText}</span>
                 </td>
-                <td style="padding: 15px; border: 1px solid #f1f5f9; text-align: right;">
-                    <button class="btn btn-sm" onclick="adjustStoreStock(${i.id})" style="font-weight: 800; color: #1e293b; border: 1px solid #e2e8f0; padding: 6px 15px; border-radius: 8px; background: white;">Adjust</button>
+                <td style="padding: 0.1rem 0.3rem; border: 1px solid #000; text-align: right;">
+                    <button class="btn btn-sm" onclick="adjustStoreStock(${i.id})" style="font-weight: 800; color: #1e293b; border: 1px solid #000; padding: 0 0.5rem; border-radius: 4px; background: #e2e8f0; height: 20px; font-size: 0.7rem; line-height: 1;">Adjust</button>
                 </td>
             </tr>
         `;
