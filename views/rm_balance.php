@@ -1,17 +1,13 @@
 <div class="rm-balance">
     <!-- Filter Bar -->
-    <div style="display: flex; gap: 1rem; margin-bottom: 2rem; background: var(--gray-100); padding: 1.2rem; border-radius: 12px; align-items: flex-end; flex-wrap: wrap; border: 1px solid var(--gray-200);">
-        <div style="flex: 2; min-width: 250px;">
-            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--gray-600); margin-bottom: 0.5rem;">Search Material Name / Code</label>
-            <input type="text" id="rmBalanceSearch" class="form-control" placeholder="Type to search..." onkeyup="refreshRMInventoryBalance()" style="background: white; border: 2px solid var(--gray-300); border-radius: 8px; padding: 0.6rem 1rem;">
-        </div>
-        <div style="flex: 1; min-width: 180px;">
-            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--gray-600); margin-bottom: 0.5rem;">Filter by Brand</label>
-            <select id="rmBalanceMainFilter" class="form-control" onchange="refreshRMInventoryBalance()" style="background: white; border: 2px solid var(--gray-300); border-radius: 8px; padding: 0.6rem 1rem;"></select>
-        </div>
-        <div style="flex: 1; min-width: 180px;">
-            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--gray-600); margin-bottom: 0.5rem;">Filter by Category</label>
-            <select id="rmBalanceSubFilter" class="form-control" onchange="refreshRMInventoryBalance()" style="background: white; border: 2px solid var(--gray-300); border-radius: 8px; padding: 0.6rem 1rem;"></select>
+    <div class="search-container" style="display: flex; gap: 0.5rem; margin-bottom: 1rem; background: var(--gray-50); padding: 1rem; border-radius: 8px; border: 1px solid #000;">
+        <select id="rmBalanceMainFilter" class="form-control" onchange="refreshRMInventoryBalance()" style="flex: 1; height: 32px; border-radius: 4px; border: 1px solid #000; font-size: 0.8rem; padding: 0 0.5rem;"></select>
+        
+        <select id="rmBalanceSubFilter" class="form-control" onchange="refreshRMInventoryBalance()" style="flex: 1; height: 32px; border-radius: 4px; border: 1px solid #000; font-size: 0.8rem; padding: 0 0.5rem;"></select>
+        
+        <div style="flex: 1; position: relative;">
+            <i class="fas fa-search" style="position: absolute; left: 0.6rem; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 0.8rem;"></i>
+            <input type="text" id="rmBalanceSearch" class="form-control" placeholder="Search name or code..." onkeyup="refreshRMInventoryBalance()" style="padding-left: 1.8rem; height: 32px; border-radius: 4px; border: 1px solid #000; font-size: 0.8rem; width: 100%;">
         </div>
     </div>
 
