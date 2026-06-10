@@ -2015,16 +2015,13 @@ function refreshStockList() {
                         let pckQtyStr = packing_qty > 0 ? `${packing_qty} ${packingUnit}` : '-';
                         
                         if (packing_qty > 0) {
-                            let packs = Math.floor(available / packing_qty);
-                            totalBrandPacks += packs;
-                            let remainder = available % packing_qty;
+                            let packsFloat = available / packing_qty;
+                            totalBrandPacks += packsFloat;
                             
-                            if (packs > 0 && remainder > 0) {
-                                packingStr = `${packs} Pck, ${remainder} ${packingUnit}`;
-                            } else if (packs > 0) {
-                                packingStr = `${packs} Pck`;
+                            if (packsFloat > 0) {
+                                packingStr = `${parseFloat(packsFloat.toFixed(2))} Pck`;
                             } else {
-                                packingStr = `${remainder} ${packingUnit}`;
+                                packingStr = `0 Pck`;
                             }
                         }
                         
@@ -2087,7 +2084,7 @@ function refreshStockList() {
             if (isFitting) {
                 brandPrefixHtml = `
                     <td colspan="4" style="text-align: right; padding: 0.6rem 0.5rem; font-weight: 800; color: #000; font-size: 1.05rem; text-transform: uppercase; border-right: 1px solid #000;">TOTAL FOR ${main.name}:</td>
-                    <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: #000; font-size: 1.05rem; border-right: 1px solid #000;">${totalBrandPacks > 0 ? totalBrandPacks + ' Pck' : '-'}</td>
+                    <td style="text-align: center; padding: 0.6rem 0.5rem; font-weight: 900; color: #000; font-size: 1.05rem; border-right: 1px solid #000;">${totalBrandPacks > 0 ? parseFloat(totalBrandPacks.toFixed(2)) + ' Pck' : '-'}</td>
                     <td style="text-align: center; padding: 0.6rem 0.5rem; border-right: 1px solid #000;"></td>
                 `;
             } else {
