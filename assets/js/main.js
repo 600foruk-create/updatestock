@@ -2063,7 +2063,7 @@ function refreshStockList() {
                                     <tr style="background: white;">
                                         ${groupColHtml}
                                         <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; border-right: 1px solid #000;"><strong>${displaySizeHeader}</strong></td>
-                                        <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; color: #000; border-right: 1px solid #000;">${desc}</td>
+                                        <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; color: #000; border-right: 1px solid #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px;" title="${desc}">${desc}</td>
                                         ${packingColHtml}
                                         <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; border-right: 1px solid #000; color: #000;">${displayLengthOrWeight}</td>
                                         <td style="padding: 0.2rem 0.5rem; border-bottom: ${borderBottom}; text-align:center; font-weight:700; color:var(--orange-600); border-right: 1px solid #000;">${available}</td>
