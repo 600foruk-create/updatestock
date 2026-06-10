@@ -1946,20 +1946,20 @@ function refreshStockList() {
 
         let itemsHtml = '<table class="data-table" style="margin: 0; width: 100%; border-collapse: collapse; font-size: 0.95rem; border: 1px solid #000;">';
         itemsHtml += '<thead><tr>';
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Group</th>';
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); color: #000;">Size</th>';
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); color: #000;">Description</th>';
+        itemsHtml += '<th style="padding: 0.4rem 0.5rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Group</th>';
+        itemsHtml += '<th style="padding: 0.4rem 0.5rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); color: #000;">Size</th>';
+        itemsHtml += '<th style="padding: 0.4rem 0.5rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); color: #000;">Description</th>';
         
         let lenWeightHeader = isFitting ? 'Weight' : 'Length';
         if (isFitting) {
-            itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000; white-space: nowrap;">Pck Qty</th>';
-            itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000; white-space: nowrap;">Packing</th>';
+            itemsHtml += '<th style="padding: 0.4rem 0.5rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000; white-space: nowrap;">Pck Qty</th>';
+            itemsHtml += '<th style="padding: 0.4rem 0.5rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000; white-space: nowrap;">Packing</th>';
         }
-        itemsHtml += `<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000; white-space: nowrap;">${lenWeightHeader}</th>`;
+        itemsHtml += `<th style="padding: 0.4rem 0.5rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000; white-space: nowrap;">${lenWeightHeader}</th>`;
         
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Available</th>';
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">In Order</th>';
-        itemsHtml += '<th style="padding: 0.8rem; border-bottom: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Result</th>';
+        itemsHtml += '<th style="padding: 0.4rem 0.5rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Available</th>';
+        itemsHtml += '<th style="padding: 0.4rem 0.5rem; border-bottom: 1px solid #000; border-right: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">In Order</th>';
+        itemsHtml += '<th style="padding: 0.4rem 0.5rem; border-bottom: 1px solid #000; background: var(--gray-100); text-align: center; color: #000;">Result</th>';
         itemsHtml += '</tr></thead><tbody>';
 
         let hasVisibleItems = false;
