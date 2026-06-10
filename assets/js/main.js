@@ -8973,13 +8973,13 @@ function refreshRMAudit() {
         row.style.borderBottom = '1px solid #000';
         row.innerHTML = `
             <td>
-                <div style="font-weight: 700; color: #1e293b;">${item.name}</div>
-                <div style="font-size: 0.75rem; color: var(--gray-500); font-family: monospace;">CODE: ${item.code}</div>
+                <span style="font-weight: 700; color: #1e293b;">${item.name}</span>
+                <span style="font-size: 0.75rem; color: var(--gray-500); font-family: monospace; margin-left: 0.5rem;">[${item.code}]</span>
             </td>
             <td style="text-align: center; font-weight: 600; color: var(--gray-600);">${sysStock.toFixed(2)} ${item.unit}</td>
             <td style="text-align: center;">
                 <input type="number" step="0.01" value="${physStock}" 
-                    style="width: 80px; height: 30px; padding: 0.2rem; border: 2px solid #000; border-radius: 4px; text-align: center; font-weight: 700; font-size: 0.85rem;"
+                    style="width: 80px; height: 24px; padding: 0 0.2rem; border: 1px solid #000; border-radius: 4px; text-align: center; font-weight: 700; font-size: 0.8rem;"
                     onfocus="this.select()"
                     oninput="calculateRMAuditDifference(${item.id}, this.value)">
             </td>

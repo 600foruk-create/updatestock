@@ -21,7 +21,7 @@
         #rmMonthlyAuditTable th,
         #rmMonthlyAuditTable td {
             border: 1px solid #000 !important;
-            padding: 0.3rem 0.5rem !important;
+            padding: 0.1rem 0.3rem !important;
             font-size: 0.85rem !important;
         }
     </style>
