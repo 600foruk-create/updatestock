@@ -6382,7 +6382,7 @@ function refreshRMDashboard() {
             </div>` : '';
         
         summaryHtml += `
-            <div style="background: white; border: 1px solid #000; padding: 8px 12px; border-radius: 6px; margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: center;">
+            <div style="background: white; border: 1px solid #000; padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <div style="font-weight: 700; color: var(--gray-800); font-size: 1.05rem;">${item.name}</div>
                     <div style="font-size: 0.8rem; color: var(--gray-500); margin-top: 3px; font-family: monospace;">${item.code}</div>

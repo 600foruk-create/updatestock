@@ -21,7 +21,7 @@
             <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem; font-size: 1rem; font-weight: 800; text-transform: uppercase;">
                 📦 Current Inventory Details
             </h3>
-            <div id="rmInventorySummary" style="max-height: 500px; overflow-y: auto; padding-right: 0.5rem;">
+            <div id="rmInventorySummary" style="max-height: 500px; overflow-y: auto; padding-right: 0.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; align-content: start;">
                 <!-- Populated by JS with Cards -->
                 <div style="text-align: center; padding: 3rem; color: var(--gray-400);">Loading inventory data...</div>
             </div>
