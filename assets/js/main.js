@@ -10236,13 +10236,13 @@ function refreshStoreItems() {
     const subFilter = document.getElementById('storeItemsSubCatFilter') ? document.getElementById('storeItemsSubCatFilter').value : '';
     
     let html = `
-        <table class="data-table">
+        <table class="data-table" style="width: 100%; border-collapse: collapse;">
             <thead>
-                <tr>
-                    <th>Item Code</th>
-                    <th>Item Name</th>
-                    <th>Stock Balance</th>
-                    <th>Status</th>
+                <tr style="background: var(--gray-100); border: 1px solid #000;">
+                    <th style="border: 1px solid #000; padding: 0.3rem 0.5rem; text-align: left; color: var(--gray-800); font-size: 0.8rem; text-transform: uppercase;">Item Code</th>
+                    <th style="border: 1px solid #000; padding: 0.3rem 0.5rem; text-align: left; color: var(--gray-800); font-size: 0.8rem; text-transform: uppercase;">Item Name</th>
+                    <th style="border: 1px solid #000; padding: 0.3rem 0.5rem; text-align: center; color: var(--gray-800); font-size: 0.8rem; text-transform: uppercase;">Stock Balance</th>
+                    <th style="border: 1px solid #000; padding: 0.3rem 0.5rem; text-align: center; color: var(--gray-800); font-size: 0.8rem; text-transform: uppercase;">Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -10261,12 +10261,12 @@ function refreshStoreItems() {
         filteredItems.forEach(i => {
             const isLow = parseFloat(i.stock) <= parseFloat(i.low_stock_threshold);
             html += `
-                <tr>
-                    <td><strong>${i.code}</strong></td>
-                    <td>${i.name}</td>
-                    <td><span style="font-size: 1.1rem; font-weight: 700;">${i.stock}</span></td>
-                    <td>
-                        ${isLow ? '<span style="color: var(--orange-600); background: var(--orange-50); padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 0.8rem;">⚠️ LOW STOCK</span>' : '<span style="color: var(--green-600); background: var(--green-50); padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 0.8rem;">✅ NORMAL</span>'}
+                <tr style="border: 1px solid #000;">
+                    <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; font-family: monospace; font-size: 0.85rem; color: #1e293b;"><strong>${i.code}</strong></td>
+                    <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; font-weight: 600; color: #334155;">${i.name}</td>
+                    <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; text-align: center;"><span style="font-size: 1rem; font-weight: 800;">${i.stock}</span></td>
+                    <td style="border: 1px solid #000; padding: 0.3rem 0.5rem; text-align: center;">
+                        ${isLow ? '<span style="color: #c2410c; background: #ffedd5; padding: 2px 8px; border-radius: 4px; font-weight: 800; font-size: 0.75rem;">⚠️ LOW</span>' : '<span style="color: #15803d; background: #dcfce7; padding: 2px 8px; border-radius: 4px; font-weight: 800; font-size: 0.75rem;">✅ NORMAL</span>'}
                     </td>
                 </tr>
             `;
