@@ -6419,6 +6419,71 @@ function refreshRMDashboard() {
     
     if (document.getElementById('rmInventorySummary')) document.getElementById('rmInventorySummary').innerHTML = summaryHtml;
     if (document.getElementById('rmLowStockAlerts')) document.getElementById('rmLowStockAlerts').innerHTML = alertsHtml;
+
+    // --- Generate Small Charts ---
+    const catChartCtx = document.getElementById('rmCategoryChart');
+    if (catChartCtx) {
+        let existingChart = Chart.getChart(catChartCtx);
+        if (existingChart) existingChart.destroy();
+        
+        let catData = {};
+        rmItems.forEach(item => {
+            const mainCat = rmMainCategories.find(m => m.id === item.mainId);
+            const catName = mainCat ? mainCat.name : 'Uncategorized';
+            if(!catData[catName]) catData[catName] = 0;
+            catData[catName] += parseFloat(item.stock) || 0;
+        });
+        
+        new Chart(catChartCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(catData),
+                datasets: [{
+                    data: Object.values(catData),
+                    backgroundColor: ['#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right', labels: { boxWidth: 10, font: { size: 9, family: 'Inter' } } }
+                }
+            }
+        });
+    }
+
+    const topChartCtx = document.getElementById('rmTopItemsChart');
+    if (topChartCtx) {
+        let existingChart = Chart.getChart(topChartCtx);
+        if (existingChart) existingChart.destroy();
+
+        let topItems = [...rmItems].sort((a,b) => (parseFloat(b.stock)||0) - (parseFloat(a.stock)||0)).slice(0, 5);
+        
+        new Chart(topChartCtx, {
+            type: 'bar',
+            data: {
+                labels: topItems.map(i => i.name.substring(0,10) + (i.name.length>10?'...':'')),
+                datasets: [{
+                    label: 'Stock (KG)',
+                    data: topItems.map(i => parseFloat(i.stock)||0),
+                    backgroundColor: '#10b981',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { ticks: { font: { size: 9, family: 'Inter' } }, grid: { display: false } },
+                    y: { beginAtZero: true, ticks: { font: { size: 9, family: 'Inter' } } }
+                }
+            }
+        });
+    }
 }
 
 function refreshRMInventory() {

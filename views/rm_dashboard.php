@@ -15,6 +15,22 @@
         </div>
     </div>
 
+    <!-- Small Charts Section -->
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+        <div style="background: white; padding: 1rem; border-radius: 6px; border: 1px solid #000; display: flex; flex-direction: column; height: 220px;">
+            <h4 style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.5rem; color: var(--gray-700); text-align: center;">Stock by Category</h4>
+            <div style="width: 100%; height: 160px; position: relative; margin: auto;">
+                <canvas id="rmCategoryChart"></canvas>
+            </div>
+        </div>
+        <div style="background: white; padding: 1rem; border-radius: 6px; border: 1px solid #000; display: flex; flex-direction: column; height: 220px;">
+            <h4 style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.5rem; color: var(--gray-700); text-align: center;">Top 5 Materials</h4>
+            <div style="width: 100%; height: 160px; position: relative; margin: auto;">
+                <canvas id="rmTopItemsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
     <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.5rem;">
         <!-- Detailed Inventory Summary: Cards Layout -->
         <div class="summary-section" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #000;">
