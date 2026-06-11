@@ -2197,6 +2197,19 @@
     .audit-table tr {
         page-break-inside: avoid !important;
     }
+    
+    .print-only-table {
+        display: block !important;
+    }
+    
+    #lowStockCards .low-brand-card {
+        display: none !important;
+    }
+}
+
+/* Hide print only table on screen */
+.print-only-table {
+    display: none;
 }
 
 /* Raw Material Premium Inputs */

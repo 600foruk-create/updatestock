@@ -2985,6 +2985,58 @@ function refreshLowStockReport() {
                         </div>
                     `;
         }
+        
+        // --- ADD PRINT TABLE (List Format) ---
+        let printTable = `
+            <div class="print-only-table">
+                <div class="print-header">
+                    <div class="print-header-top">
+                        <div class="printLogo">${companySettings?.logo || '📦'}</div>
+                        <div>
+                            <h1>${companySettings?.name || 'StockFlow'}</h1>
+                            <p>Report Date: ${new Date().toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <h2 style="margin-top: 1rem; text-align: center; border-bottom: 2px solid #000; padding-bottom: 0.5rem;">Low Stock Report</h2>
+                </div>
+                <table class="audit-table">
+                    <thead>
+                        <tr>
+                            <th>Brand</th>
+                            <th>Item Description</th>
+                            <th>Current Stock</th>
+                            <th>Minimum Limit</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        for (let brandId in lowByBrand) {
+            let brand = lowByBrand[brandId];
+            brand.items.forEach(item => {
+                let sub = subCategories.find(s => s.id === item.subId);
+                let main = mainCategories.find(m => m.id === item.mainId);
+                let min = item.lowStockLimit || main?.lowStockLimit || 10;
+                let stockPercent = (item.stock / min) * 100;
+                let status = stockPercent <= 30 ? 'CRITICAL' : 'WARNING';
+                let size = sub ? sub.name.replace(/[^0-9.]/g, '') : '?';
+                
+                printTable += `
+                    <tr>
+                        <td style="font-weight:bold; text-align:left;">${brand.name}</td>
+                        <td style="text-align:left;">${size}" / ${item.length}ft / ${item.weight}KG</td>
+                        <td style="color:#ef4444; font-weight:bold;">${item.stock}</td>
+                        <td>${min}</td>
+                        <td style="color: ${status === 'CRITICAL' ? '#ef4444' : '#f59e0b'}; font-weight:bold;">${status}</td>
+                    </tr>
+                `;
+            });
+        }
+        
+        printTable += `</tbody></table></div>`;
+        
+        lowCardsHtml += printTable;
     }
     document.getElementById('lowStockCards').innerHTML = lowCardsHtml;
 }
