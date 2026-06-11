@@ -2214,10 +2214,8 @@ function refreshAuditList() {
                                    id="auditGodownPcs_${item.id}">
                         </td>
                         <td id="auditGodownKg_${item.id}" class="godown-kg-val">${godownKg.toFixed(2)}</td>
-                        <td id="auditExcessPcs_${item.id}" class="diff-pcs-val ${diffPcs > 0 ? 'diff-plus' : ''}">${diffPcs > 0 ? '+' + diffPcs : ''}</td>
-                        <td id="auditExcessKg_${item.id}" class="diff-kg-val ${diffPcs > 0 ? 'diff-plus' : ''}">${diffPcs > 0 ? '+' + diffKg : ''}</td>
-                        <td id="auditShortagePcs_${item.id}" class="diff-pcs-val ${diffPcs < 0 ? 'diff-minus' : ''}">${diffPcs < 0 ? diffPcs : ''}</td>
-                        <td id="auditShortageKg_${item.id}" class="diff-kg-val ${diffPcs < 0 ? 'diff-minus' : ''}">${diffPcs < 0 ? diffKg : ''}</td>
+                        <td id="auditDiffPcs_${item.id}" class="diff-pcs-val ${diffClass}">${(diffPcs > 0 ? '+' : '') + diffPcs}</td>
+                        <td id="auditDiffKg_${item.id}" class="diff-kg-val ${diffClass}">${(diffPcs > 0 ? '+' : '') + diffKg}</td>
                         <td class="no-print">
                             <button class="btn btn-primary btn-sm" style="padding: 0.1rem 0.4rem; font-size: 0.75rem;" onclick="adjustStockToSystem(${item.id})" title="Adjust system stock to match manual count">Adjust</button>
                         </td>
@@ -2242,8 +2240,7 @@ function refreshAuditList() {
                                 <th rowspan="2">Brand</th>
                                 <th colspan="2" style="background: var(--sky-50);">Result Stock (System)</th>
                                 <th colspan="2" style="background: var(--orange-50);">Godown Stock (Manual)</th>
-                                <th colspan="2" style="background: var(--teal-50); color: var(--teal-800);">Excess (+)</th>
-                                <th colspan="2" style="background: var(--rose-50); color: var(--rose-800);">Shortage (-)</th>
+                                <th colspan="2" style="background: var(--green-50);">Difference</th>
                                 <th rowspan="2" class="no-print">Action</th>
                             </tr>
                             <tr>
@@ -2251,10 +2248,8 @@ function refreshAuditList() {
                                 <th style="background: var(--sky-50);">KG</th>
                                 <th style="background: var(--orange-50);">Pieces</th>
                                 <th style="background: var(--orange-50);">KG</th>
-                                <th style="background: var(--teal-50); color: var(--teal-700);">Pcs +</th>
-                                <th style="background: var(--teal-50); color: var(--teal-700);">KG +</th>
-                                <th style="background: var(--rose-50); color: var(--rose-700);">Pcs -</th>
-                                <th style="background: var(--rose-50); color: var(--rose-700);">KG -</th>
+                                <th style="background: var(--green-50);">Pcs +/-</th>
+                                <th style="background: var(--green-50);">KG +/-</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -2262,15 +2257,25 @@ function refreshAuditList() {
                         </tbody>
                         <tfoot>
                             <tr style="background: var(--gray-100); font-weight: 800;">
-                                <td colspan="4" style="text-align: right; padding-right: 1.5rem;">${main.name} TOTAL:</td>
+                                <td colspan="4" style="text-align: right; padding-right: 1.5rem;">${main.name} NET TOTAL:</td>
                                 <td id="totalSysPcs_${main.id}">${bSysPcs}</td>
                                 <td id="totalSysKg_${main.id}">${bSysKg.toFixed(2)}</td>
                                 <td id="totalGodownPcs_${main.id}">0</td>
                                 <td id="totalGodownKg_${main.id}">0.00</td>
-                                <td id="totalExcessPcs_${main.id}">0</td>
-                                <td id="totalExcessKg_${main.id}">0.00</td>
-                                <td id="totalShortagePcs_${main.id}">0</td>
-                                <td id="totalShortageKg_${main.id}">0.00</td>
+                                <td id="totalDiffPcs_${main.id}">0</td>
+                                <td id="totalDiffKg_${main.id}">0.00</td>
+                                <td class="no-print"></td>
+                            </tr>
+                            <tr style="background: var(--teal-50); font-weight: 700;">
+                                <td colspan="8" style="text-align: right; padding-right: 1.5rem; color: var(--teal-800);">EXCESS (+):</td>
+                                <td id="totalExcessPcs_${main.id}" class="diff-plus">0</td>
+                                <td id="totalExcessKg_${main.id}" class="diff-plus">0.00</td>
+                                <td class="no-print"></td>
+                            </tr>
+                            <tr style="background: var(--rose-50); font-weight: 700;">
+                                <td colspan="8" style="text-align: right; padding-right: 1.5rem; color: var(--rose-800);">SHORTAGE (-):</td>
+                                <td id="totalShortagePcs_${main.id}" class="diff-minus">0</td>
+                                <td id="totalShortageKg_${main.id}" class="diff-minus">0.00</td>
                                 <td class="no-print"></td>
                             </tr>
                         </tfoot>
@@ -2375,24 +2380,19 @@ function calculateAuditRow(itemId, unitWeight, brandId) {
     const diffPcs = godownPcs - sysPcs;
     const diffKg = (diffPcs * unitWeight).toFixed(2);
     
-    const excessPcsEl = document.getElementById(`auditExcessPcs_${itemId}`);
-    const excessKgEl = document.getElementById(`auditExcessKg_${itemId}`);
-    const shortagePcsEl = document.getElementById(`auditShortagePcs_${itemId}`);
-    const shortageKgEl = document.getElementById(`auditShortageKg_${itemId}`);
+    const diffPcsEl = document.getElementById(`auditDiffPcs_${itemId}`);
+    const diffKgEl = document.getElementById(`auditDiffKg_${itemId}`);
     
     // Save to persistence
     auditSession[itemId] = godownPcsStr;
     localStorage.setItem('stock_auditSession', JSON.stringify(auditSession));
     
-    excessPcsEl.textContent = diffPcs > 0 ? '+' + diffPcs : '';
-    excessKgEl.textContent = diffPcs > 0 ? '+' + diffKg : '';
-    shortagePcsEl.textContent = diffPcs < 0 ? diffPcs : '';
-    shortageKgEl.textContent = diffPcs < 0 ? diffKg : '';
+    diffPcsEl.textContent = (diffPcs > 0 ? '+' : '') + diffPcs;
+    diffKgEl.textContent = (diffPcs > 0 ? '+' : '') + diffKg;
     
-    excessPcsEl.className = diffPcs > 0 ? 'diff-pcs-val diff-plus' : 'diff-pcs-val';
-    excessKgEl.className = diffPcs > 0 ? 'diff-kg-val diff-plus' : 'diff-kg-val';
-    shortagePcsEl.className = diffPcs < 0 ? 'diff-pcs-val diff-minus' : 'diff-pcs-val';
-    shortageKgEl.className = diffPcs < 0 ? 'diff-kg-val diff-minus' : 'diff-kg-val';
+    // Color coding
+    diffPcsEl.className = diffPcs === 0 ? 'diff-pcs-val' : (diffPcs > 0 ? 'diff-pcs-val diff-plus' : 'diff-pcs-val diff-minus');
+    diffKgEl.className = diffPcs === 0 ? 'diff-kg-val' : (diffPcs > 0 ? 'diff-kg-val diff-plus' : 'diff-kg-val diff-minus');
 
     // Update Brand Sub-totals
     updateBrandAuditTotals(brandId);
