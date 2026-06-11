@@ -2295,42 +2295,46 @@ function refreshAuditList() {
             <table class="audit-table" style="margin-bottom: 0;">
                 <thead>
                     <tr style="background: var(--sky-50); color: black; font-weight: bold; border-bottom: 1px solid #000; font-size: 0.9rem;">
-                        <th style="padding: 0.4rem 0.5rem; text-align: left;">Category</th>
-                        <th style="padding: 0.4rem 0.5rem; text-align: center;">System Stock</th>
-                        <th style="padding: 0.4rem 0.5rem; text-align: center; border-right: 1px solid #000;">Godown Stock</th>
-                        <th style="padding: 0.4rem 0.5rem; text-align: center; background: var(--teal-50); color: var(--teal-800);">Excess (+)</th>
-                        <th style="padding: 0.4rem 0.5rem; text-align: center; background: var(--rose-50); color: var(--rose-800);">Shortage (-)</th>
+                        <th rowspan="2" style="padding: 0.4rem 0.5rem; text-align: left; vertical-align: middle;">Category</th>
+                        <th colspan="2" style="padding: 0.4rem 0.5rem; text-align: center; border-bottom: 1px solid #000;">System Stock</th>
+                        <th colspan="2" style="padding: 0.4rem 0.5rem; text-align: center; border-bottom: 1px solid #000; border-right: 1px solid #000;">Godown Stock</th>
+                        <th colspan="2" style="padding: 0.4rem 0.5rem; text-align: center; background: var(--teal-50); color: var(--teal-800); border-bottom: 1px solid #000;">Excess (+)</th>
+                        <th colspan="2" style="padding: 0.4rem 0.5rem; text-align: center; background: var(--rose-50); color: var(--rose-800); border-bottom: 1px solid #000;">Shortage (-)</th>
+                    </tr>
+                    <tr style="background: var(--gray-100); color: black; font-weight: 600; font-size: 0.85rem;">
+                        <th style="padding: 0.3rem 0.5rem; text-align: center;">Pieces</th>
+                        <th style="padding: 0.3rem 0.5rem; text-align: center;">KG</th>
+                        <th style="padding: 0.3rem 0.5rem; text-align: center;">Pieces</th>
+                        <th style="padding: 0.3rem 0.5rem; text-align: center; border-right: 1px solid #000;">KG</th>
+                        <th style="padding: 0.3rem 0.5rem; text-align: center; background: var(--teal-50); color: var(--teal-700);">Pcs +</th>
+                        <th style="padding: 0.3rem 0.5rem; text-align: center; background: var(--teal-50); color: var(--teal-700);">KG +</th>
+                        <th style="padding: 0.3rem 0.5rem; text-align: center; background: var(--rose-50); color: var(--rose-700);">Pcs -</th>
+                        <th style="padding: 0.3rem 0.5rem; text-align: center; background: var(--rose-50); color: var(--rose-700);">KG -</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Pipes Summary -->
                     <tr style="font-size: 1.05rem; font-weight: 600;">
-                        <td style="background: var(--gray-100);">PVC Pipes (Pcs)</td>
+                        <td style="background: var(--gray-100);">PVC Pipes</td>
                         <td id="grandSysPcs_Pipe">0</td>
-                        <td id="grandGdPcs_Pipe" style="color: var(--sky-600); border-right: 1px solid #000;">0</td>
-                        <td id="grandExPcs_Pipe" class="diff-plus">0</td>
-                        <td id="grandShPcs_Pipe" class="diff-minus">0</td>
-                    </tr>
-                    <tr style="font-size: 1.05rem; font-weight: 600;">
-                        <td style="background: var(--gray-100);">PVC Pipes (KG)</td>
                         <td id="grandSysKg_Pipe">0.00</td>
+                        <td id="grandGdPcs_Pipe" style="color: var(--sky-600);">0</td>
                         <td id="grandGdKg_Pipe" style="color: var(--sky-600); border-right: 1px solid #000;">0.00</td>
+                        <td id="grandExPcs_Pipe" class="diff-plus">0</td>
                         <td id="grandExKg_Pipe" class="diff-plus">0.00</td>
+                        <td id="grandShPcs_Pipe" class="diff-minus">0</td>
                         <td id="grandShKg_Pipe" class="diff-minus">0.00</td>
                     </tr>
                     <!-- Fittings Summary -->
-                    <tr style="font-size: 1.05rem; font-weight: 600; border-top: 2px solid #ccc;">
-                        <td style="background: var(--gray-100);">PVC Fittings (Pcs)</td>
+                    <tr style="font-size: 1.05rem; font-weight: 600; border-top: 1px solid #ccc;">
+                        <td style="background: var(--gray-100);">PVC Fittings</td>
                         <td id="grandSysPcs_Fitting">0</td>
-                        <td id="grandGdPcs_Fitting" style="color: var(--sky-600); border-right: 1px solid #000;">0</td>
-                        <td id="grandExPcs_Fitting" class="diff-plus">0</td>
-                        <td id="grandShPcs_Fitting" class="diff-minus">0</td>
-                    </tr>
-                    <tr style="font-size: 1.05rem; font-weight: 600;">
-                        <td style="background: var(--gray-100);">PVC Fittings (KG)</td>
                         <td id="grandSysKg_Fitting">0.00</td>
+                        <td id="grandGdPcs_Fitting" style="color: var(--sky-600);">0</td>
                         <td id="grandGdKg_Fitting" style="color: var(--sky-600); border-right: 1px solid #000;">0.00</td>
+                        <td id="grandExPcs_Fitting" class="diff-plus">0</td>
                         <td id="grandExKg_Fitting" class="diff-plus">0.00</td>
+                        <td id="grandShPcs_Fitting" class="diff-minus">0</td>
                         <td id="grandShKg_Fitting" class="diff-minus">0.00</td>
                     </tr>
                 </tbody>
