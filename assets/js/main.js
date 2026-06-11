@@ -4780,99 +4780,179 @@ async function confirmDeleteOrder() {
     }
 }
 
+let selectedMainCatId = null;
+let selectedSubCatId = null;
+
+function selectMainCategory(id) {
+    selectedMainCatId = id;
+    selectedSubCatId = null; 
+    refreshCategoriesView();
+}
+
+function selectSubCategory(id) {
+    selectedSubCatId = id;
+    refreshCategoriesView();
+}
+
 function refreshCategoriesView() {
-    resequenceCodes(); // Force re-sequence to fill gaps before drawing
-    const currentExpandedMains = Array.from(document.querySelectorAll('.main-category.expanded')).map(el => el.id);
-    const currentExpandedSubs = Array.from(document.querySelectorAll('.sub-category.expanded')).map(el => el.id);
+    resequenceCodes();
     
-    let html = '';
-    sortMainCategories(mainCategories).forEach(main => {
-        let mainSubs = subCategories.filter(s => s.mainId === main.id);
-        let mainItems = items.filter(i => i.mainId === main.id);
-        let totalStock = mainItems.reduce((sum, i) => sum + (i.stock || 0), 0);
+    let sortedMains = sortMainCategories(mainCategories);
+    if (sortedMains.length > 0 && !selectedMainCatId) {
+        selectedMainCatId = sortedMains[0].id;
+    }
+    
+    // Validate selection (in case a deleted category was selected)
+    if (selectedMainCatId && !mainCategories.find(m => m.id === selectedMainCatId)) {
+        selectedMainCatId = sortedMains.length > 0 ? sortedMains[0].id : null;
+        selectedSubCatId = null;
+    }
+
+    let activeMain = mainCategories.find(m => m.id === selectedMainCatId);
+    let mainSubs = activeMain ? subCategories.filter(s => s.mainId === activeMain.id) : [];
+    let sortedSubs = sortSubCategories(mainSubs);
+
+    if (sortedSubs.length > 0 && !selectedSubCatId && activeMain) {
+        selectedSubCatId = sortedSubs[0].id;
+    }
+    
+    if (selectedSubCatId && !subCategories.find(s => s.id === selectedSubCatId && s.mainId === selectedMainCatId)) {
+        selectedSubCatId = sortedSubs.length > 0 ? sortedSubs[0].id : null;
+    }
+
+    let activeSub = subCategories.find(s => s.id === selectedSubCatId);
+    let subItems = activeSub ? items.filter(i => i.mainId === activeMain.id && i.subId === activeSub.id) : [];
+    let sortedItems = sortItems(subItems);
+
+    // Build Column 1 (Main Categories)
+    let col1Html = `
+        <div class="col-header">
+            <h3>Brands</h3>
+            <button class="btn btn-success btn-sm" onclick="showAddMainCategoryModal()" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">+ Add Brand</button>
+        </div>
+        <div class="col-body">
+    `;
+    sortedMains.forEach(main => {
+        let mainItemsList = items.filter(i => i.mainId === main.id);
+        let totalStock = mainItemsList.reduce((sum, i) => sum + (i.stock || 0), 0);
         let mainCode = main.code || String(main.id).padStart(2, '0');
+        let isActive = main.id === selectedMainCatId ? 'active' : '';
 
-        let subHtml = '';
-        sortSubCategories(mainSubs).forEach(sub => {
-            let subItems = items.filter(i => i.mainId === main.id && i.subId === sub.id);
-            let subTotalStock = subItems.reduce((sum, i) => sum + (i.stock || 0), 0);
-            let subCode = sub.code || 'SIZE_ERR'; 
+        col1Html += `
+            <div class="list-item ${isActive}" onclick="selectMainCategory(${main.id})">
+                <div class="item-title">
+                    <span class="color-dot" style="background: ${main.color};"></span>
+                    <span>[${mainCode}] ${main.name}</span>
+                </div>
+                <div class="item-actions">
+                    <span class="stock-badge">${totalStock} PCS</span>
+                    <button class="btn-icon btn-icon-sm" onclick="editMainCategory(${main.id}); event.stopPropagation();" title="Edit">✏️</button>
+                    <button class="btn-icon btn-icon-sm" onclick="deleteMainCategory(${main.id}); event.stopPropagation();" title="Delete">🗑️</button>
+                </div>
+            </div>
+        `;
+    });
+    col1Html += `</div>`;
 
-            let itemsHtml = '';
-            sortItems(subItems).forEach(item => {
-                let itemCode = item.code || 'ITEM_ERR';
-                itemsHtml += `
-                            <div class="item-row">
-                                <div class="item-info" style="display: flex; align-items: center; gap: 0.8rem; flex-direction: row !important; flex-wrap: nowrap; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    <span class="item-name-badge" style="margin: 0; white-space: nowrap;">[${itemCode}] ${item.name || 'Item'}</span>
-                                    <div class="item-specs" style="margin: 0; display: flex; gap: 0.5rem; align-items: center; flex-wrap: nowrap;">
-                                        ${main.type === 'Fitting' 
-                                            ? `<span class="item-spec" style="padding: 0.1rem 0.5rem;">${item.fitting_size || '-'}</span>
-                                               ${item.packing_qty ? `<span class="item-spec" style="padding: 0.1rem 0.5rem;">Pack: ${item.packing_qty} ${item.packing_unit || 'KG'}</span>` : ''}
-                                               <span class="item-spec" style="padding: 0.1rem 0.5rem;">${item.weight} KG</span>`
-                                            : `<span class="item-spec" style="padding: 0.1rem 0.5rem;">${item.length} ft</span>
-                                               <span class="item-spec" style="padding: 0.1rem 0.5rem;">${item.weight} KG</span>`
-                                        }
-                                    </div>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 1rem;">
-                                    <div style="text-align: right;">
-                                        <div class="item-stock" style="color: ${parseInt(item.stock) <= (item.lowStockLimit || main.lowStockLimit || 10) ? 'var(--red-500)' : ''}">${item.stock || 0}</div>
-                                        ${item.lowStockLimit ? `<div style="font-size: 0.7rem; color: var(--orange-500); font-weight: 600;">Limit: ${item.lowStockLimit}</div>` : ''}
-                                    </div>
-                                    <div class="item-actions">
-                                        <button class="btn-icon btn-icon-sm" onclick="editItem(${item.id})" title="Edit">✏️</button>
-                                        <button class="btn-icon btn-icon-sm" onclick="deleteItem(${item.id})" title="Delete">🗑️</button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-            });
+    // Build Column 2 (Sub Categories)
+    let col2Html = `
+        <div class="col-header">
+            <h3>Sizes / Sub Categories</h3>
+            ${activeMain ? `<button class="btn btn-primary btn-sm" onclick="showAddSubCategoryModalFor(${activeMain.id})" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">${activeMain.type === 'Fitting' ? '+ Add Sub' : '+ Add Size'}</button>` : ''}
+        </div>
+        <div class="col-body">
+    `;
+    
+    if (activeMain) {
+        if (sortedSubs.length === 0) {
+            col2Html += `<div class="empty-state">No sizes found.</div>`;
+        } else {
+            sortedSubs.forEach(sub => {
+                let subItemsList = items.filter(i => i.mainId === activeMain.id && i.subId === sub.id);
+                let subTotalStock = subItemsList.reduce((sum, i) => sum + (i.stock || 0), 0);
+                let subCode = sub.code || 'SIZE_ERR'; 
+                let isActive = sub.id === selectedSubCatId ? 'active' : '';
 
-            subHtml += `
-                        <div class="sub-category" id="subCat_${sub.id}">
-                            <div class="sub-header" onclick="toggleSubCategory(this)">
-                                <div style="display: flex; align-items: center; gap: 1rem;">
-                                    <span class="sub-name">[${subCode}] ${sub.name}</span>
-                                    <span class="sub-stats">Total: ${subTotalStock} PCS</span>
-                                </div>
-                                <div class="sub-actions">
-                                    <button class="btn-icon btn-icon-sm" onclick="editSubCategory(${sub.id}); event.stopPropagation();" title="Edit Size">✏️</button>
-                                    <button class="btn-icon btn-icon-sm" onclick="deleteSubCategory(${sub.id}); event.stopPropagation();" title="Delete Size">🗑️</button>
-                                    <button class="add-btn add-btn-sm" onclick="showAddItemModalFor(${main.id}, ${sub.id}); event.stopPropagation();">+ Add Item</button>
-                                </div>
-                            </div>
-                            <div class="items-container">
-                                ${itemsHtml || '<div style="color: var(--gray-500); text-align: center; padding: 1rem;">No items in this size</div>'}
-                            </div>
+                col2Html += `
+                    <div class="list-item ${isActive}" onclick="selectSubCategory(${sub.id})">
+                        <div class="item-title">
+                            <span>[${subCode}] ${sub.name}</span>
                         </div>
-                    `;
-        });
-
-        html += `
-                    <div class="main-category" id="mainCat_${main.id}">
-                        <div class="category-header" onclick="toggleMainCategory(this)">
-                            <div class="category-title">
-                                <span class="color-dot" style="background: ${main.color};"></span>
-                                <span class="category-name">[${mainCode}] ${main.name}</span>
-                                <span class="category-stats">Total Stock: ${totalStock} PCS</span>
-                            </div>
-                            <div class="category-actions">
-                                <button class="btn-icon" onclick="editMainCategory(${main.id}); event.stopPropagation();" title="Edit Brand">✏️</button>
-                                <button class="btn-icon" onclick="deleteMainCategory(${main.id}); event.stopPropagation();" title="Delete Brand">🗑️</button>
-                                <button class="add-btn" onclick="showAddSubCategoryModalFor(${main.id}); event.stopPropagation();">${main.type === 'Fitting' ? '+ Add Sub Category' : '+ Add Size'}</button>
-                            </div>
-                        </div>
-                        <div class="sub-category-container">
-                            ${subHtml || `<div style="color: var(--gray-500); text-align: center; padding: 2rem;">No entries yet. Click "${main.type === 'Fitting' ? '+ Add Sub Category' : '+ Add Size'}" to create one.</div>`}
+                        <div class="item-actions">
+                            <span class="stock-badge">${subTotalStock} PCS</span>
+                            <button class="btn-icon btn-icon-sm" onclick="editSubCategory(${sub.id}); event.stopPropagation();" title="Edit">✏️</button>
+                            <button class="btn-icon btn-icon-sm" onclick="deleteSubCategory(${sub.id}); event.stopPropagation();" title="Delete">🗑️</button>
                         </div>
                     </div>
                 `;
-    });
-    document.getElementById('categoriesContainer').innerHTML = html;
+            });
+        }
+    } else {
+        col2Html += `<div class="empty-state">Select a brand first</div>`;
+    }
+    col2Html += `</div>`;
 
-    currentExpandedMains.forEach(id => { let el = document.getElementById(id); if (el) el.classList.add('expanded'); });
-    currentExpandedSubs.forEach(id => { let el = document.getElementById(id); if (el) el.classList.add('expanded'); });
+    // Build Column 3 (Items)
+    let col3Html = `
+        <div class="col-header">
+            <h3>Items</h3>
+            ${activeSub ? `<button class="btn btn-warning btn-sm" onclick="showAddItemModalFor(${activeMain.id}, ${activeSub.id})" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">+ Add Item</button>` : ''}
+        </div>
+        <div class="col-body">
+    `;
+    
+    if (activeSub) {
+        if (sortedItems.length === 0) {
+            col3Html += `<div class="empty-state">No items found.</div>`;
+        } else {
+            sortedItems.forEach(item => {
+                let itemCode = item.code || 'ITEM_ERR';
+                let min = item.lowStockLimit || activeMain.lowStockLimit || 10;
+                let isLow = parseInt(item.stock) <= min;
+                
+                col3Html += `
+                    <div class="list-item item-row-card">
+                        <div class="item-details">
+                            <div class="item-name">[${itemCode}] ${item.name || 'Item'}</div>
+                            <div class="item-specs-badges">
+                                ${activeMain.type === 'Fitting' 
+                                    ? `<span class="badge">${item.fitting_size || '-'}</span>
+                                       ${item.packing_qty ? `<span class="badge">Pack: ${item.packing_qty} ${item.packing_unit || 'KG'}</span>` : ''}
+                                       <span class="badge">${item.weight} KG</span>`
+                                    : `<span class="badge">${item.length} ft</span>
+                                       <span class="badge">${item.weight} KG</span>`
+                                }
+                            </div>
+                        </div>
+                        <div class="item-stock-actions">
+                            <div class="stock-box ${isLow ? 'low-stock' : ''}">
+                                <div class="stock-val">${item.stock || 0}</div>
+                                ${item.lowStockLimit ? `<div class="stock-limit">Limit: ${item.lowStockLimit}</div>` : ''}
+                            </div>
+                            <div class="item-actions-col">
+                                <button class="btn-icon btn-icon-sm" onclick="editItem(${item.id})" title="Edit">✏️</button>
+                                <button class="btn-icon btn-icon-sm" onclick="deleteItem(${item.id})" title="Delete">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    } else {
+        col3Html += `<div class="empty-state">Select a size first</div>`;
+    }
+    col3Html += `</div>`;
+
+    // Wrap in grid
+    let gridHtml = `
+        <div class="inventory-grid">
+            <div class="inv-col">${col1Html}</div>
+            <div class="inv-col">${col2Html}</div>
+            <div class="inv-col">${col3Html}</div>
+        </div>
+    `;
+
+    document.getElementById('categoriesContainer').innerHTML = gridHtml;
 }
 
 function showAddSubCategoryModalFor(mainId) {
