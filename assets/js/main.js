@@ -2294,12 +2294,13 @@ function refreshAuditList() {
             </div>
             <table class="audit-table" style="margin-bottom: 0;">
                 <thead>
-                    <tr style="background: var(--gray-800); color: white;">
-                        <th style="color: white; padding: 1rem;">Category</th>
-                        <th style="color: white; padding: 1rem;">System Stock</th>
-                        <th style="color: white; padding: 1rem;">Godown Stock</th>
-                        <th style="color: white; padding: 1rem; background: var(--teal-700);">Excess (+)</th>
-                        <th style="color: white; padding: 1rem; background: var(--rose-700);">Shortage (-)</th>
+                    <tr style="background: var(--sky-50); color: black; font-weight: bold; border-bottom: 1px solid #000; font-size: 0.9rem;">
+                        <th style="padding: 0.4rem 0.5rem; text-align: left;">Category</th>
+                        <th style="padding: 0.4rem 0.5rem; text-align: center;">System Stock</th>
+                        <th style="padding: 0.4rem 0.5rem; text-align: center;">Godown Stock</th>
+                        <th style="padding: 0.4rem 0.5rem; text-align: center; border-right: 1px solid #000;">Net Difference</th>
+                        <th style="padding: 0.4rem 0.5rem; text-align: center; background: var(--teal-50); color: var(--teal-800);">Excess (+)</th>
+                        <th style="padding: 0.4rem 0.5rem; text-align: center; background: var(--rose-50); color: var(--rose-800);">Shortage (-)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -2308,6 +2309,7 @@ function refreshAuditList() {
                         <td style="background: var(--gray-100);">PVC Pipes (Pcs)</td>
                         <td id="grandSysPcs_Pipe">0</td>
                         <td id="grandGdPcs_Pipe" style="color: var(--sky-600);">0</td>
+                        <td id="grandDiffPcs_Pipe" style="border-right: 1px solid #000;">0</td>
                         <td id="grandExPcs_Pipe" class="diff-plus">0</td>
                         <td id="grandShPcs_Pipe" class="diff-minus">0</td>
                     </tr>
@@ -2315,6 +2317,7 @@ function refreshAuditList() {
                         <td style="background: var(--gray-100);">PVC Pipes (KG)</td>
                         <td id="grandSysKg_Pipe">0.00</td>
                         <td id="grandGdKg_Pipe" style="color: var(--sky-600);">0.00</td>
+                        <td id="grandDiffKg_Pipe" style="border-right: 1px solid #000;">0.00</td>
                         <td id="grandExKg_Pipe" class="diff-plus">0.00</td>
                         <td id="grandShKg_Pipe" class="diff-minus">0.00</td>
                     </tr>
@@ -2323,6 +2326,7 @@ function refreshAuditList() {
                         <td style="background: var(--gray-100);">PVC Fittings (Pcs)</td>
                         <td id="grandSysPcs_Fitting">0</td>
                         <td id="grandGdPcs_Fitting" style="color: var(--sky-600);">0</td>
+                        <td id="grandDiffPcs_Fitting" style="border-right: 1px solid #000;">0</td>
                         <td id="grandExPcs_Fitting" class="diff-plus">0</td>
                         <td id="grandShPcs_Fitting" class="diff-minus">0</td>
                     </tr>
@@ -2330,23 +2334,9 @@ function refreshAuditList() {
                         <td style="background: var(--gray-100);">PVC Fittings (KG)</td>
                         <td id="grandSysKg_Fitting">0.00</td>
                         <td id="grandGdKg_Fitting" style="color: var(--sky-600);">0.00</td>
+                        <td id="grandDiffKg_Fitting" style="border-right: 1px solid #000;">0.00</td>
                         <td id="grandExKg_Fitting" class="diff-plus">0.00</td>
                         <td id="grandShKg_Fitting" class="diff-minus">0.00</td>
-                    </tr>
-                    <!-- Overall Total -->
-                    <tr style="font-size: 1.15rem; font-weight: 800; border-top: 2px solid #000; background: var(--sky-50);">
-                        <td style="background: var(--gray-100);">OVERALL (Pcs)</td>
-                        <td id="grandSysPcs_Total">0</td>
-                        <td id="grandGdPcs_Total" style="color: var(--sky-600);">0</td>
-                        <td id="grandExPcs_Total" class="diff-plus">0</td>
-                        <td id="grandShPcs_Total" class="diff-minus">0</td>
-                    </tr>
-                    <tr style="font-size: 1.15rem; font-weight: 800; background: var(--sky-50);">
-                        <td style="background: var(--gray-100);">OVERALL (KG)</td>
-                        <td id="grandSysKg_Total">0.00</td>
-                        <td id="grandGdKg_Total" style="color: var(--sky-600);">0.00</td>
-                        <td id="grandExKg_Total" class="diff-plus">0.00</td>
-                        <td id="grandShKg_Total" class="diff-minus">0.00</td>
                     </tr>
                 </tbody>
             </table>
@@ -2405,6 +2395,7 @@ function updateBrandAuditTotals(brandId) {
 
     let sysTotalPcs = 0, sysTotalKg = 0;
     let godownTotalPcs = 0, godownTotalKg = 0;
+    let diffTotalPcs = 0, diffTotalKg = 0;
     let excessTotalPcs = 0, excessTotalKg = 0;
     let shortageTotalPcs = 0, shortageTotalKg = 0;
 
@@ -2414,10 +2405,8 @@ function updateBrandAuditTotals(brandId) {
         const sysKgEl = document.getElementById(`auditSysKg_${itemId}`);
         const gdPcsEl = document.getElementById(`auditGodownPcs_${itemId}`);
         const gdKgEl = document.getElementById(`auditGodownKg_${itemId}`);
-        const exPcsEl = document.getElementById(`auditExcessPcs_${itemId}`);
-        const exKgEl = document.getElementById(`auditExcessKg_${itemId}`);
-        const shPcsEl = document.getElementById(`auditShortagePcs_${itemId}`);
-        const shKgEl = document.getElementById(`auditShortageKg_${itemId}`);
+        const diffPcsEl = document.getElementById(`auditDiffPcs_${itemId}`);
+        const diffKgEl = document.getElementById(`auditDiffKg_${itemId}`);
 
         if (sysPcsEl && gdPcsEl) {
             sysTotalPcs += parseInt(sysPcsEl.textContent) || 0;
@@ -2425,10 +2414,16 @@ function updateBrandAuditTotals(brandId) {
             godownTotalPcs += parseInt(gdPcsEl.value) || 0;
             godownTotalKg += parseFloat(gdKgEl.textContent) || 0;
             
-            excessTotalPcs += parseInt(exPcsEl?.textContent.replace('+', '')) || 0;
-            excessTotalKg += parseFloat(exKgEl?.textContent.replace('+', '')) || 0;
-            shortageTotalPcs += parseInt(shPcsEl?.textContent) || 0; // Already negative
-            shortageTotalKg += parseFloat(shKgEl?.textContent) || 0;
+            let dPcs = parseInt(diffPcsEl?.textContent.replace('+', '')) || 0;
+            let dKg = parseFloat(diffKgEl?.textContent.replace('+', '')) || 0;
+            
+            diffTotalPcs += dPcs;
+            diffTotalKg += dKg;
+            
+            if (dPcs > 0) excessTotalPcs += dPcs;
+            if (dPcs < 0) shortageTotalPcs += dPcs;
+            if (dKg > 0) excessTotalKg += dKg;
+            if (dKg < 0) shortageTotalKg += dKg;
         }
     });
 
@@ -2436,6 +2431,8 @@ function updateBrandAuditTotals(brandId) {
     const totSysKg = document.getElementById(`totalSysKg_${brandId}`);
     const totGdPcs = document.getElementById(`totalGodownPcs_${brandId}`);
     const totGdKg = document.getElementById(`totalGodownKg_${brandId}`);
+    const totDiffPcs = document.getElementById(`totalDiffPcs_${brandId}`);
+    const totDiffKg = document.getElementById(`totalDiffKg_${brandId}`);
     const totExPcs = document.getElementById(`totalExcessPcs_${brandId}`);
     const totExKg = document.getElementById(`totalExcessKg_${brandId}`);
     const totShPcs = document.getElementById(`totalShortagePcs_${brandId}`);
@@ -2445,6 +2442,15 @@ function updateBrandAuditTotals(brandId) {
     if (totSysKg) totSysKg.textContent = sysTotalKg.toFixed(2);
     if (totGdPcs) totGdPcs.textContent = godownTotalPcs;
     if (totGdKg) totGdKg.textContent = godownTotalKg.toFixed(2);
+    
+    if (totDiffPcs) {
+        totDiffPcs.textContent = diffTotalPcs > 0 ? '+' + diffTotalPcs : diffTotalPcs;
+        totDiffPcs.className = diffTotalPcs > 0 ? 'diff-plus' : (diffTotalPcs < 0 ? 'diff-minus' : '');
+    }
+    if (totDiffKg) {
+        totDiffKg.textContent = diffTotalKg > 0 ? '+' + diffTotalKg.toFixed(2) : diffTotalKg.toFixed(2);
+        totDiffKg.className = diffTotalKg > 0 ? 'diff-plus' : (diffTotalKg < 0 ? 'diff-minus' : '');
+    }
     
     if (totExPcs) {
         totExPcs.textContent = excessTotalPcs > 0 ? '+' + excessTotalPcs : '0';
@@ -2462,7 +2468,6 @@ function updateBrandAuditTotals(brandId) {
         totShKg.textContent = shortageTotalKg < 0 ? shortageTotalKg.toFixed(2) : '0.00';
         totShKg.className = shortageTotalKg < 0 ? 'diff-minus' : '';
     }
-
 }
 
 async function saveMonthlyAudit() {
@@ -5896,8 +5901,8 @@ initApp();
 
 function updateGrandAuditTotal() {
     let totals = {
-        Pipe: { sysPcs: 0, sysKg: 0, gdPcs: 0, gdKg: 0, exPcs: 0, exKg: 0, shPcs: 0, shKg: 0 },
-        Fitting: { sysPcs: 0, sysKg: 0, gdPcs: 0, gdKg: 0, exPcs: 0, exKg: 0, shPcs: 0, shKg: 0 }
+        Pipe: { sysPcs: 0, sysKg: 0, gdPcs: 0, gdKg: 0, diffPcs: 0, diffKg: 0, exPcs: 0, exKg: 0, shPcs: 0, shKg: 0 },
+        Fitting: { sysPcs: 0, sysKg: 0, gdPcs: 0, gdKg: 0, diffPcs: 0, diffKg: 0, exPcs: 0, exKg: 0, shPcs: 0, shKg: 0 }
     };
 
     mainCategories.forEach(m => {
@@ -5908,11 +5913,15 @@ function updateGrandAuditTotal() {
         const gdPcs = parseInt(document.getElementById(`totalGodownPcs_${m.id}`)?.textContent) || 0;
         const gdKg = parseFloat(document.getElementById(`totalGodownKg_${m.id}`)?.textContent) || 0;
         
+        const diffPcsText = document.getElementById(`totalDiffPcs_${m.id}`)?.textContent || '0';
+        const diffKgText = document.getElementById(`totalDiffKg_${m.id}`)?.textContent || '0.00';
         const exPcsText = document.getElementById(`totalExcessPcs_${m.id}`)?.textContent || '0';
         const exKgText = document.getElementById(`totalExcessKg_${m.id}`)?.textContent || '0.00';
         const shPcsText = document.getElementById(`totalShortagePcs_${m.id}`)?.textContent || '0';
         const shKgText = document.getElementById(`totalShortageKg_${m.id}`)?.textContent || '0.00';
         
+        const diffPcs = parseInt(diffPcsText.replace(/\+/g, '')) || 0;
+        const diffKg = parseFloat(diffKgText.replace(/\+/g, '')) || 0;
         const exPcs = parseInt(exPcsText.replace(/\+/g, '')) || 0;
         const exKg = parseFloat(exKgText.replace(/\+/g, '')) || 0;
         const shPcs = parseInt(shPcsText) || 0; // Already negative
@@ -5922,6 +5931,8 @@ function updateGrandAuditTotal() {
         totals[type].sysKg += sysKg;
         totals[type].gdPcs += gdPcs;
         totals[type].gdKg += gdKg;
+        totals[type].diffPcs += diffPcs;
+        totals[type].diffKg += diffKg;
         totals[type].exPcs += exPcs;
         totals[type].exKg += exKg;
         totals[type].shPcs += shPcs;
@@ -5935,6 +5946,8 @@ function updateGrandAuditTotal() {
         const elSysKg = document.getElementById(`grandSysKg_${type}`);
         const elGdPcs = document.getElementById(`grandGdPcs_${type}`);
         const elGdKg = document.getElementById(`grandGdKg_${type}`);
+        const elDiffPcs = document.getElementById(`grandDiffPcs_${type}`);
+        const elDiffKg = document.getElementById(`grandDiffKg_${type}`);
         const elExPcs = document.getElementById(`grandExPcs_${type}`);
         const elExKg = document.getElementById(`grandExKg_${type}`);
         const elShPcs = document.getElementById(`grandShPcs_${type}`);
@@ -5945,40 +5958,14 @@ function updateGrandAuditTotal() {
         if (elGdPcs) elGdPcs.textContent = t.gdPcs;
         if (elGdKg) elGdKg.textContent = t.gdKg.toFixed(2);
         
+        if (elDiffPcs) { elDiffPcs.textContent = t.diffPcs > 0 ? '+' + t.diffPcs : t.diffPcs; elDiffPcs.className = t.diffPcs > 0 ? 'diff-plus' : (t.diffPcs < 0 ? 'diff-minus' : ''); }
+        if (elDiffKg) { elDiffKg.textContent = t.diffKg > 0 ? '+' + t.diffKg.toFixed(2) : t.diffKg.toFixed(2); elDiffKg.className = t.diffKg > 0 ? 'diff-plus' : (t.diffKg < 0 ? 'diff-minus' : ''); }
+        
         if (elExPcs) { elExPcs.textContent = t.exPcs > 0 ? '+' + t.exPcs : '0'; elExPcs.className = t.exPcs > 0 ? 'diff-plus' : ''; }
         if (elExKg) { elExKg.textContent = t.exKg > 0 ? '+' + t.exKg.toFixed(2) : '0.00'; elExKg.className = t.exKg > 0 ? 'diff-plus' : ''; }
         if (elShPcs) { elShPcs.textContent = t.shPcs < 0 ? t.shPcs : '0'; elShPcs.className = t.shPcs < 0 ? 'diff-minus' : ''; }
         if (elShKg) { elShKg.textContent = t.shKg < 0 ? t.shKg.toFixed(2) : '0.00'; elShKg.className = t.shKg < 0 ? 'diff-minus' : ''; }
     });
-
-    // Overall Total
-    let oSysPcs = totals.Pipe.sysPcs + totals.Fitting.sysPcs;
-    let oSysKg = totals.Pipe.sysKg + totals.Fitting.sysKg;
-    let oGdPcs = totals.Pipe.gdPcs + totals.Fitting.gdPcs;
-    let oGdKg = totals.Pipe.gdKg + totals.Fitting.gdKg;
-    let oExPcs = totals.Pipe.exPcs + totals.Fitting.exPcs;
-    let oExKg = totals.Pipe.exKg + totals.Fitting.exKg;
-    let oShPcs = totals.Pipe.shPcs + totals.Fitting.shPcs;
-    let oShKg = totals.Pipe.shKg + totals.Fitting.shKg;
-
-    const otSysPcs = document.getElementById('grandSysPcs_Total');
-    const otSysKg = document.getElementById('grandSysKg_Total');
-    const otGdPcs = document.getElementById('grandGdPcs_Total');
-    const otGdKg = document.getElementById('grandGdKg_Total');
-    const otExPcs = document.getElementById('grandExPcs_Total');
-    const otExKg = document.getElementById('grandExKg_Total');
-    const otShPcs = document.getElementById('grandShPcs_Total');
-    const otShKg = document.getElementById('grandShKg_Total');
-
-    if (otSysPcs) otSysPcs.textContent = oSysPcs;
-    if (otSysKg) otSysKg.textContent = oSysKg.toFixed(2);
-    if (otGdPcs) otGdPcs.textContent = oGdPcs;
-    if (otGdKg) otGdKg.textContent = oGdKg.toFixed(2);
-
-    if (otExPcs) { otExPcs.textContent = oExPcs > 0 ? '+' + oExPcs : '0'; otExPcs.className = oExPcs > 0 ? 'diff-plus' : ''; }
-    if (otExKg) { otExKg.textContent = oExKg > 0 ? '+' + oExKg.toFixed(2) : '0.00'; otExKg.className = oExKg > 0 ? 'diff-plus' : ''; }
-    if (otShPcs) { otShPcs.textContent = oShPcs < 0 ? oShPcs : '0'; otShPcs.className = oShPcs < 0 ? 'diff-minus' : ''; }
-    if (otShKg) { otShKg.textContent = oShKg < 0 ? oShKg.toFixed(2) : '0.00'; otShKg.className = oShKg < 0 ? 'diff-minus' : ''; }
 }
 
 // PRODUCTION REPORT FUNCTIONS
