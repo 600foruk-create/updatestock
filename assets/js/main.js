@@ -2297,8 +2297,7 @@ function refreshAuditList() {
                     <tr style="background: var(--sky-50); color: black; font-weight: bold; border-bottom: 1px solid #000; font-size: 0.9rem;">
                         <th style="padding: 0.4rem 0.5rem; text-align: left;">Category</th>
                         <th style="padding: 0.4rem 0.5rem; text-align: center;">System Stock</th>
-                        <th style="padding: 0.4rem 0.5rem; text-align: center;">Godown Stock</th>
-                        <th style="padding: 0.4rem 0.5rem; text-align: center; border-right: 1px solid #000;">Net Difference</th>
+                        <th style="padding: 0.4rem 0.5rem; text-align: center; border-right: 1px solid #000;">Godown Stock</th>
                         <th style="padding: 0.4rem 0.5rem; text-align: center; background: var(--teal-50); color: var(--teal-800);">Excess (+)</th>
                         <th style="padding: 0.4rem 0.5rem; text-align: center; background: var(--rose-50); color: var(--rose-800);">Shortage (-)</th>
                     </tr>
@@ -2308,16 +2307,14 @@ function refreshAuditList() {
                     <tr style="font-size: 1.05rem; font-weight: 600;">
                         <td style="background: var(--gray-100);">PVC Pipes (Pcs)</td>
                         <td id="grandSysPcs_Pipe">0</td>
-                        <td id="grandGdPcs_Pipe" style="color: var(--sky-600);">0</td>
-                        <td id="grandDiffPcs_Pipe" style="border-right: 1px solid #000;">0</td>
+                        <td id="grandGdPcs_Pipe" style="color: var(--sky-600); border-right: 1px solid #000;">0</td>
                         <td id="grandExPcs_Pipe" class="diff-plus">0</td>
                         <td id="grandShPcs_Pipe" class="diff-minus">0</td>
                     </tr>
                     <tr style="font-size: 1.05rem; font-weight: 600;">
                         <td style="background: var(--gray-100);">PVC Pipes (KG)</td>
                         <td id="grandSysKg_Pipe">0.00</td>
-                        <td id="grandGdKg_Pipe" style="color: var(--sky-600);">0.00</td>
-                        <td id="grandDiffKg_Pipe" style="border-right: 1px solid #000;">0.00</td>
+                        <td id="grandGdKg_Pipe" style="color: var(--sky-600); border-right: 1px solid #000;">0.00</td>
                         <td id="grandExKg_Pipe" class="diff-plus">0.00</td>
                         <td id="grandShKg_Pipe" class="diff-minus">0.00</td>
                     </tr>
@@ -2325,16 +2322,14 @@ function refreshAuditList() {
                     <tr style="font-size: 1.05rem; font-weight: 600; border-top: 2px solid #ccc;">
                         <td style="background: var(--gray-100);">PVC Fittings (Pcs)</td>
                         <td id="grandSysPcs_Fitting">0</td>
-                        <td id="grandGdPcs_Fitting" style="color: var(--sky-600);">0</td>
-                        <td id="grandDiffPcs_Fitting" style="border-right: 1px solid #000;">0</td>
+                        <td id="grandGdPcs_Fitting" style="color: var(--sky-600); border-right: 1px solid #000;">0</td>
                         <td id="grandExPcs_Fitting" class="diff-plus">0</td>
                         <td id="grandShPcs_Fitting" class="diff-minus">0</td>
                     </tr>
                     <tr style="font-size: 1.05rem; font-weight: 600;">
                         <td style="background: var(--gray-100);">PVC Fittings (KG)</td>
                         <td id="grandSysKg_Fitting">0.00</td>
-                        <td id="grandGdKg_Fitting" style="color: var(--sky-600);">0.00</td>
-                        <td id="grandDiffKg_Fitting" style="border-right: 1px solid #000;">0.00</td>
+                        <td id="grandGdKg_Fitting" style="color: var(--sky-600); border-right: 1px solid #000;">0.00</td>
                         <td id="grandExKg_Fitting" class="diff-plus">0.00</td>
                         <td id="grandShKg_Fitting" class="diff-minus">0.00</td>
                     </tr>
@@ -5946,8 +5941,6 @@ function updateGrandAuditTotal() {
         const elSysKg = document.getElementById(`grandSysKg_${type}`);
         const elGdPcs = document.getElementById(`grandGdPcs_${type}`);
         const elGdKg = document.getElementById(`grandGdKg_${type}`);
-        const elDiffPcs = document.getElementById(`grandDiffPcs_${type}`);
-        const elDiffKg = document.getElementById(`grandDiffKg_${type}`);
         const elExPcs = document.getElementById(`grandExPcs_${type}`);
         const elExKg = document.getElementById(`grandExKg_${type}`);
         const elShPcs = document.getElementById(`grandShPcs_${type}`);
@@ -5957,9 +5950,6 @@ function updateGrandAuditTotal() {
         if (elSysKg) elSysKg.textContent = t.sysKg.toFixed(2);
         if (elGdPcs) elGdPcs.textContent = t.gdPcs;
         if (elGdKg) elGdKg.textContent = t.gdKg.toFixed(2);
-        
-        if (elDiffPcs) { elDiffPcs.textContent = t.diffPcs > 0 ? '+' + t.diffPcs : t.diffPcs; elDiffPcs.className = t.diffPcs > 0 ? 'diff-plus' : (t.diffPcs < 0 ? 'diff-minus' : ''); }
-        if (elDiffKg) { elDiffKg.textContent = t.diffKg > 0 ? '+' + t.diffKg.toFixed(2) : t.diffKg.toFixed(2); elDiffKg.className = t.diffKg > 0 ? 'diff-plus' : (t.diffKg < 0 ? 'diff-minus' : ''); }
         
         if (elExPcs) { elExPcs.textContent = t.exPcs > 0 ? '+' + t.exPcs : '0'; elExPcs.className = t.exPcs > 0 ? 'diff-plus' : ''; }
         if (elExKg) { elExKg.textContent = t.exKg > 0 ? '+' + t.exKg.toFixed(2) : '0.00'; elExKg.className = t.exKg > 0 ? 'diff-plus' : ''; }
