@@ -2214,8 +2214,10 @@ function refreshAuditList() {
                                    id="auditGodownPcs_${item.id}">
                         </td>
                         <td id="auditGodownKg_${item.id}" class="godown-kg-val">${godownKg.toFixed(2)}</td>
-                        <td id="auditDiffPcs_${item.id}" class="diff-pcs-val ${diffClass}">${(diffPcs > 0 ? '+' : '') + diffPcs}</td>
-                        <td id="auditDiffKg_${item.id}" class="diff-kg-val ${diffClass}">${(diffPcs > 0 ? '+' : '') + diffKg}</td>
+                        <td id="auditExcessPcs_${item.id}" class="diff-pcs-val ${diffPcs > 0 ? 'diff-plus' : ''}">${diffPcs > 0 ? '+' + diffPcs : ''}</td>
+                        <td id="auditExcessKg_${item.id}" class="diff-kg-val ${diffPcs > 0 ? 'diff-plus' : ''}">${diffPcs > 0 ? '+' + diffKg : ''}</td>
+                        <td id="auditShortagePcs_${item.id}" class="diff-pcs-val ${diffPcs < 0 ? 'diff-minus' : ''}">${diffPcs < 0 ? diffPcs : ''}</td>
+                        <td id="auditShortageKg_${item.id}" class="diff-kg-val ${diffPcs < 0 ? 'diff-minus' : ''}">${diffPcs < 0 ? diffKg : ''}</td>
                         <td class="no-print">
                             <button class="btn btn-primary btn-sm" style="padding: 0.1rem 0.4rem; font-size: 0.75rem;" onclick="adjustStockToSystem(${item.id})" title="Adjust system stock to match manual count">Adjust</button>
                         </td>
@@ -2240,7 +2242,8 @@ function refreshAuditList() {
                                 <th rowspan="2">Brand</th>
                                 <th colspan="2" style="background: var(--sky-50);">Result Stock (System)</th>
                                 <th colspan="2" style="background: var(--orange-50);">Godown Stock (Manual)</th>
-                                <th colspan="2" style="background: var(--green-50);">Difference</th>
+                                <th colspan="2" style="background: var(--teal-50); color: var(--teal-800);">Excess (+)</th>
+                                <th colspan="2" style="background: var(--rose-50); color: var(--rose-800);">Shortage (-)</th>
                                 <th rowspan="2" class="no-print">Action</th>
                             </tr>
                             <tr>
@@ -2248,8 +2251,10 @@ function refreshAuditList() {
                                 <th style="background: var(--sky-50);">KG</th>
                                 <th style="background: var(--orange-50);">Pieces</th>
                                 <th style="background: var(--orange-50);">KG</th>
-                                <th style="background: var(--green-50);">Pcs +/-</th>
-                                <th style="background: var(--green-50);">KG +/-</th>
+                                <th style="background: var(--teal-50); color: var(--teal-700);">Pcs +</th>
+                                <th style="background: var(--teal-50); color: var(--teal-700);">KG +</th>
+                                <th style="background: var(--rose-50); color: var(--rose-700);">Pcs -</th>
+                                <th style="background: var(--rose-50); color: var(--rose-700);">KG -</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -2262,8 +2267,10 @@ function refreshAuditList() {
                                 <td id="totalSysKg_${main.id}">${bSysKg.toFixed(2)}</td>
                                 <td id="totalGodownPcs_${main.id}">0</td>
                                 <td id="totalGodownKg_${main.id}">0.00</td>
-                                <td id="totalDiffPcs_${main.id}">0</td>
-                                <td id="totalDiffKg_${main.id}">0.00</td>
+                                <td id="totalExcessPcs_${main.id}">0</td>
+                                <td id="totalExcessKg_${main.id}">0.00</td>
+                                <td id="totalShortagePcs_${main.id}">0</td>
+                                <td id="totalShortageKg_${main.id}">0.00</td>
                                 <td class="no-print"></td>
                             </tr>
                         </tfoot>
@@ -2278,29 +2285,63 @@ function refreshAuditList() {
         <div id="grandTotalContainer" style="margin-top: 3rem; background: var(--gray-50); padding: 2rem; border-radius: 12px; border: 2px solid #000;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid #000; padding-bottom: 0.5rem;">
                 <h2 style="margin: 0; color: var(--gray-800);">🏆 Audit Grand Summary</h2>
-                <span style="font-size: 0.9rem; color: var(--gray-500);">All Brands Combined</span>
+                <span style="font-size: 0.9rem; color: var(--gray-500);">PVC Pipes & Fittings Separate</span>
             </div>
             <table class="audit-table" style="margin-bottom: 0;">
                 <thead>
                     <tr style="background: var(--gray-800); color: white;">
-                        <th style="color: white; padding: 1rem;">Metric</th>
+                        <th style="color: white; padding: 1rem;">Category</th>
                         <th style="color: white; padding: 1rem;">System Stock</th>
                         <th style="color: white; padding: 1rem;">Godown Stock</th>
-                        <th style="color: white; padding: 1rem;">Difference</th>
+                        <th style="color: white; padding: 1rem; background: var(--teal-700);">Excess (+)</th>
+                        <th style="color: white; padding: 1rem; background: var(--rose-700);">Shortage (-)</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr style="font-size: 1.1rem; font-weight: 700;">
-                        <td style="background: var(--gray-100);">Total Pieces</td>
-                        <td id="grandTotalSysPcs">0</td>
-                        <td id="grandTotalGodownPcs" style="color: var(--sky-600);">0</td>
-                        <td id="grandTotalDiffPcs">0</td>
+                    <!-- Pipes Summary -->
+                    <tr style="font-size: 1.05rem; font-weight: 600;">
+                        <td style="background: var(--gray-100);">PVC Pipes (Pcs)</td>
+                        <td id="grandSysPcs_Pipe">0</td>
+                        <td id="grandGdPcs_Pipe" style="color: var(--sky-600);">0</td>
+                        <td id="grandExPcs_Pipe" class="diff-plus">0</td>
+                        <td id="grandShPcs_Pipe" class="diff-minus">0</td>
                     </tr>
-                    <tr style="font-size: 1.1rem; font-weight: 700;">
-                        <td style="background: var(--gray-100);">Total Weight (KG)</td>
-                        <td id="grandTotalSysKg">0.00</td>
-                        <td id="grandTotalGodownKg" style="color: var(--sky-600);">0.00</td>
-                        <td id="grandTotalDiffKg">0.00</td>
+                    <tr style="font-size: 1.05rem; font-weight: 600;">
+                        <td style="background: var(--gray-100);">PVC Pipes (KG)</td>
+                        <td id="grandSysKg_Pipe">0.00</td>
+                        <td id="grandGdKg_Pipe" style="color: var(--sky-600);">0.00</td>
+                        <td id="grandExKg_Pipe" class="diff-plus">0.00</td>
+                        <td id="grandShKg_Pipe" class="diff-minus">0.00</td>
+                    </tr>
+                    <!-- Fittings Summary -->
+                    <tr style="font-size: 1.05rem; font-weight: 600; border-top: 2px solid #ccc;">
+                        <td style="background: var(--gray-100);">PVC Fittings (Pcs)</td>
+                        <td id="grandSysPcs_Fitting">0</td>
+                        <td id="grandGdPcs_Fitting" style="color: var(--sky-600);">0</td>
+                        <td id="grandExPcs_Fitting" class="diff-plus">0</td>
+                        <td id="grandShPcs_Fitting" class="diff-minus">0</td>
+                    </tr>
+                    <tr style="font-size: 1.05rem; font-weight: 600;">
+                        <td style="background: var(--gray-100);">PVC Fittings (KG)</td>
+                        <td id="grandSysKg_Fitting">0.00</td>
+                        <td id="grandGdKg_Fitting" style="color: var(--sky-600);">0.00</td>
+                        <td id="grandExKg_Fitting" class="diff-plus">0.00</td>
+                        <td id="grandShKg_Fitting" class="diff-minus">0.00</td>
+                    </tr>
+                    <!-- Overall Total -->
+                    <tr style="font-size: 1.15rem; font-weight: 800; border-top: 2px solid #000; background: var(--sky-50);">
+                        <td style="background: var(--gray-100);">OVERALL (Pcs)</td>
+                        <td id="grandSysPcs_Total">0</td>
+                        <td id="grandGdPcs_Total" style="color: var(--sky-600);">0</td>
+                        <td id="grandExPcs_Total" class="diff-plus">0</td>
+                        <td id="grandShPcs_Total" class="diff-minus">0</td>
+                    </tr>
+                    <tr style="font-size: 1.15rem; font-weight: 800; background: var(--sky-50);">
+                        <td style="background: var(--gray-100);">OVERALL (KG)</td>
+                        <td id="grandSysKg_Total">0.00</td>
+                        <td id="grandGdKg_Total" style="color: var(--sky-600);">0.00</td>
+                        <td id="grandExKg_Total" class="diff-plus">0.00</td>
+                        <td id="grandShKg_Total" class="diff-minus">0.00</td>
                     </tr>
                 </tbody>
             </table>
@@ -2331,23 +2372,27 @@ function calculateAuditRow(itemId, unitWeight, brandId) {
     const godownKg = (godownPcs * unitWeight).toFixed(2);
     document.getElementById(`auditGodownKg_${itemId}`).textContent = godownKg;
     
-    // Difference Calculation
     const diffPcs = godownPcs - sysPcs;
     const diffKg = (diffPcs * unitWeight).toFixed(2);
     
-    const diffPcsEl = document.getElementById(`auditDiffPcs_${itemId}`);
-    const diffKgEl = document.getElementById(`auditDiffKg_${itemId}`);
+    const excessPcsEl = document.getElementById(`auditExcessPcs_${itemId}`);
+    const excessKgEl = document.getElementById(`auditExcessKg_${itemId}`);
+    const shortagePcsEl = document.getElementById(`auditShortagePcs_${itemId}`);
+    const shortageKgEl = document.getElementById(`auditShortageKg_${itemId}`);
     
     // Save to persistence
     auditSession[itemId] = godownPcsStr;
     localStorage.setItem('stock_auditSession', JSON.stringify(auditSession));
     
-    diffPcsEl.textContent = (diffPcs > 0 ? '+' : '') + diffPcs;
-    diffKgEl.textContent = (diffPcs > 0 ? '+' : '') + diffKg;
+    excessPcsEl.textContent = diffPcs > 0 ? '+' + diffPcs : '';
+    excessKgEl.textContent = diffPcs > 0 ? '+' + diffKg : '';
+    shortagePcsEl.textContent = diffPcs < 0 ? diffPcs : '';
+    shortageKgEl.textContent = diffPcs < 0 ? diffKg : '';
     
-    // Color coding
-    diffPcsEl.className = diffPcs === 0 ? 'diff-pcs-val' : (diffPcs > 0 ? 'diff-pcs-val diff-plus' : 'diff-pcs-val diff-minus');
-    diffKgEl.className = diffPcs === 0 ? 'diff-kg-val' : (diffPcs > 0 ? 'diff-kg-val diff-plus' : 'diff-kg-val diff-minus');
+    excessPcsEl.className = diffPcs > 0 ? 'diff-pcs-val diff-plus' : 'diff-pcs-val';
+    excessKgEl.className = diffPcs > 0 ? 'diff-kg-val diff-plus' : 'diff-kg-val';
+    shortagePcsEl.className = diffPcs < 0 ? 'diff-pcs-val diff-minus' : 'diff-pcs-val';
+    shortageKgEl.className = diffPcs < 0 ? 'diff-kg-val diff-minus' : 'diff-kg-val';
 
     // Update Brand Sub-totals
     updateBrandAuditTotals(brandId);
@@ -2360,7 +2405,8 @@ function updateBrandAuditTotals(brandId) {
 
     let sysTotalPcs = 0, sysTotalKg = 0;
     let godownTotalPcs = 0, godownTotalKg = 0;
-    let diffTotalPcs = 0, diffTotalKg = 0;
+    let excessTotalPcs = 0, excessTotalKg = 0;
+    let shortageTotalPcs = 0, shortageTotalKg = 0;
 
     brandGroup.querySelectorAll('tbody tr').forEach(row => {
         const itemId = row.id.split('_')[1];
@@ -2368,8 +2414,10 @@ function updateBrandAuditTotals(brandId) {
         const sysKgEl = document.getElementById(`auditSysKg_${itemId}`);
         const gdPcsEl = document.getElementById(`auditGodownPcs_${itemId}`);
         const gdKgEl = document.getElementById(`auditGodownKg_${itemId}`);
-        const dPcsEl = document.getElementById(`auditDiffPcs_${itemId}`);
-        const dKgEl = document.getElementById(`auditDiffKg_${itemId}`);
+        const exPcsEl = document.getElementById(`auditExcessPcs_${itemId}`);
+        const exKgEl = document.getElementById(`auditExcessKg_${itemId}`);
+        const shPcsEl = document.getElementById(`auditShortagePcs_${itemId}`);
+        const shKgEl = document.getElementById(`auditShortageKg_${itemId}`);
 
         if (sysPcsEl && gdPcsEl) {
             sysTotalPcs += parseInt(sysPcsEl.textContent) || 0;
@@ -2377,10 +2425,10 @@ function updateBrandAuditTotals(brandId) {
             godownTotalPcs += parseInt(gdPcsEl.value) || 0;
             godownTotalKg += parseFloat(gdKgEl.textContent) || 0;
             
-            let dPcs = parseInt(dPcsEl.textContent.replace('+', '')) || 0;
-            let dKg = parseFloat(dKgEl.textContent.replace('+', '')) || 0;
-            diffTotalPcs += dPcs;
-            diffTotalKg += dKg;
+            excessTotalPcs += parseInt(exPcsEl?.textContent.replace('+', '')) || 0;
+            excessTotalKg += parseFloat(exKgEl?.textContent.replace('+', '')) || 0;
+            shortageTotalPcs += parseInt(shPcsEl?.textContent) || 0; // Already negative
+            shortageTotalKg += parseFloat(shKgEl?.textContent) || 0;
         }
     });
 
@@ -2388,22 +2436,33 @@ function updateBrandAuditTotals(brandId) {
     const totSysKg = document.getElementById(`totalSysKg_${brandId}`);
     const totGdPcs = document.getElementById(`totalGodownPcs_${brandId}`);
     const totGdKg = document.getElementById(`totalGodownKg_${brandId}`);
-    const totDiffPcs = document.getElementById(`totalDiffPcs_${brandId}`);
-    const totDiffKg = document.getElementById(`totalDiffKg_${brandId}`);
+    const totExPcs = document.getElementById(`totalExcessPcs_${brandId}`);
+    const totExKg = document.getElementById(`totalExcessKg_${brandId}`);
+    const totShPcs = document.getElementById(`totalShortagePcs_${brandId}`);
+    const totShKg = document.getElementById(`totalShortageKg_${brandId}`);
 
     if (totSysPcs) totSysPcs.textContent = sysTotalPcs;
     if (totSysKg) totSysKg.textContent = sysTotalKg.toFixed(2);
     if (totGdPcs) totGdPcs.textContent = godownTotalPcs;
     if (totGdKg) totGdKg.textContent = godownTotalKg.toFixed(2);
     
-    if (totDiffPcs) {
-        totDiffPcs.textContent = (diffTotalPcs > 0 ? '+' : '') + diffTotalPcs;
-        totDiffPcs.className = diffTotalPcs === 0 ? '' : (diffTotalPcs > 0 ? 'diff-plus' : 'diff-minus');
+    if (totExPcs) {
+        totExPcs.textContent = excessTotalPcs > 0 ? '+' + excessTotalPcs : '0';
+        totExPcs.className = excessTotalPcs > 0 ? 'diff-plus' : '';
     }
-    if (totDiffKg) {
-        totDiffKg.textContent = (diffTotalKg > 0 ? '+' : '') + diffTotalKg.toFixed(2);
-        totDiffKg.className = diffTotalKg === 0 ? '' : (diffTotalKg > 0 ? 'diff-plus' : 'diff-minus');
+    if (totExKg) {
+        totExKg.textContent = excessTotalKg > 0 ? '+' + excessTotalKg.toFixed(2) : '0.00';
+        totExKg.className = excessTotalKg > 0 ? 'diff-plus' : '';
     }
+    if (totShPcs) {
+        totShPcs.textContent = shortageTotalPcs < 0 ? shortageTotalPcs : '0';
+        totShPcs.className = shortageTotalPcs < 0 ? 'diff-minus' : '';
+    }
+    if (totShKg) {
+        totShKg.textContent = shortageTotalKg < 0 ? shortageTotalKg.toFixed(2) : '0.00';
+        totShKg.className = shortageTotalKg < 0 ? 'diff-minus' : '';
+    }
+
 }
 
 async function saveMonthlyAudit() {
@@ -5836,49 +5895,90 @@ async function deleteCustDistrict(id) {
 initApp();
 
 function updateGrandAuditTotal() {
-    let gSysPcs = 0, gSysKg = 0;
-    let gGdPcs = 0, gGdKg = 0;
-    let gDiffPcs = 0, gDiffKg = 0;
+    let totals = {
+        Pipe: { sysPcs: 0, sysKg: 0, gdPcs: 0, gdKg: 0, exPcs: 0, exKg: 0, shPcs: 0, shKg: 0 },
+        Fitting: { sysPcs: 0, sysKg: 0, gdPcs: 0, gdKg: 0, exPcs: 0, exKg: 0, shPcs: 0, shKg: 0 }
+    };
 
     mainCategories.forEach(m => {
+        const type = m.type === 'Fitting' ? 'Fitting' : 'Pipe';
+        
         const sysPcs = parseInt(document.getElementById(`totalSysPcs_${m.id}`)?.textContent) || 0;
         const sysKg = parseFloat(document.getElementById(`totalSysKg_${m.id}`)?.textContent) || 0;
         const gdPcs = parseInt(document.getElementById(`totalGodownPcs_${m.id}`)?.textContent) || 0;
         const gdKg = parseFloat(document.getElementById(`totalGodownKg_${m.id}`)?.textContent) || 0;
-        const diffPcsText = document.getElementById(`totalDiffPcs_${m.id}`)?.textContent || '0';
-        const diffKgText = document.getElementById(`totalDiffKg_${m.id}`)?.textContent || '0';
         
-        const diffPcs = parseInt(diffPcsText.replace(/\+/g, '')) || 0;
-        const diffKg = parseFloat(diffKgText.replace(/\+/g, '')) || 0;
+        const exPcsText = document.getElementById(`totalExcessPcs_${m.id}`)?.textContent || '0';
+        const exKgText = document.getElementById(`totalExcessKg_${m.id}`)?.textContent || '0.00';
+        const shPcsText = document.getElementById(`totalShortagePcs_${m.id}`)?.textContent || '0';
+        const shKgText = document.getElementById(`totalShortageKg_${m.id}`)?.textContent || '0.00';
+        
+        const exPcs = parseInt(exPcsText.replace(/\+/g, '')) || 0;
+        const exKg = parseFloat(exKgText.replace(/\+/g, '')) || 0;
+        const shPcs = parseInt(shPcsText) || 0; // Already negative
+        const shKg = parseFloat(shKgText) || 0;
 
-        gSysPcs += sysPcs;
-        gSysKg += sysKg;
-        gGdPcs += gdPcs;
-        gGdKg += gdKg;
-        gDiffPcs += diffPcs;
-        gDiffKg += diffKg;
+        totals[type].sysPcs += sysPcs;
+        totals[type].sysKg += sysKg;
+        totals[type].gdPcs += gdPcs;
+        totals[type].gdKg += gdKg;
+        totals[type].exPcs += exPcs;
+        totals[type].exKg += exKg;
+        totals[type].shPcs += shPcs;
+        totals[type].shKg += shKg;
     });
 
-    const elSysPcs = document.getElementById('grandTotalSysPcs');
-    const elSysKg = document.getElementById('grandTotalSysKg');
-    const elGdPcs = document.getElementById('grandTotalGodownPcs');
-    const elGdKg = document.getElementById('grandTotalGodownKg');
-    const elDiffPcs = document.getElementById('grandTotalDiffPcs');
-    const elDiffKg = document.getElementById('grandTotalDiffKg');
+    ['Pipe', 'Fitting'].forEach(type => {
+        const t = totals[type];
+        
+        const elSysPcs = document.getElementById(`grandSysPcs_${type}`);
+        const elSysKg = document.getElementById(`grandSysKg_${type}`);
+        const elGdPcs = document.getElementById(`grandGdPcs_${type}`);
+        const elGdKg = document.getElementById(`grandGdKg_${type}`);
+        const elExPcs = document.getElementById(`grandExPcs_${type}`);
+        const elExKg = document.getElementById(`grandExKg_${type}`);
+        const elShPcs = document.getElementById(`grandShPcs_${type}`);
+        const elShKg = document.getElementById(`grandShKg_${type}`);
 
-    if (elSysPcs) elSysPcs.textContent = gSysPcs;
-    if (elSysKg) elSysKg.textContent = gSysKg.toFixed(2);
-    if (elGdPcs) elGdPcs.textContent = gGdPcs;
-    if (elGdKg) elGdKg.textContent = gGdKg.toFixed(2);
-    
-    if (elDiffPcs) {
-        elDiffPcs.textContent = (gDiffPcs > 0 ? '+' : '') + gDiffPcs;
-        elDiffPcs.className = gDiffPcs === 0 ? '' : (gDiffPcs > 0 ? 'diff-plus' : 'diff-minus');
-    }
-    if (elDiffKg) {
-        elDiffKg.textContent = (gDiffKg > 0 ? '+' : '') + gDiffKg.toFixed(2);
-        elDiffKg.className = gDiffKg === 0 ? '' : (gDiffKg > 0 ? 'diff-plus' : 'diff-minus');
-    }
+        if (elSysPcs) elSysPcs.textContent = t.sysPcs;
+        if (elSysKg) elSysKg.textContent = t.sysKg.toFixed(2);
+        if (elGdPcs) elGdPcs.textContent = t.gdPcs;
+        if (elGdKg) elGdKg.textContent = t.gdKg.toFixed(2);
+        
+        if (elExPcs) { elExPcs.textContent = t.exPcs > 0 ? '+' + t.exPcs : '0'; elExPcs.className = t.exPcs > 0 ? 'diff-plus' : ''; }
+        if (elExKg) { elExKg.textContent = t.exKg > 0 ? '+' + t.exKg.toFixed(2) : '0.00'; elExKg.className = t.exKg > 0 ? 'diff-plus' : ''; }
+        if (elShPcs) { elShPcs.textContent = t.shPcs < 0 ? t.shPcs : '0'; elShPcs.className = t.shPcs < 0 ? 'diff-minus' : ''; }
+        if (elShKg) { elShKg.textContent = t.shKg < 0 ? t.shKg.toFixed(2) : '0.00'; elShKg.className = t.shKg < 0 ? 'diff-minus' : ''; }
+    });
+
+    // Overall Total
+    let oSysPcs = totals.Pipe.sysPcs + totals.Fitting.sysPcs;
+    let oSysKg = totals.Pipe.sysKg + totals.Fitting.sysKg;
+    let oGdPcs = totals.Pipe.gdPcs + totals.Fitting.gdPcs;
+    let oGdKg = totals.Pipe.gdKg + totals.Fitting.gdKg;
+    let oExPcs = totals.Pipe.exPcs + totals.Fitting.exPcs;
+    let oExKg = totals.Pipe.exKg + totals.Fitting.exKg;
+    let oShPcs = totals.Pipe.shPcs + totals.Fitting.shPcs;
+    let oShKg = totals.Pipe.shKg + totals.Fitting.shKg;
+
+    const otSysPcs = document.getElementById('grandSysPcs_Total');
+    const otSysKg = document.getElementById('grandSysKg_Total');
+    const otGdPcs = document.getElementById('grandGdPcs_Total');
+    const otGdKg = document.getElementById('grandGdKg_Total');
+    const otExPcs = document.getElementById('grandExPcs_Total');
+    const otExKg = document.getElementById('grandExKg_Total');
+    const otShPcs = document.getElementById('grandShPcs_Total');
+    const otShKg = document.getElementById('grandShKg_Total');
+
+    if (otSysPcs) otSysPcs.textContent = oSysPcs;
+    if (otSysKg) otSysKg.textContent = oSysKg.toFixed(2);
+    if (otGdPcs) otGdPcs.textContent = oGdPcs;
+    if (otGdKg) otGdKg.textContent = oGdKg.toFixed(2);
+
+    if (otExPcs) { otExPcs.textContent = oExPcs > 0 ? '+' + oExPcs : '0'; otExPcs.className = oExPcs > 0 ? 'diff-plus' : ''; }
+    if (otExKg) { otExKg.textContent = oExKg > 0 ? '+' + oExKg.toFixed(2) : '0.00'; otExKg.className = oExKg > 0 ? 'diff-plus' : ''; }
+    if (otShPcs) { otShPcs.textContent = oShPcs < 0 ? oShPcs : '0'; otShPcs.className = oShPcs < 0 ? 'diff-minus' : ''; }
+    if (otShKg) { otShKg.textContent = oShKg < 0 ? oShKg.toFixed(2) : '0.00'; otShKg.className = oShKg < 0 ? 'diff-minus' : ''; }
 }
 
 // PRODUCTION REPORT FUNCTIONS
