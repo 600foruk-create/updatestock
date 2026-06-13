@@ -6498,10 +6498,16 @@ function refreshRMDashboard() {
 
         const isLow = stock <= actualThresholdKg;
         
-        totalWeight += stock;
+        let stockInKg = stock;
+        const itemUnit = (item.unit || '').toLowerCase();
+        if (itemUnit === 'grams' || itemUnit === 'g' || itemUnit === 'gram') {
+            stockInKg = stock / 1000;
+        }
+
+        totalWeight += stockInKg;
         
         if (kgPerBag > 0) {
-            totalBags += stock / kgPerBag;
+            totalBags += stockInKg / kgPerBag;
         }
 
         // Inventory Summary Cards - Consistent sizing for KG and Bags
@@ -6559,10 +6565,15 @@ function refreshRMDashboard() {
         let catData = {};
         rmItems.forEach(item => {
             const subCat = rmSubCategories.find(s => s.id === item.subId);
-            const mainCat = subCat ? rmMainCategories.find(m => m.id === subCat.mainId) : null;
-            const catName = mainCat ? mainCat.name : 'Uncategorized';
+            const catName = subCat ? subCat.name : 'Uncategorized';
             if(!catData[catName]) catData[catName] = 0;
-            catData[catName] += parseFloat(item.stock) || 0;
+            
+            let stockVal = parseFloat(item.stock) || 0;
+            const unit = (item.unit || '').toLowerCase();
+            if (unit === 'grams' || unit === 'g' || unit === 'gram') {
+                stockVal = stockVal / 1000;
+            }
+            catData[catName] += stockVal;
         });
         
         new Chart(catChartCtx, {
@@ -6589,7 +6600,14 @@ function refreshRMDashboard() {
         let existingChart = Chart.getChart(topChartCtx);
         if (existingChart) existingChart.destroy();
 
-        let topItems = [...rmItems].sort((a,b) => (parseFloat(b.stock)||0) - (parseFloat(a.stock)||0)).slice(0, 5);
+        let topItems = [...rmItems].map(i => {
+            let stockKg = parseFloat(i.stock) || 0;
+            const u = (i.unit || '').toLowerCase();
+            if (u === 'grams' || u === 'g' || u === 'gram') {
+                stockKg = stockKg / 1000;
+            }
+            return { ...i, stockKg };
+        }).sort((a,b) => b.stockKg - a.stockKg).slice(0, 5);
         
         new Chart(topChartCtx, {
             type: 'bar',
@@ -6597,7 +6615,7 @@ function refreshRMDashboard() {
                 labels: topItems.map(i => i.name.substring(0,10) + (i.name.length>10?'...':'')),
                 datasets: [{
                     label: 'Stock (KG)',
-                    data: topItems.map(i => parseFloat(i.stock)||0),
+                    data: topItems.map(i => i.stockKg),
                     backgroundColor: '#10b981',
                     borderRadius: 4
                 }]
