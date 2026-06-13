@@ -6615,8 +6615,8 @@ function refreshRMDashboard() {
                 labels: topItems.map(i => i.name.substring(0,10) + (i.name.length>10?'...':'')),
                 datasets: [{
                     label: 'Stock (KG)',
-                    data: topItems.map(i => i.stockKg),
-                    backgroundColor: '#10b981',
+                    data: topItems.map(i => Math.abs(i.stockKg)),
+                    backgroundColor: topItems.map(i => i.stockKg < 0 ? '#ef4444' : '#10b981'),
                     borderRadius: 4
                 }]
             },
