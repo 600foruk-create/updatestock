@@ -198,6 +198,9 @@ async function initApp() {
             const _tMSel = document.getElementById('transMonthFilter');
             if (_tMSel && !_tMSel.value) _tMSel.value = _now.getMonth() + 1;
             
+            // Silently sync missing or modified logs in the background
+            setTimeout(() => { autoSaveRMConsumption(); }, 1500);
+            
             const _rmMSel = document.getElementById('rmInMonthFilter');
             if (_rmMSel && !_rmMSel.value) _rmMSel.value = _now.getMonth() + 1;
             
@@ -7984,28 +7987,6 @@ function refreshRMConsumptionReport() {
                     </div>
                 </div>
             </div>`;
-
-            // Auto-save brand log if there's any data and we are in daily mode
-            if ((fg > 0 || rm > 0) && periodType === 'daily') {
-                const logDate = targetDateObj;
-                if (logDate) {
-                    const y = logDate.getFullYear(), m = String(logDate.getMonth()+1).padStart(2,'0'), d2 = String(logDate.getDate()).padStart(2,'0');
-                    const dateStr = `${y}-${m}-${d2} 23:59:59`;
-                    fetch('api/sync.php?action=save_rm_brand_consumption_log', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ log: { date: dateStr, brand_id: bid, fg_weight: fg, rm_weight: rm, rm_value: val, gap: wip, notes: '[Auto]' } })
-                    }).then(r => r.json()).then(res => {
-                        if (res.status === 'success') {
-                            // Update local brand logs
-                            const existing = rmBrandConsumptionLogs.findIndex(l => l.brand_id == bid && l.date && l.date.startsWith(`${y}-${m}-${d2}`));
-                            const logObj = { id: res.id, date: dateStr, brand_id: bid, fg_weight: fg, rm_weight: rm, rm_value: val, gap: wip };
-                            if (existing !== -1) rmBrandConsumptionLogs[existing] = logObj;
-                            else rmBrandConsumptionLogs.unshift(logObj);
-                        }
-                    }).catch(() => {});
-                }
-            }
         });
         brandCards.innerHTML = html;
     } else if (brandSection) {
@@ -8020,106 +8001,117 @@ async function saveRMConsumptionEntry() {
 }
 
 async function autoSaveRMConsumption(targetDate = null) {
-    // 1. Find the latest date in the entire system (FG or RM)
-    let refDate = targetDate ? new Date(targetDate) : null;
-    if (!targetDate) {
-        let maxDate = null;
-        transactions.forEach(t => {
-            if (t.type === 'IN') {
-                const d = new Date(t.date);
-                if (!isNaN(d.getTime()) && (!maxDate || d > maxDate)) maxDate = d;
-            }
-        });
-        rmTransactions.forEach(t => {
-            if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:')) {
-                const d = new Date(t.date);
-                if (!isNaN(d.getTime()) && (!maxDate || d > maxDate)) maxDate = d;
-            }
-        });
-        refDate = maxDate;
-    }
+    const dailyData = {}; 
 
-    let fgTotalKg = 0;
-    let rmTotalKg = 0;
-    let rmTotalValue = 0;
-
-    if (refDate) {
-        const refDateStr = refDate.toDateString();
-
-        transactions.forEach(t => {
-            if (t.type === 'IN' && new Date(t.date).toDateString() === refDateStr) {
-                fgTotalKg += (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
-            }
-        });
-
-        rmTransactions.forEach(t => {
-            if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === refDateStr) {
-                const item = rmItems.find(i => i.id == t.rm_item_id);
-                const qty = (parseFloat(t.quantity) || 0);
-                let price = (parseFloat(t.price) || 0);
-
-                if (price <= 0 && item) {
-                    price = getRMItemCurrentPrice(item);
-                }
-
-                rmTotalKg += qty;
-                rmTotalValue += qty * price;
-            }
-        });
-    }
-    
-    // Don't auto-save if both are zero
-    if (fgTotalKg === 0 && rmTotalKg === 0) return;
-
-    const gapVal = rmTotalKg - fgTotalKg;
-
-    // Use the actual transaction date (not today's date) so the log entry
-    // matches the date of the production/issuance, even if entered the next day
-    let logDateStr;
-    if (targetDate) {
-        logDateStr = targetDate + " 23:59:59";
-    } else {
-        if (refDate) {
-            // Format as YYYY-MM-DD 23:59:59
-            const y = refDate.getFullYear();
-            const m = String(refDate.getMonth() + 1).padStart(2, '0');
-            const d = String(refDate.getDate()).padStart(2, '0');
-            logDateStr = `${y}-${m}-${d} 23:59:59`;
-        } else {
-            logDateStr = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        }
-    }
-
-    const log = {
-        date: logDateStr,
-        fg_weight: fgTotalKg,
-        rm_weight: rmTotalKg,
-        rm_value: rmTotalValue,
-        in_process: 0,
-        gap: gapVal,
-        notes: '[Saved]'
+    const processDate = (dateVal) => {
+        const d = new Date(dateVal);
+        if (isNaN(d.getTime())) return null;
+        const y = d.getFullYear();
+        const m = String(d.getMonth()+1).padStart(2,'0');
+        const day = String(d.getDate()).padStart(2,'0');
+        return `${y}-${m}-${day}`;
     };
 
-    try {
-        const response = await fetch('api/sync.php?action=save_rm_consumption_log', {
-            method: 'POST',
-            body: JSON.stringify({ log })
-        });
-        const result = await response.json();
-        if (result.status === 'success') {
-            log.id = result.id;
-            if (result.action === 'updated') {
-                const idx = rmConsumptionLogs.findIndex(l => l.id == result.id);
-                if (idx !== -1) rmConsumptionLogs[idx] = log;
-            } else {
-                rmConsumptionLogs.unshift(log);
-            }
-            populateRMHistoryYearFilter(); 
-            refreshRMConsumptionHistory();
-            // Standardizing message
-            console.log('Daily consumption report synced.');
+    transactions.forEach(t => {
+        if (t.type === 'IN') {
+            const dKey = processDate(t.date);
+            if (!dKey) return;
+            if (!dailyData[dKey]) dailyData[dKey] = { fg: 0, rm: 0, val: 0, brands: {} };
+            const bid = t.mainId || '__none__';
+            if (!dailyData[dKey].brands[bid]) dailyData[dKey].brands[bid] = { fg: 0, rm: 0, val: 0 };
+            
+            const qty = (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
+            dailyData[dKey].fg += qty;
+            dailyData[dKey].brands[bid].fg += qty;
         }
-    } catch (e) { console.error('Failed to save log:', e); }
+    });
+
+    rmTransactions.forEach(t => {
+        if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:')) {
+            const dKey = processDate(t.date);
+            if (!dKey) return;
+            if (!dailyData[dKey]) dailyData[dKey] = { fg: 0, rm: 0, val: 0, brands: {} };
+            const bid = t.brand_id || '__none__';
+            if (!dailyData[dKey].brands[bid]) dailyData[dKey].brands[bid] = { fg: 0, rm: 0, val: 0 };
+
+            const item = rmItems.find(i => i.id == t.rm_item_id);
+            const qty = (parseFloat(t.quantity) || 0);
+            let price = (parseFloat(t.price) || 0);
+            if (price <= 0 && item) price = getRMItemCurrentPrice(item);
+            
+            dailyData[dKey].rm += qty;
+            dailyData[dKey].val += qty * price;
+            dailyData[dKey].brands[bid].rm += qty;
+            dailyData[dKey].brands[bid].val += qty * price;
+        }
+    });
+
+    let uiNeedsRefresh = false;
+
+    for (const [dKey, data] of Object.entries(dailyData)) {
+        if (data.fg === 0 && data.rm === 0) continue;
+
+        // 1. Global log sync
+        const existingLog = rmConsumptionLogs.find(l => l.date && l.date.startsWith(dKey));
+        const diffFg = Math.abs((parseFloat(existingLog?.fg_weight) || 0) - data.fg);
+        const diffRm = Math.abs((parseFloat(existingLog?.rm_weight) || 0) - data.rm);
+        const diffVal = Math.abs((parseFloat(existingLog?.rm_value) || 0) - data.val);
+
+        if (!existingLog || diffFg > 0.01 || diffRm > 0.01 || diffVal > 0.01) {
+            const logDateStr = existingLog ? existingLog.date : `${dKey} 23:59:59`;
+            const gapVal = data.rm - data.fg;
+            const logObj = { id: existingLog?.id, date: logDateStr, fg_weight: data.fg, rm_weight: data.rm, rm_value: data.val, in_process: existingLog?.in_process || 0, gap: gapVal, notes: existingLog?.notes || '[Auto-Sync]' };
+            
+            try {
+                const res = await fetch('api/sync.php?action=save_rm_consumption_log', {
+                    method: 'POST', body: JSON.stringify({ log: logObj })
+                });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    uiNeedsRefresh = true;
+                    logObj.id = result.id || logObj.id;
+                    if (existingLog) Object.assign(existingLog, logObj);
+                    else rmConsumptionLogs.unshift(logObj);
+                }
+            } catch(e) {}
+        }
+
+        // 2. Brand logs sync
+        for (const [bid, bData] of Object.entries(data.brands)) {
+            if (bData.fg === 0 && bData.rm === 0) continue;
+            
+            const existingBLog = rmBrandConsumptionLogs.find(l => l.brand_id == bid && l.date && l.date.startsWith(dKey));
+            const bDiffFg = Math.abs((parseFloat(existingBLog?.fg_weight) || 0) - bData.fg);
+            const bDiffRm = Math.abs((parseFloat(existingBLog?.rm_weight) || 0) - bData.rm);
+            const bDiffVal = Math.abs((parseFloat(existingBLog?.rm_value) || 0) - bData.val);
+
+            if (!existingBLog || bDiffFg > 0.01 || bDiffRm > 0.01 || bDiffVal > 0.01) {
+                const logDateStr = existingBLog ? existingBLog.date : `${dKey} 23:59:59`;
+                const gapVal = bData.rm - bData.fg;
+                const bLogObj = { id: existingBLog?.id, date: logDateStr, brand_id: bid, fg_weight: bData.fg, rm_weight: bData.rm, rm_value: bData.val, gap: gapVal, notes: existingBLog?.notes || '[Auto-Sync]' };
+                
+                try {
+                    const res = await fetch('api/sync.php?action=save_rm_brand_consumption_log', {
+                        method: 'POST', body: JSON.stringify({ log: bLogObj })
+                    });
+                    const result = await res.json();
+                    if (result.status === 'success') {
+                        uiNeedsRefresh = true;
+                        bLogObj.id = result.id || bLogObj.id;
+                        if (existingBLog) Object.assign(existingBLog, bLogObj);
+                        else rmBrandConsumptionLogs.unshift(bLogObj);
+                    }
+                } catch(e) {}
+            }
+        }
+    }
+    
+    if (uiNeedsRefresh && typeof refreshRMConsumptionHistory === 'function') {
+        const brandSection = document.getElementById('brandWIPSection');
+        if (brandSection && brandSection.style.display !== 'none') {
+            refreshRMConsumptionHistory();
+        }
+    }
 }
 
 // ==================== BRAND HISTORY MODAL ====================
