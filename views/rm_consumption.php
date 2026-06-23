@@ -54,9 +54,21 @@
 
     <!-- Brand-wise WIP Breakdown -->
     <div id="brandWIPSection" style="margin-bottom: 2.5rem; display: none;">
-        <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem;">
-            <span style="font-size: 0.75rem; font-weight: 800; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.8px;">🏷️ Brand-Wise Breakdown</span>
-            <div style="flex: 1; height: 1px; background: var(--gray-200);"></div>
+        <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; flex-wrap: wrap;">
+            <span style="font-size: 0.75rem; font-weight: 800; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.8px; white-space: nowrap;">🏷️ Brand-Wise Breakdown</span>
+            <div style="flex: 1; height: 1px; background: var(--gray-200); min-width: 50px;"></div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; padding: 4px 8px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <select id="brandWIPPeriodType" class="form-control" style="border: none; outline: none; background: transparent; font-weight: 700; color: var(--sky-700); cursor: pointer; padding: 0 4px; font-size: 0.75rem;" onchange="refreshRMConsumptionReport()">
+                    <option value="daily">Daily (Selected Date)</option>
+                    <option value="monthly">Monthly (Selected Month)</option>
+                    <option value="custom">Date Range</option>
+                </select>
+                <div id="brandWIPCustomRange" style="display: none; align-items: center; gap: 0.5rem; border-left: 1px solid #cbd5e1; padding-left: 0.5rem; margin-left: 0.2rem;">
+                    <input type="date" id="brandWIPFromDate" class="form-control" style="border: none; outline: none; background: transparent; font-weight: 700; color: var(--sky-700); cursor: pointer; padding: 0; font-size: 0.7rem;" onchange="refreshRMConsumptionReport()">
+                    <span style="color: var(--gray-400); font-weight: bold; font-size: 0.7rem;">to</span>
+                    <input type="date" id="brandWIPToDate" class="form-control" style="border: none; outline: none; background: transparent; font-weight: 700; color: var(--sky-700); cursor: pointer; padding: 0; font-size: 0.7rem;" onchange="refreshRMConsumptionReport()">
+                </div>
+            </div>
         </div>
         <div id="brandWIPCards" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
             <!-- Injected by JS -->

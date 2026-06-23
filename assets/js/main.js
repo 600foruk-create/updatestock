@@ -7860,10 +7860,41 @@ function refreshRMConsumptionReport() {
     if (brandCards && mainCategories.length > 0) {
         if (brandSection) brandSection.style.display = 'block';
 
+        const periodTypeEl = document.getElementById('brandWIPPeriodType');
+        const periodType = periodTypeEl ? periodTypeEl.value : 'daily';
+        
+        const customRangeEl = document.getElementById('brandWIPCustomRange');
+        if (customRangeEl) {
+            customRangeEl.style.display = periodType === 'custom' ? 'flex' : 'none';
+        }
+        
+        let brandFilterMatch = (dateVal) => {
+            const dateToCheck = new Date(dateVal);
+            if (isNaN(dateToCheck.getTime())) return false;
+            
+            if (periodType === 'daily') {
+                return dateToCheck.toDateString() === targetDateStr;
+            } else if (periodType === 'monthly') {
+                return dateToCheck.getMonth() === targetDateObj.getMonth() && dateToCheck.getFullYear() === targetDateObj.getFullYear();
+            } else if (periodType === 'custom') {
+                const fromEl = document.getElementById('brandWIPFromDate');
+                const toEl = document.getElementById('brandWIPToDate');
+                if (fromEl && toEl && fromEl.value && toEl.value) {
+                    const fromDate = new Date(fromEl.value);
+                    fromDate.setHours(0,0,0,0);
+                    const toDate = new Date(toEl.value);
+                    toDate.setHours(23,59,59,999);
+                    return dateToCheck >= fromDate && dateToCheck <= toDate;
+                }
+                return false;
+            }
+            return false;
+        };
+
         // -- FG by brand (uses t.brand_id / t.mainId) --
         const fgByBrand = {};
         transactions.forEach(t => {
-            if (t.type === 'IN' && new Date(t.date).toDateString() === targetDateStr) {
+            if (t.type === 'IN' && brandFilterMatch(t.date)) {
                 const bid = t.mainId || '__none__';
                 fgByBrand[bid] = (fgByBrand[bid] || 0) + (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
             }
@@ -7872,7 +7903,7 @@ function refreshRMConsumptionReport() {
         // -- RM by brand — use t.brand_id directly (already stored on transaction) --
         const rmByBrand = {};
         rmTransactions.forEach(t => {
-            if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && new Date(t.date).toDateString() === targetDateStr) {
+            if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && brandFilterMatch(t.date)) {
                 const bid = t.brand_id || '__none__';
                 const item = rmItems.find(i => i.id == t.rm_item_id);
                 const qty = (parseFloat(t.quantity) || 0);
@@ -7935,8 +7966,8 @@ function refreshRMConsumptionReport() {
                 </div>
             </div>`;
 
-            // Auto-save brand log if there's any data
-            if (fg > 0 || rm > 0) {
+            // Auto-save brand log if there's any data and we are in daily mode
+            if ((fg > 0 || rm > 0) && periodType === 'daily') {
                 const logDate = targetDateObj;
                 if (logDate) {
                     const y = logDate.getFullYear(), m = String(logDate.getMonth()+1).padStart(2,'0'), d2 = String(logDate.getDate()).padStart(2,'0');
