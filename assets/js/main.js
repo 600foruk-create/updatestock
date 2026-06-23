@@ -8017,6 +8017,7 @@ async function autoSaveRMConsumption(targetDate = null) {
     };
 
     transactions.forEach(t => {
+        if (t.is_hidden == 1) return;
         if (t.type === 'IN') {
             const dKey = processDate(t.date);
             if (!dKey) return;
@@ -8031,6 +8032,7 @@ async function autoSaveRMConsumption(targetDate = null) {
     });
 
     rmTransactions.forEach(t => {
+        if (t.is_hidden == 1) return;
         if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:')) {
             const dKey = processDate(t.date);
             if (!dKey) return;
