@@ -4515,8 +4515,6 @@ function editOrder(orderId) {
     let order = orders.find(o => o.id == orderId);
     if (!order) return;
 
-    let custOptions = customers.map(c => `<option value="${c.id}" ${c.id == order.customerId ? 'selected' : ''}>${c.name} ${c.address ? '- '+c.address : ''}</option>`).join('');
-
     let formHtml = `
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="form-group">
@@ -4525,10 +4523,7 @@ function editOrder(orderId) {
                     </div>
                     <div class="form-group">
                         <label>Customer</label>
-                        <select id="editOrderCustomer" class="form-control">
-                            <option value="">-- No Customer --</option>
-                            ${custOptions}
-                        </select>
+                        <div id="editOrderCustomerWrapper" data-customer-id="${order.customerId || ''}"></div>
                     </div>
                 </div>
                 <h4>Order Items</h4>
@@ -4541,6 +4536,17 @@ function editOrder(orderId) {
 
     document.getElementById('editOrderForm').innerHTML = formHtml;
     document.getElementById('editOrderId').textContent = order.id;
+
+    // Add searchable customer input
+    let custOptions = customers.map(c => ({ value: c.id, text: `${c.name} ${c.address ? '- '+c.address : ''}` }));
+    let custWrapper = createSearchableInput('Search Customer...', custOptions, (opt) => {
+        document.getElementById('editOrderCustomerWrapper').dataset.customerId = opt.value;
+    });
+    let existingCust = customers.find(c => c.id == order.customerId);
+    if (existingCust) {
+        custWrapper.querySelector('input').value = `${existingCust.name} ${existingCust.address ? '- '+existingCust.address : ''}`;
+    }
+    document.getElementById('editOrderCustomerWrapper').appendChild(custWrapper);
 
     let container = document.getElementById('editOrderItems');
     (order.items || []).forEach(item => {
@@ -4720,7 +4726,7 @@ async function updateOrder(orderId) {
     let updatedData = {
         ...order,
         date: document.getElementById('editOrderDate').value,
-        customerId: document.getElementById('editOrderCustomer').value || null,
+        customerId: document.getElementById('editOrderCustomerWrapper').dataset.customerId || null,
         items: orderItems,
         totalQty: totalQty,
         totalKg: totalKg
