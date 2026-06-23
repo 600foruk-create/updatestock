@@ -8000,8 +8000,12 @@ async function saveRMConsumptionEntry() {
     await autoSaveRMConsumption();
 }
 
+let isAutoSyncing = false;
 async function autoSaveRMConsumption(targetDate = null) {
-    const dailyData = {}; 
+    if (isAutoSyncing) return;
+    isAutoSyncing = true;
+    try {
+        const dailyData = {}; 
 
     const processDate = (dateVal) => {
         const d = new Date(dateVal);
@@ -8111,6 +8115,9 @@ async function autoSaveRMConsumption(targetDate = null) {
         if (brandSection && brandSection.style.display !== 'none') {
             refreshRMConsumptionHistory();
         }
+    }
+    } finally {
+        isAutoSyncing = false;
     }
 }
 
@@ -8580,9 +8587,19 @@ async function deleteRMConsumptionEntry(id) {
             if (dateOnly) {
                 rmBrandConsumptionLogs = rmBrandConsumptionLogs.filter(l => l.date.substring(0, 10) !== dateOnly);
                 
+                // Helper to match dates safely regardless of raw format
+                const isMatch = (tDateStr) => {
+                    const d = new Date(tDateStr);
+                    if (isNaN(d.getTime())) return false;
+                    const y = d.getFullYear();
+                    const m = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    return `${y}-${m}-${day}` === dateOnly;
+                };
+
                 // Delete associated raw transactions so cards become zero and auto-sync does not restore the log
-                const tIdsToDelete = transactions.filter(t => t.type === 'IN' && t.date.startsWith(dateOnly)).map(t => t.id);
-                const rmIdsToDelete = rmTransactions.filter(t => t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && t.date.startsWith(dateOnly)).map(t => t.id);
+                const tIdsToDelete = transactions.filter(t => t.type === 'IN' && isMatch(t.date)).map(t => t.id);
+                const rmIdsToDelete = rmTransactions.filter(t => t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && isMatch(t.date)).map(t => t.id);
 
                 for (let tid of tIdsToDelete) {
                     await fetch('api/sync.php?action=delete_transaction', { method: 'POST', body: JSON.stringify({ id: tid }) }).catch(()=>{});
