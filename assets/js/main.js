@@ -7896,29 +7896,43 @@ function refreshRMConsumptionReport() {
             return false;
         };
 
-        // -- FG by brand (uses t.brand_id / t.mainId) --
+        // -- Aggregate Data --
         const fgByBrand = {};
-        transactions.forEach(t => {
-            if (t.type === 'IN' && brandFilterMatch(t.date)) {
-                const bid = t.mainId || '__none__';
-                fgByBrand[bid] = (fgByBrand[bid] || 0) + (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
-            }
-        });
-
-        // -- RM by brand — use t.brand_id directly (already stored on transaction) --
         const rmByBrand = {};
-        rmTransactions.forEach(t => {
-            if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && brandFilterMatch(t.date)) {
-                const bid = t.brand_id || '__none__';
-                const item = rmItems.find(i => i.id == t.rm_item_id);
-                const qty = (parseFloat(t.quantity) || 0);
-                let price = (parseFloat(t.price) || 0);
-                if (price <= 0 && item) price = getRMItemCurrentPrice(item);
-                if (!rmByBrand[bid]) rmByBrand[bid] = { kg: 0, value: 0 };
-                rmByBrand[bid].kg    += qty;
-                rmByBrand[bid].value += qty * price;
-            }
-        });
+
+        if (periodType === 'daily') {
+            transactions.forEach(t => {
+                if (t.type === 'IN' && brandFilterMatch(t.date)) {
+                    const bid = t.mainId || '__none__';
+                    fgByBrand[bid] = (fgByBrand[bid] || 0) + (parseFloat(t.quantity) || 0) * (parseFloat(t.itemWeight) || 0);
+                }
+            });
+
+            rmTransactions.forEach(t => {
+                if (t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && brandFilterMatch(t.date)) {
+                    const bid = t.brand_id || '__none__';
+                    const item = rmItems.find(i => i.id == t.rm_item_id);
+                    const qty = (parseFloat(t.quantity) || 0);
+                    let price = (parseFloat(t.price) || 0);
+                    if (price <= 0 && item) price = getRMItemCurrentPrice(item);
+                    if (!rmByBrand[bid]) rmByBrand[bid] = { kg: 0, value: 0 };
+                    rmByBrand[bid].kg    += qty;
+                    rmByBrand[bid].value += qty * price;
+                }
+            });
+        } else {
+            // For Monthly and Custom ranges, use logs which contain the historical saved totals
+            rmBrandConsumptionLogs.forEach(l => {
+                if (brandFilterMatch(l.date)) {
+                    const bid = l.brand_id || '__none__';
+                    fgByBrand[bid] = (fgByBrand[bid] || 0) + (parseFloat(l.fg_weight) || 0);
+                    
+                    if (!rmByBrand[bid]) rmByBrand[bid] = { kg: 0, value: 0 };
+                    rmByBrand[bid].kg += (parseFloat(l.rm_weight) || 0);
+                    rmByBrand[bid].value += (parseFloat(l.rm_value) || 0);
+                }
+            });
+        }
 
         // Predefined color palette for cards
         const palette = [
