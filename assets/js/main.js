@@ -8112,6 +8112,42 @@ async function autoSaveRMConsumption(targetDate = null) {
         }
     }
     
+    // 3. Clean up orphaned global logs
+    rmConsumptionLogs.forEach(l => {
+        const dKey = l.date.substring(0, 10);
+        const data = dailyData[dKey];
+        if (!data || (data.fg === 0 && data.rm === 0)) {
+            if ((parseFloat(l.fg_weight) || 0) > 0 || (parseFloat(l.rm_weight) || 0) > 0) {
+                const logDateStr = l.date;
+                const logObj = { id: l.id, date: logDateStr, fg_weight: 0, rm_weight: 0, rm_value: 0, in_process: l.in_process || 0, gap: -(parseFloat(l.in_process)||0), notes: l.notes || '[Auto-Sync]' };
+                try {
+                    fetch('api/sync.php?action=save_rm_consumption_log', { method: 'POST', body: JSON.stringify({ log: logObj }) });
+                    Object.assign(l, logObj);
+                    uiNeedsRefresh = true;
+                } catch(e) {}
+            }
+        }
+    });
+
+    // 4. Clean up orphaned brand logs
+    rmBrandConsumptionLogs.forEach(l => {
+        const dKey = l.date.substring(0, 10);
+        const bid = l.brand_id;
+        const data = dailyData[dKey];
+        const bData = data ? data.brands[bid] : null;
+
+        if (!bData || (bData.fg === 0 && bData.rm === 0)) {
+            if ((parseFloat(l.fg_weight) || 0) > 0 || (parseFloat(l.rm_weight) || 0) > 0) {
+                const bLogObj = { id: l.id, date: l.date, brand_id: bid, fg_weight: 0, rm_weight: 0, rm_value: 0, gap: 0, notes: l.notes || '[Auto-Sync]' };
+                try {
+                    fetch('api/sync.php?action=save_rm_brand_consumption_log', { method: 'POST', body: JSON.stringify({ log: bLogObj }) });
+                    Object.assign(l, bLogObj);
+                    uiNeedsRefresh = true;
+                } catch(e) {}
+            }
+        }
+    });
+
     if (uiNeedsRefresh && typeof refreshRMConsumptionHistory === 'function') {
         const brandSection = document.getElementById('brandWIPSection');
         if (brandSection && brandSection.style.display !== 'none') {
@@ -8221,6 +8257,7 @@ function renderBrandHistoryTable(brandId) {
 
     const logs = rmBrandConsumptionLogs.filter(l => {
         if (l.brand_id != brandId) return false;
+        if ((parseFloat(l.fg_weight)||0) === 0 && (parseFloat(l.rm_weight)||0) === 0) return false;
         const d = new Date(l.date);
         if (selMonth && (d.getMonth() + 1) != selMonth) return false;
         if (selYear  && d.getFullYear()    != selYear)  return false;
@@ -8330,6 +8367,12 @@ function refreshRMConsumptionHistory() {
     }
 
     let filteredLogs = baseLogs.filter(l => {
+        const fg = parseFloat(l.fg_weight) || 0;
+        const rm = parseFloat(l.rm_weight) || 0;
+        const inp = parseFloat(l.in_process) || 0;
+        const other = parseFloat(l.other_expenses) || 0;
+        if (fg === 0 && rm === 0 && inp === 0 && other === 0) return false;
+
         const d = new Date(l.date);
         const m = d.getMonth() + 1;
         const y = d.getFullYear();
