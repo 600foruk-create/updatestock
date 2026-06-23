@@ -4515,10 +4515,21 @@ function editOrder(orderId) {
     let order = orders.find(o => o.id == orderId);
     if (!order) return;
 
+    let custOptions = customers.map(c => `<option value="${c.id}" ${c.id == order.customerId ? 'selected' : ''}>${c.name} ${c.address ? '- '+c.address : ''}</option>`).join('');
+
     let formHtml = `
-                <div class="form-group">
-                    <label>Date</label>
-                    <input type="datetime-local" id="editOrderDate" class="form-control" value="${order.date}">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="datetime-local" id="editOrderDate" class="form-control" value="${order.date}">
+                    </div>
+                    <div class="form-group">
+                        <label>Customer</label>
+                        <select id="editOrderCustomer" class="form-control">
+                            <option value="">-- No Customer --</option>
+                            ${custOptions}
+                        </select>
+                    </div>
                 </div>
                 <h4>Order Items</h4>
                 <div id="editOrderItems"></div>
@@ -4709,6 +4720,7 @@ async function updateOrder(orderId) {
     let updatedData = {
         ...order,
         date: document.getElementById('editOrderDate').value,
+        customerId: document.getElementById('editOrderCustomer').value || null,
         items: orderItems,
         totalQty: totalQty,
         totalKg: totalKg

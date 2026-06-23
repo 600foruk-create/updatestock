@@ -13,7 +13,7 @@
     </div>
 
     <div id="editOrderModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 900px;">
             <div class="modal-header">
                 <h3>✏️ Edit Order #<span id="editOrderId"></span></h3>
                 <span class="close-modal" onclick="closeEditModal()">&times;</span>
