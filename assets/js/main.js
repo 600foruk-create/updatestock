@@ -7869,14 +7869,19 @@ function refreshRMConsumptionReport() {
         }
         
         let brandFilterMatch = (dateVal) => {
-            const dateToCheck = new Date(dateVal);
-            if (isNaN(dateToCheck.getTime())) return false;
+            if (!dateVal) return false;
             
             if (periodType === 'daily') {
+                const dateToCheck = new Date(dateVal);
+                if (isNaN(dateToCheck.getTime())) return false;
                 return dateToCheck.toDateString() === targetDateStr;
             } else if (periodType === 'monthly') {
-                return dateToCheck.getMonth() === targetDateObj.getMonth() && dateToCheck.getFullYear() === targetDateObj.getFullYear();
+                const now = new Date();
+                const targetYm = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+                return dateVal.startsWith(targetYm);
             } else if (periodType === 'custom') {
+                const dateToCheck = new Date(dateVal);
+                if (isNaN(dateToCheck.getTime())) return false;
                 const fromEl = document.getElementById('brandWIPFromDate');
                 const toEl = document.getElementById('brandWIPToDate');
                 if (fromEl && toEl && fromEl.value && toEl.value) {

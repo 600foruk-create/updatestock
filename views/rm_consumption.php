@@ -60,7 +60,7 @@
             <div style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; padding: 4px 8px; border-radius: 8px; border: 1px solid #e2e8f0;">
                 <select id="brandWIPPeriodType" class="form-control" style="border: none; outline: none; background: transparent; font-weight: 700; color: var(--sky-700); cursor: pointer; padding: 0 4px; font-size: 0.75rem;" onchange="refreshRMConsumptionReport()">
                     <option value="daily">Daily (Selected Date)</option>
-                    <option value="monthly">Monthly (Selected Month)</option>
+                    <option value="monthly">Monthly (Current Month)</option>
                     <option value="custom">Date Range</option>
                 </select>
                 <div id="brandWIPCustomRange" style="display: none; align-items: center; gap: 0.5rem; border-left: 1px solid #cbd5e1; padding-left: 0.5rem; margin-left: 0.2rem;">
