@@ -8562,7 +8562,7 @@ async function deleteRMConsumptionEntry(id) {
         if (pwd !== null) alert('Incorrect password!');
         return;
     }
-    if (!confirm('Are you sure you want to delete this entry?')) return;
+    if (!confirm('Are you sure you want to delete this entry AND clear its related data from the cards?')) return;
     try {
         const logToDelete = rmConsumptionLogs.find(l => l.id == id);
         let dateOnly = null;
@@ -8579,6 +8579,20 @@ async function deleteRMConsumptionEntry(id) {
             rmConsumptionLogs = rmConsumptionLogs.filter(l => l.id != id);
             if (dateOnly) {
                 rmBrandConsumptionLogs = rmBrandConsumptionLogs.filter(l => l.date.substring(0, 10) !== dateOnly);
+                
+                // Delete associated raw transactions so cards become zero and auto-sync does not restore the log
+                const tIdsToDelete = transactions.filter(t => t.type === 'IN' && t.date.startsWith(dateOnly)).map(t => t.id);
+                const rmIdsToDelete = rmTransactions.filter(t => t.type === 'OUT' && t.notes && t.notes.includes('[Formula:') && t.date.startsWith(dateOnly)).map(t => t.id);
+
+                for (let tid of tIdsToDelete) {
+                    await fetch('api/sync.php?action=delete_transaction', { method: 'POST', body: JSON.stringify({ id: tid }) }).catch(()=>{});
+                }
+                for (let rmid of rmIdsToDelete) {
+                    await fetch('api/sync.php?action=delete_rm_transaction', { method: 'POST', body: JSON.stringify({ id: rmid }) }).catch(()=>{});
+                }
+
+                transactions = transactions.filter(t => !tIdsToDelete.includes(t.id));
+                rmTransactions = rmTransactions.filter(t => !rmIdsToDelete.includes(t.id));
             }
             refreshRMConsumptionHistory();
             refreshRMConsumptionReport(); // Refresh top dashboard if needed
