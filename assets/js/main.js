@@ -9179,6 +9179,10 @@ function refreshRMInventoryBalance() {
         return;
     }
 
+    let sumBags = 0;
+    let sumStock = 0;
+    let sumValue = 0;
+
     sortedItems.forEach(item => {
         const currentStock = parseFloat(item.stock) || 0;
         const kgPerBag = parseFloat(item.kgPerBag) || 0;
@@ -9218,6 +9222,10 @@ function refreshRMInventoryBalance() {
         
         totalValue = currentStock * avgPrice;
 
+        if (kgPerBag > 0) sumBags += (currentStock / kgPerBag);
+        sumStock += currentStock;
+        sumValue += totalValue;
+
         const row = document.createElement('tr');
         row.style.borderBottom = '1px solid var(--gray-100)';
         row.innerHTML = `
@@ -9254,6 +9262,23 @@ function refreshRMInventoryBalance() {
         `;
         tbody.appendChild(row);
     });
+
+    const totalRow = document.createElement('tr');
+    totalRow.style.background = '#fef3c7'; // Highlight background
+    totalRow.innerHTML = `
+        <td style="padding: 0.5rem; font-weight: 900; color: var(--gray-900); text-align: right; font-size: 1.05rem;">Sub Total:</td>
+        <td style="padding: 0.5rem; text-align: right; font-weight: 900; color: var(--primary); white-space: nowrap; font-size: 1.05rem;">
+            ${sumBags.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} <span style="font-size: 0.75rem; color: var(--gray-600); font-weight: 700;">Bags</span>
+        </td>
+        <td style="padding: 0.5rem; text-align: right; font-weight: 900; color: var(--sky-800); white-space: nowrap; font-size: 1.05rem;">
+            ${sumStock.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} <span style="font-size: 0.75rem; color: var(--gray-600); font-weight: 700;">KG</span>
+        </td>
+        <td colspan="2" style="padding: 0.5rem; text-align: center; color: var(--gray-500); font-weight: bold;">---</td>
+        <td style="padding: 0.5rem; text-align: right; font-weight: 900; color: var(--success); white-space: nowrap; font-size: 1.05rem;">
+            Rs. ${sumValue.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}
+        </td>
+    `;
+    tbody.appendChild(totalRow);
 }
 
 async function setRMItemTotalValue(id) {
