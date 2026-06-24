@@ -9264,17 +9264,17 @@ function refreshRMInventoryBalance() {
     });
 
     const totalRow = document.createElement('tr');
-    totalRow.setAttribute('style', 'background-color: #1e293b !important; color: white !important;');
+    totalRow.setAttribute('style', 'background-color: #e0f2fe !important; color: #0f172a !important;');
     totalRow.innerHTML = `
-        <td style="padding: 0.5rem; font-weight: 900; text-align: right; font-size: 1.05rem;">Sub Total:</td>
-        <td style="padding: 0.5rem; text-align: right; font-weight: 900; white-space: nowrap; font-size: 1.05rem;">
-            ${sumBags.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} <span style="font-size: 0.75rem; color: #cbd5e1; font-weight: 700;">Bags</span>
+        <td style="padding: 0.5rem; font-weight: 900; color: #0f172a; text-align: right; font-size: 1.05rem;">Sub Total:</td>
+        <td style="padding: 0.5rem; text-align: right; font-weight: 900; color: #0369a1; white-space: nowrap; font-size: 1.05rem;">
+            ${sumBags.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} <span style="font-size: 0.75rem; color: #475569; font-weight: 700;">Bags</span>
         </td>
-        <td style="padding: 0.5rem; text-align: right; font-weight: 900; white-space: nowrap; font-size: 1.05rem;">
-            ${sumStock.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} <span style="font-size: 0.75rem; color: #cbd5e1; font-weight: 700;">KG</span>
+        <td style="padding: 0.5rem; text-align: right; font-weight: 900; color: #0369a1; white-space: nowrap; font-size: 1.05rem;">
+            ${sumStock.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} <span style="font-size: 0.75rem; color: #475569; font-weight: 700;">KG</span>
         </td>
-        <td colspan="2" style="padding: 0.5rem; text-align: center; color: #94a3b8; font-weight: bold;">---</td>
-        <td style="padding: 0.5rem; text-align: right; font-weight: 900; color: #4ade80; white-space: nowrap; font-size: 1.05rem;">
+        <td colspan="2" style="padding: 0.5rem; text-align: center; color: #64748b; font-weight: bold;">---</td>
+        <td style="padding: 0.5rem; text-align: right; font-weight: 900; color: #166534; white-space: nowrap; font-size: 1.05rem;">
             Rs. ${sumValue.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}
         </td>
     `;
