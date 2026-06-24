@@ -207,7 +207,7 @@ try {
                 'customerProvinces' => $conn->query("SELECT id, name FROM customer_main_categories")->fetchAll(PDO::FETCH_ASSOC),
                 'customerDistricts' => $conn->query("SELECT id, main_id AS mainId, name FROM customer_sub_categories")->fetchAll(PDO::FETCH_ASSOC),
                 'orders' => $conn->query("SELECT o.id, o.date, o.customer_id AS customerId, o.status, o.total_qty AS totalQty, o.total_kg AS totalKg, o.is_stock_subtracted AS isStockSubtracted, c.name AS customerName FROM orders o LEFT JOIN customers c ON o.customer_id = c.id ORDER BY o.date DESC")->fetchAll(PDO::FETCH_ASSOC),
-                'transactions' => $conn->query("SELECT t.id, t.date, t.type, t.main_id AS mainId, t.sub_id AS subId, t.item_id AS itemId, t.quantity, t.customer_id AS customerId, t.notes, mc.name AS mainName, sc.name AS subName, i.name AS itemName, i.weight AS itemWeight, i.length AS itemLength, c.name AS customer FROM transactions t LEFT JOIN main_categories mc ON t.main_id = mc.id LEFT JOIN sub_categories sc ON t.sub_id = sc.id LEFT JOIN items i ON t.item_id = i.id LEFT JOIN customers c ON t.customer_id = c.id ORDER BY t.date DESC")->fetchAll(PDO::FETCH_ASSOC),
+                'transactions' => $conn->query("SELECT t.id, t.date, t.type, t.main_id AS mainId, t.sub_id AS subId, t.item_id AS itemId, t.quantity, t.customer_id AS customerId, t.notes, mc.name AS mainName, sc.name AS subName, i.name AS itemName, i.weight AS itemWeight, i.length AS itemLength, c.name AS customer FROM transactions t LEFT JOIN main_categories mc ON t.main_id = mc.id LEFT JOIN sub_categories sc ON t.sub_id = sc.id LEFT JOIN items i ON t.item_id = i.id LEFT JOIN customers c ON t.customer_id = c.id WHERE t.is_hidden = 0 OR t.is_hidden IS NULL ORDER BY t.date DESC")->fetchAll(PDO::FETCH_ASSOC),
                 'settings' => $conn->query("SELECT id, category, `key`, value FROM settings")->fetchAll(PDO::FETCH_ASSOC),
                 'rawMaterials' => $conn->query("SELECT id, name, category, unit, stock, threshold FROM raw_materials")->fetchAll(PDO::FETCH_ASSOC), // Legacy support
                 'rmMainCategories' => $conn->query("SELECT id, name, code FROM rm_main_categories")->fetchAll(PDO::FETCH_ASSOC),
@@ -216,7 +216,7 @@ try {
                 'rmUnits' => $conn->query("SELECT id, name FROM rm_units")->fetchAll(PDO::FETCH_ASSOC),
                 'rmFormulas' => $conn->query("SELECT * FROM rm_formulas")->fetchAll(PDO::FETCH_ASSOC),
                 'rmFormulaItems' => $conn->query("SELECT * FROM rm_formula_items")->fetchAll(PDO::FETCH_ASSOC),
-                'rmTransactions' => $conn->query("SELECT * FROM rm_transactions ORDER BY date DESC")->fetchAll(PDO::FETCH_ASSOC),
+                'rmTransactions' => $conn->query("SELECT * FROM rm_transactions WHERE is_hidden = 0 OR is_hidden IS NULL ORDER BY date DESC")->fetchAll(PDO::FETCH_ASSOC),
                 'rmConsumptionLogs' => $conn->query("SELECT * FROM rm_consumption_logs ORDER BY date DESC")->fetchAll(PDO::FETCH_ASSOC),
                 'rmBrandConsumptionLogs' => $conn->query("SELECT * FROM rm_brand_consumption_logs ORDER BY date DESC")->fetchAll(PDO::FETCH_ASSOC),
                 'storeMainCategories' => $conn->query("SELECT * FROM store_main_categories")->fetchAll(PDO::FETCH_ASSOC),
