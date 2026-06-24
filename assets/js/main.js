@@ -9264,7 +9264,7 @@ function refreshRMInventoryBalance() {
     });
 
     const totalRow = document.createElement('tr');
-    totalRow.style.background = '#fef3c7'; // Highlight background
+    totalRow.style.background = '#e0f2fe'; // Light sky blue highlight
     totalRow.innerHTML = `
         <td style="padding: 0.5rem; font-weight: 900; color: var(--gray-900); text-align: right; font-size: 1.05rem;">Sub Total:</td>
         <td style="padding: 0.5rem; text-align: right; font-weight: 900; color: var(--primary); white-space: nowrap; font-size: 1.05rem;">
