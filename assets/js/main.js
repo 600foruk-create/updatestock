@@ -9232,9 +9232,24 @@ function refreshRMInventoryBalance() {
         });
 
         let basePrice = parseFloat(item.base_price) || 0;
+        let avgPrice = basePrice;
         let calculatedPrice = basePrice;
 
         if (history.length > 0) {
+            let totalQty = 0;
+            let totalCost = 0;
+            history.forEach(t => {
+                const q = parseFloat(t.quantity) || 0;
+                const p = parseFloat(t.price) || 0;
+                totalQty += q;
+                totalCost += (q * p);
+            });
+            if (basePrice > 0) {
+                avgPrice = basePrice; // Manual override persists
+            } else if (totalQty > 0) {
+                avgPrice = totalCost / totalQty;
+            }
+
             if (priceType === 'max') {
                 calculatedPrice = Math.max(...history.map(t => parseFloat(t.price)));
             } else if (priceType === 'min') {
@@ -9247,22 +9262,12 @@ function refreshRMInventoryBalance() {
                 });
                 calculatedPrice = parseFloat(sortedHistory[0].price);
             } else {
-                // 'avg'
-                let totalQty = 0;
-                let totalCost = 0;
-                history.forEach(t => {
-                    const q = parseFloat(t.quantity) || 0;
-                    const p = parseFloat(t.price) || 0;
-                    totalQty += q;
-                    totalCost += (q * p);
-                });
-                if (totalQty > 0) {
-                    calculatedPrice = totalCost / totalQty;
-                }
+                calculatedPrice = avgPrice;
             }
         }
 
-        const totalValue = currentStock * calculatedPrice;
+        // Total Value represents actual stock worth based on average/base cost, fixed regardless of dropdown view
+        const totalValue = currentStock * avgPrice;
 
         if (kgPerBag > 0) sumBags += (currentStock / kgPerBag);
         sumStock += currentStock;
