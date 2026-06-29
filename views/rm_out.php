@@ -14,7 +14,17 @@
 
             <div class="form-group" style="margin-bottom: 0;">
                 <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.3rem; font-size: 0.8rem; display: block;">Issue Date</label>
-                <input type="date" id="rmOutDate" class="form-control" style="height: 38px; border-radius: 6px; border: 2px solid #000; width: 180px; background: white; font-size: 0.85rem; padding: 0.4rem 0.6rem;">
+                <input type="date" id="rmOutDate" class="form-control" style="height: 38px; border-radius: 6px; border: 2px solid #000; width: 160px; background: white; font-size: 0.85rem; padding: 0.4rem 0.6rem;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+                <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.3rem; font-size: 0.8rem; display: block;">Issuance Rate Mode</label>
+                <select id="rmOutValuationRate" class="form-control" onchange="saveRMValuationPreference()" style="height: 38px; border-radius: 6px; border: 2px solid #000; width: 150px; background: white; font-size: 0.85rem; padding: 0.4rem 0.6rem; font-weight: bold;">
+                    <option value="last">Last Purchase</option>
+                    <option value="avg">Average Price</option>
+                    <option value="max">Max Price</option>
+                    <option value="min">Min Price</option>
+                </select>
             </div>
         </div>
         

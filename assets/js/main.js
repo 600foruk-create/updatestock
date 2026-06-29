@@ -7322,6 +7322,11 @@ function refreshRMOutFormControls() {
         dateInput.value = new Date().toISOString().split('T')[0];
     }
     
+    const valRate = document.getElementById('rmOutValuationRate');
+    if (valRate) {
+        valRate.value = localStorage.getItem('rmOutValuationRate') || 'last';
+    }
+    
     const formulaSelect = document.getElementById('rmOutFormulaSelect');
     const editor = document.getElementById('rmFormulaIngredientsEditor');
     
@@ -7435,26 +7440,48 @@ function clearFormulaSelection() {
     }
 }
 
+function saveRMValuationPreference() {
+    const el = document.getElementById('rmOutValuationRate');
+    if (el) {
+        localStorage.setItem('rmOutValuationRate', el.value);
+    }
+}
+
 function getRMItemCurrentPrice(item) {
     if (!item) return 0;
     
-    let basePrice = parseFloat(item.base_price) || 0;
-    if (basePrice > 0) return basePrice;
-
-    // Fallback to history average
+    const valMode = localStorage.getItem('rmOutValuationRate') || 'last';
+    
+    // Fallback to history based on valMode
     const history = rmTransactions.filter(t => t.type === 'IN' && t.rm_item_id == item.id && parseFloat(t.price) > 0);
     if (history.length > 0) {
-        let totalQty = 0;
-        let totalCost = 0;
-        history.forEach(t => {
-            const q = parseFloat(t.quantity) || 0;
-            const p = parseFloat(t.price) || 0;
-            totalQty += q;
-            totalCost += (q * p);
-        });
-        return totalQty > 0 ? (totalCost / totalQty) : 0;
+        if (valMode === 'max') {
+            return Math.max(...history.map(t => parseFloat(t.price)));
+        } else if (valMode === 'min') {
+            return Math.min(...history.map(t => parseFloat(t.price)));
+        } else if (valMode === 'last') {
+            const sortedHistory = [...history].sort((a, b) => {
+                const dateDiff = new Date(b.date) - new Date(a.date);
+                if (dateDiff !== 0 && !isNaN(dateDiff)) return dateDiff;
+                return b.id - a.id;
+            });
+            return parseFloat(sortedHistory[0].price);
+        } else {
+            // 'avg'
+            let totalQty = 0;
+            let totalCost = 0;
+            history.forEach(t => {
+                const q = parseFloat(t.quantity) || 0;
+                const p = parseFloat(t.price) || 0;
+                totalQty += q;
+                totalCost += (q * p);
+            });
+            return totalQty > 0 ? (totalCost / totalQty) : 0;
+        }
     }
-    return 0;
+
+    let basePrice = parseFloat(item.base_price) || 0;
+    return basePrice;
 }
 
 function recalculateFormulaTotalValue() {
@@ -9175,7 +9202,7 @@ function refreshRMInventoryBalance() {
     const sortedItems = [...filteredItems].sort((a, b) => a.name.localeCompare(b.name));
 
     if (sortedItems.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 0.2rem 0.5rem; color:var(--gray-500);">No items match your filters.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 0.2rem 0.5rem; color:var(--gray-500);">No items match your filters.</td></tr>';
         return;
     }
 
@@ -9183,44 +9210,59 @@ function refreshRMInventoryBalance() {
     let sumStock = 0;
     let sumValue = 0;
 
+    const priceTypeEl = document.getElementById('rmBalancePriceType');
+    const priceType = priceTypeEl ? priceTypeEl.value : 'avg';
+
+    const fromDateVal = document.getElementById('rmBalanceFromDate') ? document.getElementById('rmBalanceFromDate').value : '';
+    const toDateVal = document.getElementById('rmBalanceToDate') ? document.getElementById('rmBalanceToDate').value : '';
+
     sortedItems.forEach(item => {
         const currentStock = parseFloat(item.stock) || 0;
         const kgPerBag = parseFloat(item.kgPerBag) || 0;
         const bags = kgPerBag > 0 ? (currentStock / kgPerBag).toFixed(1) : '---';
 
-        // Calculate Price Metrics from history
-        const history = rmTransactions.filter(t => t.type === 'IN' && t.rm_item_id == item.id && parseFloat(t.price) > 0);
-        
+        // Filter RM IN transactions by item and optional date range
+        const history = rmTransactions.filter(t => {
+            if (t.type !== 'IN' || t.rm_item_id != item.id || parseFloat(t.price) <= 0) return false;
+            if (!t.date) return false;
+            const tDateStr = t.date.split(' ')[0]; // YYYY-MM-DD
+            if (fromDateVal && tDateStr < fromDateVal) return false;
+            if (toDateVal && tDateStr > toDateVal) return false;
+            return true;
+        });
+
         let basePrice = parseFloat(item.base_price) || 0;
-        let avgPrice = basePrice;
-        let maxPrice = basePrice;
-        let totalValue = 0;
+        let calculatedPrice = basePrice;
 
         if (history.length > 0) {
-            let totalQty = 0;
-            let totalCost = 0;
-            
-            // If we have a base price, we treat it as the price for the current stock minus new purchases? 
-            // That's complex. Let's simplify: 
-            // If base_price is set, it overrides history for valuation. 
-            // This is what users typically want when "balancing" records.
-            
-            history.forEach(t => {
-                const q = parseFloat(t.quantity) || 0;
-                const p = parseFloat(t.price) || 0;
-                totalQty += q;
-                totalCost += (q * p);
-                if (p > maxPrice) maxPrice = p;
-            });
-
-            if (basePrice > 0) {
-                avgPrice = basePrice; // Manual override persists
-            } else if (totalQty > 0) {
-                avgPrice = totalCost / totalQty;
+            if (priceType === 'max') {
+                calculatedPrice = Math.max(...history.map(t => parseFloat(t.price)));
+            } else if (priceType === 'min') {
+                calculatedPrice = Math.min(...history.map(t => parseFloat(t.price)));
+            } else if (priceType === 'last') {
+                const sortedHistory = [...history].sort((a, b) => {
+                    const dateDiff = new Date(b.date) - new Date(a.date);
+                    if (dateDiff !== 0 && !isNaN(dateDiff)) return dateDiff;
+                    return b.id - a.id;
+                });
+                calculatedPrice = parseFloat(sortedHistory[0].price);
+            } else {
+                // 'avg'
+                let totalQty = 0;
+                let totalCost = 0;
+                history.forEach(t => {
+                    const q = parseFloat(t.quantity) || 0;
+                    const p = parseFloat(t.price) || 0;
+                    totalQty += q;
+                    totalCost += (q * p);
+                });
+                if (totalQty > 0) {
+                    calculatedPrice = totalCost / totalQty;
+                }
             }
         }
-        
-        totalValue = currentStock * avgPrice;
+
+        const totalValue = currentStock * calculatedPrice;
 
         if (kgPerBag > 0) sumBags += (currentStock / kgPerBag);
         sumStock += currentStock;
@@ -9245,11 +9287,8 @@ function refreshRMInventoryBalance() {
                     ${currentStock.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} <span style="font-size: 0.65rem; color: var(--gray-400); font-weight: 600;">KG</span>
                 </div>
             </td>
-            <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; color: var(--gray-600); font-weight: 600; font-size: 0.9rem; white-space: nowrap;">
-                ${avgPrice > 0 ? avgPrice.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}) : '---'}
-            </td>
-            <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; color: var(--gray-600); font-weight: 600; font-size: 0.9rem; white-space: nowrap;">
-                ${maxPrice > 0 ? maxPrice.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}) : '---'}
+            <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; color: var(--gray-800); font-weight: 700; font-size: 0.95rem; white-space: nowrap;">
+                ${calculatedPrice > 0 ? calculatedPrice.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}) : '---'}
             </td>
             <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; white-space: nowrap;">
                 <div style="display: flex; align-items: center; justify-content: flex-end; gap: 5px; flex-wrap: nowrap;">
@@ -9273,7 +9312,7 @@ function refreshRMInventoryBalance() {
         <td style="padding: 0.5rem; text-align: right; font-weight: 900; color: #0369a1; white-space: nowrap; font-size: 1.05rem;">
             ${sumStock.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} <span style="font-size: 0.75rem; color: #475569; font-weight: 700;">KG</span>
         </td>
-        <td colspan="2" style="padding: 0.5rem; text-align: center; color: #64748b; font-weight: bold;">---</td>
+        <td style="padding: 0.5rem; text-align: center; color: #64748b; font-weight: bold;">---</td>
         <td style="padding: 0.5rem; text-align: right; font-weight: 900; color: #166534; white-space: nowrap; font-size: 1.05rem;">
             Rs. ${sumValue.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}
         </td>
