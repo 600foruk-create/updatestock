@@ -9215,11 +9215,12 @@ function refreshRMInventoryBalance() {
 
     const fromDateVal = document.getElementById('rmBalanceFromDate') ? document.getElementById('rmBalanceFromDate').value : '';
     const toDateVal = document.getElementById('rmBalanceToDate') ? document.getElementById('rmBalanceToDate').value : '';
+    const isDateFiltered = Boolean(fromDateVal || toDateVal);
+
+    let renderedCount = 0;
 
     sortedItems.forEach(item => {
-        const currentStock = parseFloat(item.stock) || 0;
         const kgPerBag = parseFloat(item.kgPerBag) || 0;
-        const bags = kgPerBag > 0 ? (currentStock / kgPerBag).toFixed(1) : '---';
 
         // Filter RM IN transactions by item and optional date range
         const history = rmTransactions.filter(t => {
@@ -9231,23 +9232,31 @@ function refreshRMInventoryBalance() {
             return true;
         });
 
+        if (isDateFiltered && history.length === 0) {
+            return; // Skip items that had no purchases in the selected date range
+        }
+
         let basePrice = parseFloat(item.base_price) || 0;
         let avgPrice = basePrice;
         let calculatedPrice = basePrice;
+        let totalQty = 0;
+        let totalCost = 0;
 
         if (history.length > 0) {
-            let totalQty = 0;
-            let totalCost = 0;
             history.forEach(t => {
                 const q = parseFloat(t.quantity) || 0;
                 const p = parseFloat(t.price) || 0;
                 totalQty += q;
                 totalCost += (q * p);
             });
-            if (basePrice > 0) {
-                avgPrice = basePrice; // Manual override persists
-            } else if (totalQty > 0) {
-                avgPrice = totalCost / totalQty;
+            if (isDateFiltered) {
+                avgPrice = totalQty > 0 ? (totalCost / totalQty) : 0;
+            } else {
+                if (basePrice > 0) {
+                    avgPrice = basePrice; // Manual override persists for overall inventory balance
+                } else if (totalQty > 0) {
+                    avgPrice = totalCost / totalQty;
+                }
             }
 
             if (priceType === 'max') {
@@ -9266,12 +9275,17 @@ function refreshRMInventoryBalance() {
             }
         }
 
-        // Total Value represents actual stock worth based on average/base cost, fixed regardless of dropdown view
-        const totalValue = currentStock * avgPrice;
+        const displayStock = isDateFiltered ? totalQty : (parseFloat(item.stock) || 0);
+        const bagsNum = kgPerBag > 0 ? (displayStock / kgPerBag) : 0;
+        const bagsStr = kgPerBag > 0 ? bagsNum.toFixed(1) : '---';
 
-        if (kgPerBag > 0) sumBags += (currentStock / kgPerBag);
-        sumStock += currentStock;
+        // Total Value represents stock worth or period purchase cost
+        const totalValue = isDateFiltered ? totalCost : (displayStock * avgPrice);
+
+        if (kgPerBag > 0) sumBags += bagsNum;
+        sumStock += displayStock;
         sumValue += totalValue;
+        renderedCount++;
 
         const row = document.createElement('tr');
         row.style.borderBottom = '1px solid var(--gray-100)';
@@ -9284,12 +9298,12 @@ function refreshRMInventoryBalance() {
             </td>
             <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; white-space: nowrap;">
                 <div style="font-weight: 800; font-size: 0.95rem; color: var(--primary);">
-                    ${bags} <span style="font-size: 0.65rem; color: var(--gray-400); font-weight: 600;">Bags</span>
+                    ${bagsStr} <span style="font-size: 0.65rem; color: var(--gray-400); font-weight: 600;">Bags</span>
                 </div>
             </td>
             <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; white-space: nowrap;">
                 <div style="font-weight: 800; font-size: 0.95rem; color: var(--sky-700);">
-                    ${currentStock.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} <span style="font-size: 0.65rem; color: var(--gray-400); font-weight: 600;">KG</span>
+                    ${displayStock.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} <span style="font-size: 0.65rem; color: var(--gray-400); font-weight: 600;">KG</span>
                 </div>
             </td>
             <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; color: var(--gray-800); font-weight: 700; font-size: 0.95rem; white-space: nowrap;">
@@ -9306,6 +9320,11 @@ function refreshRMInventoryBalance() {
         `;
         tbody.appendChild(row);
     });
+
+    if (renderedCount === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 0.5rem; color:var(--gray-500);">No purchases found within the selected date range.</td></tr>';
+        return;
+    }
 
     const totalRow = document.createElement('tr');
     totalRow.setAttribute('style', 'background-color: #e0f2fe !important; color: #0f172a !important;');
