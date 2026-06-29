@@ -9293,7 +9293,7 @@ function refreshRMInventoryBalance() {
                 </div>
             </td>
             <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; color: var(--gray-800); font-weight: 700; font-size: 0.95rem; white-space: nowrap;">
-                ${calculatedPrice > 0 ? calculatedPrice.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}) : '---'}
+                ${calculatedPrice > 0 ? calculatedPrice.toLocaleString(undefined, {minimumFractionDigits: calculatedPrice % 1 === 0 ? 0 : 2, maximumFractionDigits: 2}) : '---'}
             </td>
             <td style="padding: 0.2rem 0.5rem; text-align: right; vertical-align: middle; white-space: nowrap;">
                 <div style="display: flex; align-items: center; justify-content: flex-end; gap: 5px; flex-wrap: nowrap;">
