@@ -9211,15 +9211,10 @@ function refreshRMInventoryBalance() {
     let sumValue = 0;
 
     const priceTypeEl = document.getElementById('rmBalancePriceType');
-    // Restore saved price type from localStorage (default: 'last')
+    // Always default to 'Last Purchase' on fresh page load/refresh
     if (priceTypeEl && !priceTypeEl.dataset.initialized) {
-        const savedPriceType = localStorage.getItem('rmBalancePriceType') || 'last';
-        priceTypeEl.value = savedPriceType;
+        priceTypeEl.value = 'last';
         priceTypeEl.dataset.initialized = '1';
-    }
-    // Save selection to localStorage whenever it changes
-    if (priceTypeEl) {
-        localStorage.setItem('rmBalancePriceType', priceTypeEl.value);
     }
     const priceType = priceTypeEl ? priceTypeEl.value : 'last';
 
