@@ -7440,11 +7440,24 @@ function clearFormulaSelection() {
     }
 }
 
+function toggleRMOutCustomDate() {
+    const period = document.getElementById('rmOutRatePeriod') ? document.getElementById('rmOutRatePeriod').value : 'month';
+    const customFields = document.getElementById('rmOutCustomDateFields');
+    if (customFields) {
+        customFields.style.display = period === 'custom' ? 'flex' : 'none';
+    }
+}
+
 function saveRMValuationPreference() {
     const el = document.getElementById('rmOutValuationRate');
+    const container = document.getElementById('rmOutDateRangeContainer');
     if (el) {
         localStorage.setItem('rmOutValuationRate', el.value);
+        if (container) {
+            container.style.display = el.value === 'last' ? 'none' : 'block';
+        }
     }
+    if (typeof recalculateFormulaTotalValue === 'function') recalculateFormulaTotalValue();
 }
 
 function getRMItemCurrentPrice(item) {
@@ -7452,8 +7465,50 @@ function getRMItemCurrentPrice(item) {
     
     const valMode = localStorage.getItem('rmOutValuationRate') || 'last';
     
-    // Fallback to history based on valMode
-    const history = rmTransactions.filter(t => t.type === 'IN' && t.rm_item_id == item.id && parseFloat(t.price) > 0);
+    // Date range filtering logic
+    let history = rmTransactions.filter(t => t.type === 'IN' && t.rm_item_id == item.id && parseFloat(t.price) > 0);
+    
+    if (history.length > 0 && valMode !== 'last') {
+        const periodEl = document.getElementById('rmOutRatePeriod');
+        const period = periodEl ? periodEl.value : 'today';
+        
+        let fromDate = null;
+        let toDate = null;
+        const now = new Date();
+        
+        if (period === 'today') {
+            fromDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            toDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+        } else if (period === 'week') {
+            const firstDay = now.getDate() - now.getDay();
+            fromDate = new Date(now.getFullYear(), now.getMonth(), firstDay);
+            toDate = new Date(now.getFullYear(), now.getMonth(), firstDay + 6, 23, 59, 59);
+        } else if (period === 'month') {
+            fromDate = new Date(now.getFullYear(), now.getMonth(), 1);
+            toDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+        } else if (period === 'year') {
+            fromDate = new Date(now.getFullYear(), 0, 1);
+            toDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+        } else if (period === 'custom') {
+            const fVal = document.getElementById('rmOutRateFrom') ? document.getElementById('rmOutRateFrom').value : '';
+            const tVal = document.getElementById('rmOutRateTo') ? document.getElementById('rmOutRateTo').value : '';
+            if (fVal) fromDate = new Date(fVal);
+            if (tVal) {
+                toDate = new Date(tVal);
+                toDate.setHours(23, 59, 59, 999);
+            }
+        }
+        
+        if (fromDate || toDate) {
+            history = history.filter(t => {
+                const tDate = new Date(t.date);
+                if (fromDate && tDate < fromDate) return false;
+                if (toDate && tDate > toDate) return false;
+                return true;
+            });
+        }
+    }
+
     if (history.length > 0) {
         if (valMode === 'max') {
             return Math.max(...history.map(t => parseFloat(t.price)));

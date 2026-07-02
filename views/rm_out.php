@@ -26,6 +26,26 @@
                     <option value="min">Min Price</option>
                 </select>
             </div>
+
+            <!-- Date Range Filter for Valuation -->
+            <div id="rmOutDateRangeContainer" class="form-group" style="margin-bottom: 0; display: none;">
+                <label style="font-weight: 700; color: var(--gray-700); margin-bottom: 0.3rem; font-size: 0.8rem; display: block;">Period</label>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select id="rmOutRatePeriod" class="form-control" onchange="toggleRMOutCustomDate(); recalculateFormulaTotalValue();" style="height: 38px; border-radius: 6px; border: 2px solid #000; width: 120px; background: white; font-size: 0.85rem; padding: 0.4rem 0.6rem; font-weight: bold;">
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="year">This Year</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    
+                    <div id="rmOutCustomDateFields" style="display: none; align-items: center; gap: 0.3rem;">
+                        <input type="date" id="rmOutRateFrom" class="form-control" onchange="recalculateFormulaTotalValue()" style="height: 38px; border-radius: 6px; border: 1px solid #000; width: 110px; font-size: 0.75rem; padding: 0.2rem;">
+                        <span style="font-weight: bold; font-size: 0.7rem;">to</span>
+                        <input type="date" id="rmOutRateTo" class="form-control" onchange="recalculateFormulaTotalValue()" style="height: 38px; border-radius: 6px; border: 1px solid #000; width: 110px; font-size: 0.75rem; padding: 0.2rem;">
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- Formula Issuance Tracker -->
@@ -164,5 +184,17 @@
     color: var(--gray-700);
 }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedValMode = localStorage.getItem('rmOutValuationRate') || 'last';
+        const el = document.getElementById('rmOutValuationRate');
+        if (el) {
+            el.value = savedValMode;
+            saveRMValuationPreference(); // Trigger UI updates
+            toggleRMOutCustomDate();
+        }
+    });
+</script>
 
 
