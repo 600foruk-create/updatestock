@@ -9211,7 +9211,17 @@ function refreshRMInventoryBalance() {
     let sumValue = 0;
 
     const priceTypeEl = document.getElementById('rmBalancePriceType');
-    const priceType = priceTypeEl ? priceTypeEl.value : 'avg';
+    // Restore saved price type from localStorage (default: 'last')
+    if (priceTypeEl && !priceTypeEl.dataset.initialized) {
+        const savedPriceType = localStorage.getItem('rmBalancePriceType') || 'last';
+        priceTypeEl.value = savedPriceType;
+        priceTypeEl.dataset.initialized = '1';
+    }
+    // Save selection to localStorage whenever it changes
+    if (priceTypeEl) {
+        localStorage.setItem('rmBalancePriceType', priceTypeEl.value);
+    }
+    const priceType = priceTypeEl ? priceTypeEl.value : 'last';
 
     const fromDateVal = document.getElementById('rmBalanceFromDate') ? document.getElementById('rmBalanceFromDate').value : '';
     const toDateVal = document.getElementById('rmBalanceToDate') ? document.getElementById('rmBalanceToDate').value : '';
@@ -9280,7 +9290,9 @@ function refreshRMInventoryBalance() {
         const bagsStr = kgPerBag > 0 ? bagsNum.toFixed(1) : '---';
 
         // Total Value represents stock worth or period purchase cost
-        const totalValue = isDateFiltered ? totalCost : (displayStock * avgPrice);
+        // Uses calculatedPrice (based on selected price type) when not date-filtered
+        const effectivePrice = history.length > 0 ? calculatedPrice : avgPrice;
+        const totalValue = isDateFiltered ? totalCost : (displayStock * effectivePrice);
 
         if (kgPerBag > 0) sumBags += bagsNum;
         sumStock += displayStock;

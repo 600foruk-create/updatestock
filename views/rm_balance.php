@@ -30,10 +30,10 @@
                         <div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px;">
                             <span>Price:</span>
                             <select id="rmBalancePriceType" onchange="refreshRMInventoryBalance()" style="padding: 2px 6px; border-radius: 4px; border: 1px solid #000; font-size: 0.8rem; font-weight: bold; background: #fff; color: #000;">
+                                <option value="last">Last Purchase</option>
                                 <option value="avg">Average</option>
                                 <option value="max">Maximum</option>
                                 <option value="min">Minimum</option>
-                                <option value="last">Last Purchase</option>
                             </select>
                         </div>
                     </th>
